@@ -5,11 +5,13 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:yelpax_pro/config/localization/l10n/l10n.dart';
 import 'package:yelpax_pro/config/localization/locale_provider.dart';
 import 'package:yelpax_pro/config/themes/theme_provider.dart';
+import 'package:yelpax_pro/home.dart';
 import 'package:yelpax_pro/providers/providers.dart';
+import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 
 import 'config/themes/theme_mode_type.dart';
 import 'generated/app_localizations.dart';
-
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 void main() {
   runApp(MultiProvider(providers: appProviders, child: const MyApp()));
 }
@@ -24,6 +26,8 @@ class MyApp extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return MaterialApp(
+      navigatorObservers: [FlutterSmartDialog.observer],
+           builder: FlutterSmartDialog.init(),
       locale: provider.locale,
       supportedLocales: L10n.all,
       localizationsDelegates: [
@@ -65,45 +69,75 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  bool isLoading = false;
+  int counter = 0;
+
+  Future<void> _simulateCount() async {
+    setState(() => isLoading = true);
+
+    // Simulate a delay (e.g., API call or task)
+    await Future.delayed(const Duration(seconds: 20));
+
+    setState(() {
+      isLoading = false;
+      counter += 1;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            DropdownButton<ThemeModeType>(
-              value: widget.themeProvider.currentTheme,
-              items: ThemeModeType.values.map((type) {
-                return DropdownMenuItem(
-                  value: type,
-                  child: Text(type.toString().split('.').last),
-                );
-              }).toList(),
-              onChanged: (type) {
-                if (type != null) {
-                  widget.themeProvider.setTheme(type);
-                }
-              },
-            ),
+    return
+            Home();
+    
+    //  Scaffold(
+    //   appBar: AppBar(
+    //     backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+    //     title: Text(widget.title),
+    //   ),
+    //   body: Center(
+    //     child: Column(
+    //       mainAxisAlignment: MainAxisAlignment.center,
+    //       children: [
+    //         SizedBox(height: 20,),
+    //          CustomButton(
+    //           isLoading: isLoading,
+    //           label: 'Press',
+    //           onPressed: () {
+    //             _simulateCount();
+    //           },
+    //         ),
+    //         SizedBox(height: 20,),
+    //         DropdownButton<ThemeModeType>(
+    //           value: widget.themeProvider.currentTheme,
+    //           items: ThemeModeType.values.map((type) {
+    //             return DropdownMenuItem(
+    //               value: type,
+    //               child: Text(type.toString().split('.').last),
+    //             );
+    //           }).toList(),
+    //           onChanged: (type) {
+    //             if (type != null) {
+    //               widget.themeProvider.setTheme(type);
+    //             }
+    //           },
+    //         ),
 
-            Text(AppLocalizations.of(context)!.icrement),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+    //         Text(AppLocalizations.of(context)!.icrement),
+    //         Text(
+    //           '$_counter',
+    //           style: Theme.of(context).textTheme.headlineMedium,
+    //         ),
+
+    //         const SizedBox(height: 20),
+           
+    //       ],
+    //     ),
+    //   ),
+    //   floatingActionButton: FloatingActionButton(
+    //     onPressed: _incrementCounter,
+    //     tooltip: 'Increment',
+    //     child: const Icon(Icons.add),
+    //   ), // This trailing comma makes auto-formatting nicer for build methods.
+    // );
   }
 }
