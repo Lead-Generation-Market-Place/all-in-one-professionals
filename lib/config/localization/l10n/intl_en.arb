@@ -1,0 +1,9 @@
+{
+  "@@locale": "en",
+  "appTitle": "All In One",
+  "login": "Login",
+  "signup": "Sign Up",
+  "welcome": "Welcome!",
+  "icrement":"Increment"
+
+}
