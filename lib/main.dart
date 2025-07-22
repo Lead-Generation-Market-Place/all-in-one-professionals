@@ -15,7 +15,6 @@ import 'package:yelpax_pro/shared/screens/unexpected_error_screen.dart';
 import 'package:yelpax_pro/shared/screens/unexpected_release_mode_error.dart';
 
 import 'config/themes/theme_mode_type.dart';
-import 'generated/app_localizations.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -67,11 +66,9 @@ class MyApp extends StatelessWidget {
       navigatorKey: navigatorKey,
       onGenerateRoute: AppRouter.generateRoute,
       onUnknownRoute: (settings) => AppRouter.unknownRoute(settings),
-      locale: provider.locale,
+      locale: Locale('en'),
       supportedLocales: L10n.all,
       localizationsDelegates: [
-        AppLocalizations.delegate, // <- Generated
-
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,

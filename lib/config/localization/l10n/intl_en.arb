@@ -5,6 +5,5 @@
   "signup": "Sign Up",
   "welcome": "Welcome!",
   "icrement": "Increment",
-  "retry": "Retry",
-  "try":"Try"
+  "retry": "Retry"
 }
