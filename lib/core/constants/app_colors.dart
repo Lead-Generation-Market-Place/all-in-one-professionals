@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
+
 
 class AppColors {
   static const Color primaryDark = Color(0xFF03045E); // color1

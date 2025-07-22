@@ -62,7 +62,7 @@ class CustomButton extends StatelessWidget {
               boxShadow: type != CustomButtonType.text && !isDisabled
                   ? [
                       BoxShadow(
-                        color: AppColors.primaryBlue.withOpacity(0.1),
+                        color: AppColors.primaryBlue,
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),

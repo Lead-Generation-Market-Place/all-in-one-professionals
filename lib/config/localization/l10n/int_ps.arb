@@ -4,5 +4,7 @@
   "login": "ننوتل",
   "signup": "راجسټر",
   "welcome": "ښه راغلاست!",
-"icrement":"اضافه"
+  "icrement": "اضافه",
+  "retry": "هڅه",
+  "try":"بیا"
 }

@@ -6,6 +6,6 @@ final amoledTheme = ThemeData(
   useMaterial3: true,
   colorScheme: const ColorScheme.dark(
     primary: Colors.teal,
-    background: Colors.black,
+    surface: Colors.black,
   ),
 );

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yelpax_pro/config/localization/l10n/l10n.dart';
 
-
 class LocaleProvider extends ChangeNotifier {
   Locale? _locale;
 
