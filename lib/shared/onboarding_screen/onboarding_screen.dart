@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/features/authentication/presentation/controllers/auth_user_controller.dart';
 import 'package:yelpax_pro/features/authentication/presentation/screens/login_screen.dart';
 import 'package:yelpax_pro/home.dart';
@@ -41,9 +42,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _skipOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_seen', true);
-    
-      
-    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+
+    Navigator.of(
+      context,
+    ).pushNamedAndRemoveUntil(AppRouter.login, (route) => false);
   }
 
   void _finishOnboarding() async {
