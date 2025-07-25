@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:yelpax_pro/core/error/widgets/unknown_route_screen.dart';
+import 'package:yelpax_pro/features/authentication/presentation/screens/login_screen.dart';
+import 'package:yelpax_pro/home.dart';
+import 'package:yelpax_pro/shared/onboarding_screen/onboarding_screen.dart';
 
 
 class AppRouter {
@@ -10,12 +13,12 @@ class AppRouter {
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      // case splash:
-      //   return MaterialPageRoute(builder: (_) => const SplashScreen());
-      // case login:
-      //   return MaterialPageRoute(builder: (_) => const LoginScreen());
-      // case home:
-      //   return MaterialPageRoute(builder: (_) => const HomeScreen());
+      case splash:
+        return MaterialPageRoute(builder: (_) => const OnboardingScreen());
+      case login:
+        return MaterialPageRoute(builder: (_) => const LoginScreen());
+      case home:
+        return MaterialPageRoute(builder: (_) => const Home());
       case unknownRouteScreen:
         return MaterialPageRoute(
           builder: (_) =>

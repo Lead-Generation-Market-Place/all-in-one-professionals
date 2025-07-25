@@ -1,23 +1,27 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:logger/web.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yelpax_pro/config/localization/l10n/l10n.dart';
 import 'package:yelpax_pro/config/localization/locale_provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/config/themes/theme_provider.dart';
 import 'package:yelpax_pro/core/utils/app_restart.dart';
-import 'package:yelpax_pro/features/inbox/presentation/screens/signup_screen.dart';
+import 'package:yelpax_pro/features/authentication/presentation/controllers/auth_user_controller.dart';
+import 'package:yelpax_pro/features/authentication/presentation/screens/login_screen.dart';
 import 'package:yelpax_pro/generated/app_localizations.dart';
+import 'package:yelpax_pro/home.dart';
 import 'package:yelpax_pro/providers/providers.dart';
+import 'package:yelpax_pro/shared/onboarding_screen/onboarding_screen.dart';
 import 'package:yelpax_pro/shared/screens/unexpected_error_screen.dart';
 import 'package:yelpax_pro/shared/screens/unexpected_release_mode_error.dart';
-
-import 'config/themes/theme_mode_type.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -56,98 +60,69 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Widget? _startScreen;
+  final _storage = FlutterSecureStorage();
+  @override
+  void initState() {
+    super.initState();
+    _checkOnboardingStatus();
+  }
+
+  Future<void> _checkOnboardingStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final seen = prefs.getBool('onboarding_seen') ?? false;
+
+    final auth = Provider.of<AuthUserController>(context, listen: false);
+    await auth.checkAuthStatus();
+
+    Widget targetScreen;
+    if (!seen) {
+      targetScreen = const OnboardingScreen();
+    } else if (auth.isAuthenticated.value == true) {
+      targetScreen = const Home();
+    } else {
+      targetScreen = const LoginScreen();
+    }
+
+    setState(() {
+      _startScreen = targetScreen;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<LocaleProvider>(context);
-  
+    final localeProvider = Provider.of<LocaleProvider>(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return MaterialApp(
       navigatorKey: navigatorKey,
       onGenerateRoute: AppRouter.generateRoute,
       onUnknownRoute: (settings) => AppRouter.unknownRoute(settings),
-      locale: Locale('en'),
+      locale: localeProvider.locale ?? const Locale('en'),
       supportedLocales: L10n.all,
-      localizationsDelegates: [
+      localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      title: 'Flutter Demo',
+      title: 'Yelpax Pro',
       theme: themeProvider.themeData,
-      home: SignupScreen()
+      debugShowCheckedModeBanner: false,
+      home:
+          _startScreen ??
+          const Scaffold(
+            // Show loading indicator before SharedPreferences is ready
+            body: Center(child: CircularProgressIndicator()),
+          ),
     );
   }
 }
-
-// class MyHomePage extends StatefulWidget {
-//   const MyHomePage({
-//     super.key,
-//     required this.title,
-//     required this.themeProvider,
-//   });
-//   final ThemeProvider themeProvider;
-//   final String title;
-
-//   @override
-//   State<MyHomePage> createState() => _MyHomePageState();
-// }
-
-// class _MyHomePageState extends State<MyHomePage> {
-//   int _counter = 0;
-
-//   void _incrementCounter() {
-//     setState(() {
-//       _counter++;
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-//         title: Text(widget.title),
-//       ),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             DropdownButton<ThemeModeType>(
-//               value: widget.themeProvider.currentTheme,
-//               items: ThemeModeType.values.map((type) {
-//                 return DropdownMenuItem(
-//                   value: type,
-//                   child: Text(type.toString().split('.').last),
-//                 );
-//               }).toList(),
-//               onChanged: (type) {
-//                 if (type != null) {
-//                   widget.themeProvider.setTheme(type);
-//                 }
-//               },
-//             ),
-//                 Text('سلام و علیکم',style: TextStyle(fontWeight: FontWeight.w700,fontSize: 20),),
-//             Text(AppLocalizations.of(context)!.icrement),
-//             Text(
-//               '$_counter',
-//               style: Theme.of(context).textTheme.headlineMedium,
-//             ),
-//           ],
-//         ),
-//       ),
-//       floatingActionButton: FloatingActionButton(
-//         onPressed: () {
-//           throw Exception('Exception');
-//         },
-//         tooltip: 'Increment',
-//         child: const Icon(Icons.add),
-//       ),
-//     );
-//   }
-// }

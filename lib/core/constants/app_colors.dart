@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class AppColors {
   static const Color primaryDark = Color(0xFF03045E); // color1
   static const Color accent = Color(0xFF023E8A); // color2
@@ -17,6 +16,10 @@ class AppColors {
   static const Color neutral500 = Color(0xFF757575);
   static const Color white = Color.fromARGB(255, 255, 255, 255);
   static const Color error = Color.fromARGB(255, 248, 21, 21);
+
+  // ✅ Added status colors
+  static const Color successGreen = Color(0xFF2E7D32); // A strong success green
+  static const Color failureRed = Color(0xFFD32F2F); // A vivid failure red
 
   static Color lighten(Color color, [double amount = .1]) {
     final hsl = HSLColor.fromColor(color);
