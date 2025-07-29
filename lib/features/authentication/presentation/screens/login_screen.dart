@@ -1,7 +1,9 @@
-
 import 'package:flutter/material.dart';
+import 'package:logger/web.dart';
+import 'package:yelpax_pro/config/routes/router.dart';
 
 import 'package:yelpax_pro/core/constants/app_colors.dart';
+import 'package:yelpax_pro/features/authentication/presentation/widgets/forgot_password.dart';
 
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 import 'package:yelpax_pro/shared/widgets/custom_flutter_toast.dart';
@@ -20,9 +22,39 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isLoading = false;
+  bool _isButtonEnabled = false;
 
   final List<String> _countries = ['United States', 'Canada', 'UK'];
   String? _selectedCountry;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(_validateForm);
+    _passwordController.addListener(_validateForm);
+  }
+
+  void _validateForm() {
+    final email = _emailController.text;
+    final password = _passwordController.text;
+
+    final isEmailValid = RegExp(
+      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+    ).hasMatch(email);
+    final isPasswordValid = password.length >= 8;
+    final isCountrySelected = _selectedCountry != null;
+
+    setState(() {
+      _isButtonEnabled = isEmailValid && isPasswordValid && isCountrySelected;
+    });
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,8 +115,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your password';
                           }
-                          if (value.length < 6) {
-                            return 'Password must be at least 6 characters';
+                          if (value.length < 8) {
+                            return 'Password must be at least 8 characters';
                           }
                           return null;
                         },
@@ -96,12 +128,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         decoration: BoxDecoration(
-                          // color: AppColors.background,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: AppColors.neutral200),
                         ),
                         child: DropdownButtonFormField<String>(
-                          value: _selectedCountry ?? _countries.first,
+                          value: _selectedCountry,
+                          hint: const Text("Select country"),
                           items: _countries.map((country) {
                             return DropdownMenuItem<String>(
                               value: country,
@@ -115,6 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             setState(() {
                               _selectedCountry = value!;
                             });
+                            _validateForm();
                           },
                         ),
                       ),
@@ -126,18 +159,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: double.infinity,
                         child: CustomButton(
                           text: 'Log In',
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              Navigator.of(context).pushReplacementNamed('/home');
-                              // Uncomment this to use actual login flow
-                              // await context.read<AuthUserController>().login(
-                              //   email: _emailController.text,
-                              //   password: _passwordController.text,
-                              //   onSuccess: () => Navigator.of(context).pushReplacementNamed('/home'),
-                              //   onFailure: () => Navigator.of(context).pushReplacementNamed('/login'),
-                              // );
-                            }
-                          },
+                          onPressed: _isButtonEnabled
+                              ? () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    setState(() => _isLoading = true);
+                                    // Simulated login logic
+                                    await Future.delayed(
+                                      const Duration(seconds: 5),
+                                    );
+                                    setState(() => _isLoading = false);
+                                    Navigator.of(
+                                      context,
+                                    ).pushReplacementNamed(AppRouter.home);
+                                  }
+                                }
+                              : null,
                           isLoading: _isLoading,
                         ),
                       ),
@@ -149,7 +185,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                backgroundColor: Colors.transparent,
+                                builder: (context) =>
+                                    ForgotPasswordBottomSheet(),
+                              );
+                            },
                             child: Text(
                               'Forgot password?',
                               style: TextStyle(color: AppColors.primaryBlue),
@@ -178,7 +222,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   TextButton(
                     onPressed: () {
-                      CustomFlutterToast.showInfoToast(context, 'Coming Soon..');
+                      CustomFlutterToast.showInfoToast(
+                        context,
+                        'Coming Soon..',
+                      );
                     },
                     child: Text(
                       'Want to Shop on Groupon?',
@@ -187,7 +234,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      CustomFlutterToast.showInfoToast(context, 'Coming Soon..');
+                      CustomFlutterToast.showInfoToast(
+                        context,
+                        'Coming Soon..',
+                      );
                     },
                     child: Text(
                       'Get the Groupon app.',

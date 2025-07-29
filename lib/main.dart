@@ -17,7 +17,7 @@ import 'package:yelpax_pro/core/utils/app_restart.dart';
 import 'package:yelpax_pro/features/authentication/presentation/controllers/auth_user_controller.dart';
 import 'package:yelpax_pro/features/authentication/presentation/screens/login_screen.dart';
 import 'package:yelpax_pro/generated/app_localizations.dart';
-import 'package:yelpax_pro/home.dart';
+import 'package:yelpax_pro/features/mainHome/presentation/screens/home.dart';
 import 'package:yelpax_pro/providers/providers.dart';
 import 'package:yelpax_pro/shared/onboarding_screen/onboarding_screen.dart';
 import 'package:yelpax_pro/shared/screens/unexpected_error_screen.dart';
@@ -77,33 +77,34 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _checkOnboardingStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    final seen = prefs.getBool('onboarding_seen') ?? false;
+  final prefs = await SharedPreferences.getInstance();
+  final seen = prefs.getBool('onboarding_seen') ?? false;
 
-    final auth = Provider.of<AuthUserController>(context, listen: false);
-    await auth.checkAuthStatus();
+  final auth = Provider.of<AuthUserController>(context, listen: false);
+  await auth.checkAuthStatus();
 
-    Widget targetScreen;
-    if (!seen) {
-      targetScreen = const OnboardingScreen();
-    } else if (auth.isAuthenticated.value == true) {
-      targetScreen = const Home();
-    } else {
-      targetScreen = const LoginScreen();
-    }
-
-    setState(() {
-      _startScreen = targetScreen;
-    });
+  Widget targetScreen;
+  if (!seen) {
+    targetScreen = const OnboardingScreen();
+  } else if (auth.isAuthenticated.value == true) {
+    targetScreen = const Home();
+  } else {
+    targetScreen = const LoginScreen();
   }
+
+  setState(() {
+    _startScreen = targetScreen;
+  });
+}
 
   @override
   Widget build(BuildContext context) {
-    final localeProvider = Provider.of<LocaleProvider>(context);
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final localeProvider = Provider.of<LocaleProvider>(context,listen:false);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
 
     return MaterialApp(
       navigatorKey: navigatorKey,
+      
       onGenerateRoute: AppRouter.generateRoute,
       onUnknownRoute: (settings) => AppRouter.unknownRoute(settings),
       locale: localeProvider.locale ?? const Locale('en'),
@@ -114,6 +115,7 @@ class _MyAppState extends State<MyApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
+    
       title: 'Yelpax Pro',
       theme: themeProvider.themeData,
       debugShowCheckedModeBanner: false,
