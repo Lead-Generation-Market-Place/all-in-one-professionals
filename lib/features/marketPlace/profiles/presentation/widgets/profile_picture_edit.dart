@@ -55,7 +55,7 @@ class ProfilePictureEdit extends StatelessWidget {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: AppColors.accent,
+                              color: AppColors.black,
                               width: 2,
                             ),
                           ),
@@ -233,7 +233,7 @@ class ProfilePictureEdit extends StatelessWidget {
 
   Widget _buildProfileCompletionBanner() {
     return Container(
-      color: AppColors.accent,
+      color: AppColors.black,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

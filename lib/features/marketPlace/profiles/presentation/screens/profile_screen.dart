@@ -67,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // 1. Profile Completion Banner Widget
   Widget _buildProfileCompletionBanner() {
     return Container(
-      color: AppColors.accent,
+      color:AppColors.black,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -634,7 +634,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRouter.addPhotosAndVideoes,
+                      );
+                    },
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey.shade300),
@@ -651,7 +656,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   );
                 } else {
                   return GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRouter.addPhotosAndVideoes,
+                      );
+                    },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image.network(
@@ -683,17 +693,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: TextStyle(fontSize: 14, color: Colors.black54),
                   ),
                   const SizedBox(height: 16),
-                  CustomButton(text: 'Add Photos',enabled: true,onPressed: (){
+                  // CustomButton(text: 'Add Photos',enabled: true,onPressed: (){
 
-                  },)
-                  // ElevatedButton(
-                  //   onPressed: () {},
-                  //   style: ElevatedButton.styleFrom(
-                  //     backgroundColor: Colors.black,
-                  //     padding: const EdgeInsets.symmetric(vertical: 12),
-                  //   ),
-                  //   child: const Text("Add photos",style: TextStyle(color: Colors.white),),
-                  // ),
+                  // },),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRouter.addPhotosAndVideoes,
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlue,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 15,
+                        horizontal: 25,
+                      ),
+                    ),
+                    child: const Text(
+                      "Add photos",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -738,16 +759,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const Spacer(),
                     TextButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          AppRouter.addFeatureProject,
+                        );
+                      },
                       icon: const Icon(Icons.add_circle_outline_rounded),
                       label: const Text('Add Project'),
                     ),
                   ],
                 ),
                 const SizedBox(height: 12),
-                const Text(
-                  "No featured projects yet.",
-                  style: TextStyle(color: Colors.grey),
+                Center(
+                  child: Container(
+                    height: 200,
+                    width: double.infinity,
+                    color: AppColors
+                        .background, // Optional: just to visualize the container
+                    child: Center(
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRouter.addFeatureProject,
+                          );
+                        }, // Change to your function
+                        icon: const Icon(Icons.add, size: 40),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -875,9 +916,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         style: TextStyle(fontSize: 14, color: Colors.black54),
                       ),
                       const SizedBox(height: 16),
-                     CustomButton(text: 'Get Reviews',enabled: true , onPressed: (){
-                      
-                     },)
+                      CustomButton(
+                        text: 'Get Reviews',
+                        enabled: true,
+                        onPressed: () {},
+                      ),
                     ],
                   ),
                 ),

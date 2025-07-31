@@ -141,7 +141,7 @@ class BottomNavbar extends StatelessWidget {
           
             child: SafeArea(
               child: BottomNavigationBar(
-                backgroundColor: AppColors.accent,
+                backgroundColor: AppColors.black,
                 currentIndex: navProvider.selectedIndex,
                 onTap: (index) {
                   navProvider.changeIndex(index);

@@ -8,6 +8,7 @@ import 'package:yelpax_pro/features/marketPlace/notifications/presentation/scree
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/profile_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/business_faqs.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/business_info.dart';
+import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/featured_projects.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/photos_videos.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/professional_license.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/profile_picture_edit.dart';
@@ -35,6 +36,7 @@ class AppRouter {
   static const String editYourIntroduction = '/marketplace/editYourIntroduction';
   static const String addBusinessLicense = '/marketplace/addBusinessLicense';
   static const String addPhotosAndVideoes = '/marketplace/addPhotosAndVideoes';
+  static const String addFeatureProject = '/marketplace/addFeatureProject';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -68,6 +70,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => ProfessionalLicense());
       case addPhotosAndVideoes:
         return MaterialPageRoute(builder: (_) => PhotosVideos());
+      case addFeatureProject:
+        return MaterialPageRoute(builder: (_) => FeaturedProjects());
       case unknownRouteScreen:
         return MaterialPageRoute(
           builder: (_) =>

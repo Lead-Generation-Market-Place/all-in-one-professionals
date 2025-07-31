@@ -257,7 +257,7 @@ class BusinessInfo extends StatelessWidget {
 
   Widget _buildProfileCompletionBanner() {
     return Container(
-      color: AppColors.accent,
+      color: AppColors.black,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

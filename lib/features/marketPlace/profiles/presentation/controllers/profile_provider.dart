@@ -300,7 +300,7 @@ class ProfileProvider extends ChangeNotifier {
     seventhBusinessQuestion.dispose();
     eighthBusinessQuestion.dispose();
     ninthBusinessQuestion.dispose();
-      licenseNumberController.dispose();
+    licenseNumberController.dispose();
     super.dispose();
   }
 
@@ -309,14 +309,6 @@ class ProfileProvider extends ChangeNotifier {
   Future<void> saveBusinessIntroduction() async {
     // Your logic to save the introduction
   }
-
-
-  
-
-
-
-
-
 
   /// Dropdown lists
   List<String> _states = [];
@@ -345,7 +337,12 @@ class ProfileProvider extends ChangeNotifier {
   /// Simulated API fetch for license types
   Future<void> fetchLicenses() async {
     await Future.delayed(const Duration(milliseconds: 500)); // simulate loading
-    _licenseTypes = ['General Contractor', 'Electrician', 'Plumber', 'HVAC Technician'];
+    _licenseTypes = [
+      'General Contractor',
+      'Electrician',
+      'Plumber',
+      'HVAC Technician',
+    ];
     notifyListeners();
   }
 
@@ -375,32 +372,68 @@ class ProfileProvider extends ChangeNotifier {
     // Optionally reset form or show success message
   }
 
-  
+  List<String> userImageUrls = [];
 
-
-
-List<String> userImageUrls = [];
-
-Future<void> fetchUserImages() async {
-  // Fetch and assign images
-  // userImageUrls = await imageService.getUserImages();
-  notifyListeners();
-}
-
-Future<void> pickMedia({required ImageSource source, required bool isVideo}) async {
-  final picker = ImagePicker();
-  final pickedFile = await (isVideo
-      ? picker.pickVideo(source: source)
-      : picker.pickImage(source: source));
-
-  if (pickedFile != null) {
-    // Upload or handle the file, then update the list
-    // final uploadedUrl = await uploadService.uploadFile(pickedFile);
-    // userImageUrls.add(uploadedUrl);
+  Future<void> fetchUserImages() async {
+    // Fetch and assign images
+    // userImageUrls = await imageService.getUserImages();
     notifyListeners();
   }
-}
 
+  Future<void> pickMedia({
+    required ImageSource source,
+    required bool isVideo,
+  }) async {
+    final picker = ImagePicker();
+    final pickedFile = await (isVideo
+        ? picker.pickVideo(source: source)
+        : picker.pickImage(source: source));
 
+    if (pickedFile != null) {
+      // Upload or handle the file, then update the list
+      // final uploadedUrl = await uploadService.uploadFile(pickedFile);
+      // userImageUrls.add(uploadedUrl);
+      notifyListeners();
+    }
+  }
 
+ final TextEditingController locationController = TextEditingController();
+  final TextEditingController projectTitleController = TextEditingController();
+  final List<XFile> selectedFiles = [];
+
+  List<Map<String, dynamic>> services = [];
+  List<Map<String, dynamic>> citySearchResults = [];
+  List<String> featureProjectImageUrls = [];
+
+  String selectedServiceId = '';
+  int selectedCityId = 0;
+  bool isCitySearching = false;
+
+  Future<void> fetchServices() async {
+    /* your logic */
+  }
+  Future<void> fetchFeaturedProjects() async {
+    /* your logic */
+  }
+  Future<void> searchCities(String query) async {
+    /* your logic */
+  }
+  Future<void> saveFeaturedProjectAndFiles() async {
+    /* your logic */
+  }
+
+  void setServiceId(String id) {
+    selectedServiceId = id;
+    notifyListeners();
+  }
+
+  void setCityId(int id) {
+    selectedCityId = id;
+    notifyListeners();
+  }
+
+  void setCitySearching(bool val) {
+    isCitySearching = val;
+    notifyListeners();
+  }
 }
