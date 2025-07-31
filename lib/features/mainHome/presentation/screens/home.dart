@@ -32,7 +32,6 @@ class Home extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        
         title: Text(currentContext.name),
 
         actions: [
@@ -69,6 +68,9 @@ class Home extends StatelessWidget {
       case 1:
         return const Center(child: Text("Restaurant Reviews"));
       case 2:
+        return const Center(child: Text("Restaurant Settings"));
+
+      case 3:
         return const Center(child: Text("Restaurant Settings"));
       default:
         return const RestaurantScreen();
