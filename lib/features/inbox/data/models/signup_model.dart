@@ -8,12 +8,12 @@ class SignupModel extends SignupEntity {
     required String password,
     required String confirmPassword,
   }) : super(
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          password: password,
-          confirmPassword: confirmPassword,
-        );
+         firstName: firstName,
+         lastName: lastName,
+         email: email,
+         password: password,
+         confirmPassword: confirmPassword,
+       );
 
   /// Factory to convert Entity -> Model
   factory SignupModel.fromEntity(SignupEntity entity) {

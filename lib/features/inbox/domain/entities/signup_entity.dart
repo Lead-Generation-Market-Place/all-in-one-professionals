@@ -1,5 +1,4 @@
 class SignupEntity {
-
   final String firstName;
   final String lastName;
   final String email;

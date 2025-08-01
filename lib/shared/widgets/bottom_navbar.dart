@@ -136,9 +136,9 @@ class BottomNavbar extends StatelessWidget {
               bottomLeft: Radius.circular(20),
               bottomRight: Radius.circular(20),
               topLeft: Radius.circular(20),
-              topRight: Radius.circular(20)
+              topRight: Radius.circular(20),
             ),
-          
+
             child: SafeArea(
               child: BottomNavigationBar(
                 backgroundColor: AppColors.black,
@@ -148,7 +148,7 @@ class BottomNavbar extends StatelessWidget {
                   _handleTabNavigation(businessType, index);
                 },
                 type: BottomNavigationBarType.fixed,
-                selectedItemColor: AppColors.primaryBlue,
+                selectedItemColor: AppColors.white,
                 unselectedItemColor: AppColors.neutral400,
                 items: _buildItems(businessType),
               ),

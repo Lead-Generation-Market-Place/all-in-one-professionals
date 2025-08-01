@@ -8,8 +8,14 @@ class TokenRepository {
   final _refreshTokenKey = 'refresh_token';
   final _tokenExpiryKey = 'token_expiry';
 
-  Future<void> persistTokens(String accessToken, String refreshToken, int expiresIn) async {
-    final expiryTime = DateTime.now().add(Duration(seconds: expiresIn)).millisecondsSinceEpoch;
+  Future<void> persistTokens(
+    String accessToken,
+    String refreshToken,
+    int expiresIn,
+  ) async {
+    final expiryTime = DateTime.now()
+        .add(Duration(seconds: expiresIn))
+        .millisecondsSinceEpoch;
     await Future.wait([
       _storage.write(key: _accessTokenKey, value: accessToken),
       _storage.write(key: _refreshTokenKey, value: refreshToken),
@@ -19,7 +25,7 @@ class TokenRepository {
 
   Future<String?> getAccessToken() => _storage.read(key: _accessTokenKey);
   Future<String?> getRefreshToken() => _storage.read(key: _refreshTokenKey);
-  
+
   Future<bool> hasValidToken() async {
     final expiry = await _storage.read(key: _tokenExpiryKey);
     if (expiry == null) return false;
@@ -30,4 +36,3 @@ class TokenRepository {
     await _storage.deleteAll();
   }
 }
-

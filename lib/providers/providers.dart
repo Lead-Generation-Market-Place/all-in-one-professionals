@@ -7,7 +7,6 @@ import 'package:yelpax_pro/features/mainHome/presentation/controllers/business_c
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/controllers/profile_provider.dart';
 import 'package:yelpax_pro/shared/services/bottom_navbar_notifier.dart';
 
-
 import '../config/localization/locale_provider.dart';
 import '../config/themes/theme_provider.dart';
 

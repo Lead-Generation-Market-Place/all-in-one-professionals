@@ -9,14 +9,20 @@ class TokenInterceptor extends Interceptor {
   TokenInterceptor(this._authService, this._apiService);
 
   @override
-  Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  Future<void> onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     final token = await _authService.getValidAccessToken();
     options.headers['Authorization'] = 'Bearer $token';
     return handler.next(options);
   }
 
   @override
-  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     if (err.response?.statusCode == 401) {
       try {
         final newToken = await _authService.refreshToken();

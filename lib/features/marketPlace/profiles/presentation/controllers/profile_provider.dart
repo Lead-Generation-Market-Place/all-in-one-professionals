@@ -397,7 +397,7 @@ class ProfileProvider extends ChangeNotifier {
     }
   }
 
- final TextEditingController locationController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
   final TextEditingController projectTitleController = TextEditingController();
   final List<XFile> selectedFiles = [];
 

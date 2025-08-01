@@ -101,7 +101,8 @@ class ProfessionalLicense extends StatelessWidget {
                         initialItem: provider.selectedState.isNotEmpty
                             ? provider.selectedState
                             : null,
-                        onChanged: (value) => provider.setSelectedState(value.toString()),
+                        onChanged: (value) =>
+                            provider.setSelectedState(value.toString()),
                       ),
                       const SizedBox(height: 25),
                       CustomDropdown<String>(

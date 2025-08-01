@@ -17,7 +17,10 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
   @override
   void initState() {
     super.initState();
-    final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    final profileProvider = Provider.of<ProfileProvider>(
+      context,
+      listen: false,
+    );
     if (!profileProvider.hasLoadedFaqs) {
       profileProvider.fetchAnsweredBusinessFaqs();
       profileProvider.hasLoadedFaqs = true;
@@ -49,7 +52,8 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
         const SizedBox(height: 8),
         CustomInputField(
           controller: controllerText,
-      hintText: 'text',label: 'text',
+          hintText: 'text',
+          label: 'text',
           validator: validateMin50IfTyped,
         ),
         if (!hasTyped)
@@ -90,7 +94,8 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                   builder: (context) => AlertDialog(
                     title: const Text('Confirm Save'),
                     content: const Text(
-                        'Are you sure you want to save your answers?'),
+                      'Are you sure you want to save your answers?',
+                    ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context),
@@ -175,7 +180,8 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                     selector: (_, provider) => provider.fourthBusinessCharCount,
                     builder: (context, charCount, child) {
                       return buildQuestion(
-                        title: 'How did you get started doing this type of work?',
+                        title:
+                            'How did you get started doing this type of work?',
                         controllerText: profileProvider.fourthBusinessQuestion,
                         hasTyped: hasTyped,
                         charCount: charCount,
@@ -221,7 +227,8 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                 selector: (_, provider) => provider.hasTypedSeventhBusiness,
                 builder: (context, hasTyped, child) {
                   return Selector<ProfileProvider, int>(
-                    selector: (_, provider) => provider.seventhBusinessCharCount,
+                    selector: (_, provider) =>
+                        provider.seventhBusinessCharCount,
                     builder: (context, charCount, child) {
                       return buildQuestion(
                         title:

@@ -1,4 +1,3 @@
-
 import 'package:yelpax_pro/features/inbox/data/repositories/signup_repository_impl.dart';
 import 'package:yelpax_pro/features/inbox/domain/entities/signup_entity.dart';
 
@@ -14,7 +13,7 @@ class SignupUsecase {
     String password,
     String confirmPassword,
   ) async {
-  return await signupRepository.addUsers(
+    return await signupRepository.addUsers(
       firstName,
       lastName,
       email,

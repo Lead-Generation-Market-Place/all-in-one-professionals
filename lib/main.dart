@@ -77,34 +77,34 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _checkOnboardingStatus() async {
-  final prefs = await SharedPreferences.getInstance();
-  final seen = prefs.getBool('onboarding_seen') ?? false;
+    final prefs = await SharedPreferences.getInstance();
+    final seen = prefs.getBool('onboarding_seen') ?? false;
 
-  final auth = Provider.of<AuthUserController>(context, listen: false);
-  await auth.checkAuthStatus();
+    final auth = Provider.of<AuthUserController>(context, listen: false);
+    await auth.checkAuthStatus();
 
-  Widget targetScreen;
-  if (!seen) {
-    targetScreen = const OnboardingScreen();
-  } else if (auth.isAuthenticated.value == true) {
-    targetScreen = const Home();
-  } else {
-    targetScreen = const LoginScreen();
+    Widget targetScreen;
+    if (!seen) {
+      targetScreen = const OnboardingScreen();
+    } else if (auth.isAuthenticated.value == true) {
+      targetScreen = const Home();
+    } else {
+      targetScreen = const LoginScreen();
+    }
+
+    setState(() {
+      _startScreen = targetScreen;
+    });
   }
-
-  setState(() {
-    _startScreen = targetScreen;
-  });
-}
 
   @override
   Widget build(BuildContext context) {
-    final localeProvider = Provider.of<LocaleProvider>(context,listen:false);
-    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
+    final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
 
     return MaterialApp(
       navigatorKey: navigatorKey,
-      
+
       onGenerateRoute: AppRouter.generateRoute,
       onUnknownRoute: (settings) => AppRouter.unknownRoute(settings),
       locale: localeProvider.locale ?? const Locale('en'),
@@ -115,7 +115,7 @@ class _MyAppState extends State<MyApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-    
+
       title: 'Yelpax Pro',
       theme: themeProvider.themeData,
       debugShowCheckedModeBanner: false,

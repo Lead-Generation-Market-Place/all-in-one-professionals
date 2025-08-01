@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/core/constants/app_colors.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/controllers/profile_provider.dart';
 import 'package:yelpax_pro/shared/widgets/bottom_navbar.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
@@ -13,7 +15,7 @@ class BusinessInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isSetupFinished = false;
-    int stepNumber = 2;
+
     final profileProvider = Provider.of<ProfileProvider>(
       context,
       listen: false,
@@ -25,8 +27,14 @@ class BusinessInfo extends StatelessWidget {
         body: Column(
           children: [
             // Black label banner
-            if (!isSetupFinished) _buildProfileCompletionBanner(),
-            // AppBar-like container with elevation
+            if (!isSetupFinished)
+              ProfileCompletionBanner(
+                stepNumber: 3,
+                onFinishSetupPressed: () {
+                  Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
+                },
+              ),
+
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               width: double.infinity,
@@ -120,7 +128,6 @@ class BusinessInfo extends StatelessWidget {
                         label: 'Year Founded',
                         hintText: '2000',
                         inputType: TextInputType.number,
-                        
                       ),
                       const SizedBox(height: 24),
 
@@ -251,53 +258,6 @@ class BusinessInfo extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildProfileCompletionBanner() {
-    return Container(
-      color: AppColors.black,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Wrap the Text with Flexible to allow wrapping
-          Flexible(
-            child:
-                // Replace your static Text widget with:
-                Selector<ProfileProvider, int>(
-                  selector: (_, provider) => provider.stepNumber,
-                  builder: (context, stepnumber, child) {
-                    return Text(
-                      'Only $stepnumber setup tasks left before you can start getting leads.',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      softWrap: true,
-                      maxLines: 2, // Optional: limit to 2 lines
-                      overflow: TextOverflow
-                          .ellipsis, // Optional: fade or ellipsis if too long
-                    );
-                  },
-                ),
-          ),
-          const SizedBox(width: 12),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryBlue,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: const Text('Finish Setup'),
-          ),
-        ],
       ),
     );
   }

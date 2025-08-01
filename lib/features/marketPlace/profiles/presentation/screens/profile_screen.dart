@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/core/constants/app_colors.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/controllers/profile_provider.dart';
 import 'package:yelpax_pro/shared/widgets/bottom_navbar.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
@@ -20,6 +21,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      top: false,
+      bottom: true,
+      left: false,
+      right: false,
       child: Scaffold(
         backgroundColor: Colors.grey[50],
         bottomNavigationBar: const BottomNavbar(),
@@ -27,8 +32,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             children: [
               // Profile Completion Banner
-              if (!isSetupFinished) _buildProfileCompletionBanner(),
+              if (!isSetupFinished)
+                ProfileCompletionBanner(
+                  stepNumber: 3,
+                  onFinishSetupPressed: () {
+                    Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
+                  },
+                ),
 
+              // Manually add AppBar here below the banner
+              PreferredSize(
+                preferredSize: const Size.fromHeight(kToolbarHeight),
+                child: AppBar(
+                  title: const Text('Search'),
+                  automaticallyImplyLeading: false,
+                ),
+              ),
               // Profile Header
               _buildProfileHeader(),
 
@@ -64,47 +83,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // 1. Profile Completion Banner Widget
-  Widget _buildProfileCompletionBanner() {
-    return Container(
-      color:AppColors.black,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Wrap the Text with Flexible to allow wrapping
-          Flexible(
-            child: Text(
-              'Only $stepNumber setup tasks left before you can start getting leads.',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-              softWrap: true,
-              maxLines: 2, // Optional: limit to 2 lines
-              overflow: TextOverflow
-                  .ellipsis, // Optional: fade or ellipsis if too long
-            ),
-          ),
-          const SizedBox(width: 12),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryBlue,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: const Text('Finish Setup'),
-          ),
-        ],
-      ),
-    );
-  }
-
   // 2. Profile Header Widget
   Widget _buildProfileHeader() {
     return Padding(
@@ -125,14 +103,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               IconButton(
                 icon: const Icon(
                   Icons.calendar_today,
-                  color: Colors.grey, // Changed from AppColors.neutral700
+                  color: AppColors.black, // Changed from AppColors.neutral700
                 ),
                 onPressed: () {},
               ),
               IconButton(
                 icon: const Icon(
                   Icons.settings,
-                  color: Colors.grey,
+                  color: AppColors.black,
                 ), // Changed from AppColors.neutral700
                 onPressed: () {},
               ),
@@ -158,12 +136,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
                 child: const Row(
                   children: [
-                    Icon(Icons.edit, color: AppColors.primaryBlue, size: 20),
+                    Icon(Icons.edit, color: AppColors.black, size: 20),
                     SizedBox(width: 4),
                     Text(
                       'Edit',
                       style: TextStyle(
-                        color: AppColors.primaryBlue,
+                        color: AppColors.black,
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -181,7 +159,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 height: 180,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.primaryBlue, width: 4),
+                  border: Border.all(color: AppColors.black, width: 4),
                 ),
                 child: ClipOval(
                   child: Image.network(
@@ -200,7 +178,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryBlue,
+                    color: AppColors.black,
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 2),
                   ),
@@ -260,10 +238,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onPressed: () {},
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    side: const BorderSide(
-                      color: AppColors.primaryBlue,
-                      width: 1.5,
-                    ),
+                    side: const BorderSide(color: AppColors.black, width: 1.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -271,7 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: const Text(
                     'See how you rank',
                     style: TextStyle(
-                      color: AppColors.primaryBlue,
+                      color: AppColors.black,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -283,7 +258,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryBlue,
+                    backgroundColor: AppColors.black,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -383,12 +358,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
                 child: const Row(
                   children: [
-                    Icon(Icons.edit, color: AppColors.primaryBlue, size: 20),
+                    Icon(Icons.edit, color: AppColors.black, size: 20),
                     SizedBox(width: 4),
                     Text(
                       'Edit',
                       style: TextStyle(
-                        color: AppColors.primaryBlue,
+                        color: AppColors.black,
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -460,13 +435,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
-                  side: const BorderSide(color: AppColors.primaryBlue),
+                  side: const BorderSide(color: AppColors.black),
                 ),
               ),
               child: const Text(
                 'Start a background check',
                 style: TextStyle(
-                  color: AppColors.primaryBlue,
+                  color: AppColors.black,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -547,13 +522,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
-                          side: const BorderSide(color: AppColors.primaryBlue),
+                          side: const BorderSide(color: AppColors.black),
                         ),
                       ),
                       child: const Text(
                         'Add a license',
                         style: TextStyle(
-                          color: AppColors.primaryBlue,
+                          color: AppColors.black,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -607,13 +582,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                   icon: const Icon(
                     Icons.edit,
-                    color: AppColors.primaryBlue,
+                    color: AppColors.black,
                     size: 18,
                   ),
                   label: const Text(
                     'Edit',
                     style: TextStyle(
-                      color: AppColors.primaryBlue,
+                      color: AppColors.black,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -648,7 +623,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: const Center(
                         child: Icon(
                           Icons.add_circle_outline,
-                          color: Colors.blue,
+                          color: AppColors.black,
                           size: 36,
                         ),
                       ),
@@ -704,7 +679,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryBlue,
+                      backgroundColor: AppColors.black,
                       padding: const EdgeInsets.symmetric(
                         vertical: 15,
                         horizontal: 25,

@@ -52,8 +52,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
       decoration: InputDecoration(
         labelText: widget.label, // Floating label inside border
         hintText: widget.hintText,
-        prefixIcon:
-            widget.prefixIcon != null ? Icon(widget.prefixIcon) : null,
+        prefixIcon: widget.prefixIcon != null ? Icon(widget.prefixIcon) : null,
         suffixIcon: widget.isPassword
             ? IconButton(
                 icon: Icon(
@@ -65,15 +64,18 @@ class _CustomInputFieldState extends State<CustomInputField> {
                   });
                 },
               )
-            : (widget.suffixIcon != null
-                ? Icon(widget.suffixIcon)
-                : null),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            : (widget.suffixIcon != null ? Icon(widget.suffixIcon) : null),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primaryBlue, width: 1.8),
+          borderSide: const BorderSide(
+            color: AppColors.primaryBlue,
+            width: 1.8,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

@@ -14,9 +14,15 @@ class SignupRepositoryImp implements SignupRepository {
     String email,
     String password,
     String confirmPassword,
-  )async {
+  ) async {
     try {
-      return await signupDatasouce.signUp(firstName, lastName, email, password, confirmPassword);
+      return await signupDatasouce.signUp(
+        firstName,
+        lastName,
+        email,
+        password,
+        confirmPassword,
+      );
     } catch (e) {
       throw Exception(e);
     }

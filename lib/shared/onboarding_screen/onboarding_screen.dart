@@ -51,7 +51,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _finishOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_seen', true);
-    Navigator.of(context).pushNamedAndRemoveUntil(AppRouter.login, (route) => false);
+    Navigator.of(
+      context,
+    ).pushNamedAndRemoveUntil(AppRouter.login, (route) => false);
   }
 
   @override

@@ -1,11 +1,10 @@
 // providers/business_context_provider.dart
 import 'package:flutter/material.dart';
 
-
 class BusinessContextProvider extends ChangeNotifier {
   BusinessContext _currentContext = BusinessContext(
-    name: "Restaurant",
-    type: BusinessType.restaurant,
+    name: "Marketplace",
+    type: BusinessType.marketplace,
   );
 
   final List<BusinessContext> _availableContexts = [

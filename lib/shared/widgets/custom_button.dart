@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:yelpax_pro/core/constants/app_colors.dart';
 
-
 enum CustomButtonType { primary, secondary, outline, text }
 
 enum CustomButtonSize { small, medium, large }
@@ -55,14 +54,14 @@ class CustomButton extends StatelessWidget {
               color: _getBackgroundColor(isDisabled),
               borderRadius: BorderRadius.circular(12),
               border: type == CustomButtonType.outline && !isDisabled
-                  ? Border.all(color: AppColors.primaryBlue)
+                  ? Border.all(color: AppColors.black)
                   : type == CustomButtonType.outline && isDisabled
                   ? Border.all(color: AppColors.lighten(Colors.white))
                   : null,
               boxShadow: type != CustomButtonType.text && !isDisabled
                   ? [
                       BoxShadow(
-                        color: AppColors.primaryBlue,
+                        color: AppColors.black,
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -113,7 +112,7 @@ class CustomButton extends StatelessWidget {
 
   Color _getBackgroundColor(bool isDisabled) {
     if (isLoading) {
-      return AppColors.primaryBlue;
+      return AppColors.black;
     }
 
     if (isDisabled) {
@@ -124,15 +123,14 @@ class CustomButton extends StatelessWidget {
 
     switch (type) {
       case CustomButtonType.primary:
-        return AppColors.primaryBlue;
+        return AppColors.black;
       case CustomButtonType.secondary:
-        return AppColors.secondaryBlue;
+        return AppColors.black;
       case CustomButtonType.outline:
       case CustomButtonType.text:
         return Colors.transparent;
     }
   }
-
 
   TextStyle _getTextStyle(bool isDisabled) {
     final baseStyle = TextStyle(
@@ -202,5 +200,10 @@ class CustomButton extends StatelessWidget {
     }
   }
 
-  static styleFrom({required Color backgroundColor, required Color foregroundColor, required int elevation, required BorderSide side}) {}
+  static styleFrom({
+    required Color backgroundColor,
+    required Color foregroundColor,
+    required int elevation,
+    required BorderSide side,
+  }) {}
 }

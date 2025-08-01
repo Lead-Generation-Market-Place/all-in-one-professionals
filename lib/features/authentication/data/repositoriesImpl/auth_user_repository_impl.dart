@@ -6,10 +6,9 @@ import 'package:yelpax_pro/features/authentication/domain/repositories/auth_user
 
 class AuthUserRepositoryImpl implements AuthUserRepository {
   final AuthUserDatasource authUserDatasource;
- 
 
   AuthUserRepositoryImpl(this.authUserDatasource);
-  
+
   @override
   Future<AuthUserModel> login(String email, String password) async {
     try {
@@ -27,5 +26,3 @@ class AuthUserRepositoryImpl implements AuthUserRepository {
     }
   }
 }
-
-

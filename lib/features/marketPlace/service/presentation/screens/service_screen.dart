@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
 import 'package:yelpax_pro/shared/widgets/bottom_navbar.dart';
 
-class NotificationsScreen extends StatefulWidget {
-  const NotificationsScreen({super.key});
+class ServiceScreen extends StatefulWidget {
+  const ServiceScreen({super.key});
 
   @override
-  State<NotificationsScreen> createState() => _NotificationsScreenState();
+  State<ServiceScreen> createState() => _ServiceScreenState();
 }
 
-class _NotificationsScreenState extends State<NotificationsScreen> {
+class _ServiceScreenState extends State<ServiceScreen> {
   bool isSetupFinished = false;
 
   @override
@@ -32,7 +31,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: AppBar(
-              title: const Text('Notifications'),
+              title: const Text('Services'),
+
               automaticallyImplyLeading: false,
             ),
           ),

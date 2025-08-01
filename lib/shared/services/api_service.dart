@@ -14,7 +14,8 @@ class ApiService {
   String? _refreshToken;
   DateTime? _tokenExpiry;
   bool _isRefreshing = false;
-  final List<({RequestOptions options, Completer<Response> completer})> _requestQueue = [];
+  final List<({RequestOptions options, Completer<Response> completer})>
+  _requestQueue = [];
 
   void setTokens({String? accessToken, String? refreshToken, int? expiresIn}) {
     _authToken = accessToken;
@@ -25,48 +26,52 @@ class ApiService {
   }
 
   Future<TokenResponse> refreshToken() async {
-  if (_refreshToken == null) {
-    throw ValidationException('No refresh token available');
-  }
-
-  try {
-    _isRefreshing = true;
-
-    final response = await dio.post(
-      'auth/refresh',
-      data: {'refresh_token': _refreshToken},
-      options: Options(
-        headers: {HttpHeaders.authorizationHeader: 'Bearer $_refreshToken'},
-      ),
-    );
-
-    final newAccessToken = response.data['access_token'];
-    final newRefreshToken = response.data['refresh_token'];
-    final expiresIn = response.data['expires_in'];
-
-    // Update internal tokens
-    setTokens(
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
-      expiresIn: expiresIn,
-    );
-
-    // Retry queued requests
-    for (var item in _requestQueue) {
-      item.options.headers[HttpHeaders.authorizationHeader] = 'Bearer $_authToken';
-      dio.fetch(item.options).then(item.completer.complete).catchError(item.completer.completeError);
+    if (_refreshToken == null) {
+      throw ValidationException('No refresh token available');
     }
 
-    return TokenResponse(
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
-      expiresIn: expiresIn,
-    );
-  } finally {
-    _isRefreshing = false;
-    _requestQueue.clear();
+    try {
+      _isRefreshing = true;
+
+      final response = await dio.post(
+        'auth/refresh',
+        data: {'refresh_token': _refreshToken},
+        options: Options(
+          headers: {HttpHeaders.authorizationHeader: 'Bearer $_refreshToken'},
+        ),
+      );
+
+      final newAccessToken = response.data['access_token'];
+      final newRefreshToken = response.data['refresh_token'];
+      final expiresIn = response.data['expires_in'];
+
+      // Update internal tokens
+      setTokens(
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+        expiresIn: expiresIn,
+      );
+
+      // Retry queued requests
+      for (var item in _requestQueue) {
+        item.options.headers[HttpHeaders.authorizationHeader] =
+            'Bearer $_authToken';
+        dio
+            .fetch(item.options)
+            .then(item.completer.complete)
+            .catchError(item.completer.completeError);
+      }
+
+      return TokenResponse(
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+        expiresIn: expiresIn,
+      );
+    } finally {
+      _isRefreshing = false;
+      _requestQueue.clear();
+    }
   }
-}
 
   ApiService._internal() {
     BaseOptions options = BaseOptions(
@@ -78,70 +83,80 @@ class ApiService {
     );
 
     dio = Dio(options);
-    dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        // Skip for refresh token request
-        if (options.path == 'auth/refresh') {
-          return handler.next(options);
-        }
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          // Skip for refresh token request
+          if (options.path == 'auth/refresh') {
+            return handler.next(options);
+          }
 
-        // Check if token is expired or about to expire (within 30 seconds)
-        if (_tokenExpiry != null && 
-            _tokenExpiry!.isBefore(DateTime.now().add(Duration(seconds: 30)))) {
-          
-          if (!_isRefreshing) {
-            _isRefreshing = true;
+          // Check if token is expired or about to expire (within 30 seconds)
+          if (_tokenExpiry != null &&
+              _tokenExpiry!.isBefore(
+                DateTime.now().add(Duration(seconds: 30)),
+              )) {
+            if (!_isRefreshing) {
+              _isRefreshing = true;
+              try {
+                await refreshToken();
+              } catch (e) {
+                handler.reject(
+                  DioException(
+                    requestOptions: options,
+                    error: 'Token refresh failed',
+                  ),
+                );
+                return;
+              } finally {
+                _isRefreshing = false;
+              }
+            } else {
+              // Queue the request while refreshing
+              final completer = Completer<Response>();
+              _requestQueue.add((options: options, completer: completer));
+              return completer.future
+                  .then(handler.resolve)
+                  .catchError(handler.reject);
+            }
+          }
+
+          if (_authToken != null) {
+            options.headers[HttpHeaders.authorizationHeader] =
+                "Bearer $_authToken";
+          }
+          return handler.next(options);
+        },
+        onError: (error, handler) async {
+          if (error.response?.statusCode == 401 &&
+              error.requestOptions.path != 'auth/refresh' &&
+              _refreshToken != null) {
             try {
               await refreshToken();
-            } catch (e) {
-              handler.reject(DioException(
-                requestOptions: options,
-                error: 'Token refresh failed',
-              ));
-              return;
-            } finally {
-              _isRefreshing = false;
-            }
-          } else {
-            // Queue the request while refreshing
-            final completer = Completer<Response>();
-            _requestQueue.add((options: options, completer: completer));
-            return completer.future.then(handler.resolve).catchError(handler.reject);
-          }
-        }
 
-        if (_authToken != null) {
-          options.headers[HttpHeaders.authorizationHeader] = "Bearer $_authToken";
-        }
-        return handler.next(options);
-      },
-      onError: (error, handler) async {
-        if (error.response?.statusCode == 401 && 
-            error.requestOptions.path != 'auth/refresh' &&
-            _refreshToken != null) {
-          
-          try {
-            await refreshToken();
-            
-            // Retry the original request
-            final retryOptions = error.requestOptions
-              ..headers[HttpHeaders.authorizationHeader] = 'Bearer $_authToken';
-            
-            return handler.resolve(await dio.fetch(retryOptions));
-          } catch (e) {
-            return handler.next(error);
+              // Retry the original request
+              final retryOptions = error.requestOptions
+                ..headers[HttpHeaders.authorizationHeader] =
+                    'Bearer $_authToken';
+
+              return handler.resolve(await dio.fetch(retryOptions));
+            } catch (e) {
+              return handler.next(error);
+            }
           }
-        }
-        return handler.next(error);
-      },
-    ));
+          return handler.next(error);
+        },
+      ),
+    );
 
     if (kDebugMode) {
-      dio.interceptors.add(LogInterceptor(
-        requestBody: true,
-        responseBody: true,
-        logPrint: (obj) => debugPrint(obj.toString()),
-      ));
+      dio.interceptors.add(
+        LogInterceptor(
+          requestBody: true,
+          responseBody: true,
+          logPrint: (obj) => debugPrint(obj.toString()),
+        ),
+      );
     }
   }
 
@@ -155,7 +170,10 @@ class ApiService {
     _tokenExpiry = null;
   }
 
-  Future<Response> get(String endpoint, {Map<String, dynamic>? queryParams}) async {
+  Future<Response> get(
+    String endpoint, {
+    Map<String, dynamic>? queryParams,
+  }) async {
     try {
       return await dio.get(endpoint, queryParameters: queryParams);
     } catch (e) {
@@ -171,7 +189,9 @@ class ApiService {
       throw NetworkException('No internet connection: ${e.message}');
     } on DioException catch (e) {
       if (e.response?.statusCode == 400) {
-        throw ValidationException(e.response?.data['message'] ?? 'Invalid request');
+        throw ValidationException(
+          e.response?.data['message'] ?? 'Invalid request',
+        );
       }
       rethrow;
     } catch (e) {
@@ -179,7 +199,11 @@ class ApiService {
     }
   }
 
-  Future<Response> put(String endpoint, {dynamic data, Map<String, dynamic>? queryParams}) async {
+  Future<Response> put(
+    String endpoint, {
+    dynamic data,
+    Map<String, dynamic>? queryParams,
+  }) async {
     try {
       return await dio.put(endpoint, data: data, queryParameters: queryParams);
     } catch (e) {
@@ -187,9 +211,17 @@ class ApiService {
     }
   }
 
-  Future<Response> delete(String endpoint, {dynamic data, Map<String, dynamic>? queryParams}) async {
+  Future<Response> delete(
+    String endpoint, {
+    dynamic data,
+    Map<String, dynamic>? queryParams,
+  }) async {
     try {
-      return await dio.delete(endpoint, data: data, queryParameters: queryParams);
+      return await dio.delete(
+        endpoint,
+        data: data,
+        queryParameters: queryParams,
+      );
     } catch (e) {
       return _handleError(e);
     }
@@ -216,16 +248,16 @@ class ApiService {
   Future<Response> uploadFiles(
     String endpoint, {
     required List<File> files,
-    String fieldName = 'files', 
+    String fieldName = 'files',
     Map<String, dynamic>? fields,
   }) async {
     try {
-      List<MultipartFile> multipartFiles = await Future.wait(files.map(
-        (file) async {
+      List<MultipartFile> multipartFiles = await Future.wait(
+        files.map((file) async {
           String fileName = file.path.split('/').last;
           return await MultipartFile.fromFile(file.path, filename: fileName);
-        },
-      ));
+        }),
+      );
 
       FormData formData = FormData.fromMap({
         fieldName: multipartFiles,
@@ -253,10 +285,7 @@ class ApiService {
     return Response(
       requestOptions: RequestOptions(path: ''),
       statusCode: 500,
-      data: {
-        "error": true,
-        "message": "Unexpected error: $error",
-      },
+      data: {"error": true, "message": "Unexpected error: $error"},
     );
   }
 }

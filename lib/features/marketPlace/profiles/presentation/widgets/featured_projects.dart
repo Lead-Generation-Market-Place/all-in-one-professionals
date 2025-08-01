@@ -59,13 +59,15 @@ class _FeaturedProjectsState extends State<FeaturedProjects> {
     final serviceNames = _services.map((service) => service.name).toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Featured Projects'),actions: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CustomButton(text: 'Save',enabled: true,onPressed: () {
-          },),
-        )
-      ],),
+      appBar: AppBar(
+        title: const Text('Featured Projects'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CustomButton(text: 'Save', enabled: true, onPressed: () {}),
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

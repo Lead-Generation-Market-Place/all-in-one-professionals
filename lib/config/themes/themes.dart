@@ -17,7 +17,6 @@ class AppTheme {
         return foodTheme;
       case ThemeModeType.light:
         return lightTheme;
-      
     }
   }
 }

@@ -31,7 +31,7 @@ class _PhotosVideosState extends State<PhotosVideos> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            if (!isSetupFinished) _buildProfileCompletionBanner(),
+
             _buildAppBar(context),
             Expanded(
               child: SingleChildScrollView(
@@ -74,53 +74,6 @@ class _PhotosVideosState extends State<PhotosVideos> {
           const Text(
             'Photos & Videos',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProfileCompletionBanner() {
-    return Container(
-      color: AppColors.black,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Wrap the Text with Flexible to allow wrapping
-          Flexible(
-            child:
-                // Replace your static Text widget with:
-                Selector<ProfileProvider, int>(
-                  selector: (_, provider) => provider.stepNumber,
-                  builder: (context, stepnumber, child) {
-                    return Text(
-                      'Only $stepnumber setup tasks left before you can start getting leads.',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      softWrap: true,
-                      maxLines: 2, // Optional: limit to 2 lines
-                      overflow: TextOverflow
-                          .ellipsis, // Optional: fade or ellipsis if too long
-                    );
-                  },
-                ),
-          ),
-          const SizedBox(width: 12),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryBlue,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: const Text('Finish Setup'),
           ),
         ],
       ),

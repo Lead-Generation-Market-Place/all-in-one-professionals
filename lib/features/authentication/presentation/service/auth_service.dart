@@ -16,28 +16,29 @@ class AuthService {
   }
 
   Future<String> refreshToken() async {
-  final storedRefreshToken = await _tokenRepo.getRefreshToken();
-  if (storedRefreshToken == null) {
-    throw Exception('No refresh token available');
-  }
-
-  try {
-    final tokenResponse = await _apiService.refreshToken(); // ← Now returns a proper object
-
-    await _tokenRepo.persistTokens(
-      tokenResponse.accessToken,
-      tokenResponse.refreshToken,
-      tokenResponse.expiresIn,
-    );
-
-    return tokenResponse.accessToken;
-  } on DioException catch (e) {
-    if (e.response?.statusCode == 401) {
-      await _tokenRepo.clearTokens();
+    final storedRefreshToken = await _tokenRepo.getRefreshToken();
+    if (storedRefreshToken == null) {
+      throw Exception('No refresh token available');
     }
-    rethrow;
+
+    try {
+      final tokenResponse = await _apiService
+          .refreshToken(); // ← Now returns a proper object
+
+      await _tokenRepo.persistTokens(
+        tokenResponse.accessToken,
+        tokenResponse.refreshToken,
+        tokenResponse.expiresIn,
+      );
+
+      return tokenResponse.accessToken;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        await _tokenRepo.clearTokens();
+      }
+      rethrow;
+    }
   }
-}
 
   Future<void> logout() async {
     await _tokenRepo.clearTokens();

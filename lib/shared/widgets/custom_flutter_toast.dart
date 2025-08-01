@@ -87,7 +87,9 @@ class CustomFlutterToast {
 
     overlay.insert(_currentToast!);
 
-    final toastDuration = seconds != null ? Duration(seconds: seconds) : duration;
+    final toastDuration = seconds != null
+        ? Duration(seconds: seconds)
+        : duration;
 
     Future.delayed(toastDuration, () {
       _currentToast?.remove();
@@ -95,8 +97,12 @@ class CustomFlutterToast {
     });
   }
 
-  static void showSuccessToast(BuildContext context, String message,
-      {int? seconds, Duration? duration}) {
+  static void showSuccessToast(
+    BuildContext context,
+    String message, {
+    int? seconds,
+    Duration? duration,
+  }) {
     showToast(
       context: context,
       message: message,
@@ -106,8 +112,12 @@ class CustomFlutterToast {
     );
   }
 
-  static void showErrorToast(BuildContext context, String message,
-      {int? seconds, Duration? duration}) {
+  static void showErrorToast(
+    BuildContext context,
+    String message, {
+    int? seconds,
+    Duration? duration,
+  }) {
     showToast(
       context: context,
       message: message,
@@ -117,8 +127,12 @@ class CustomFlutterToast {
     );
   }
 
-  static void showWarningToast(BuildContext context, String message,
-      {int? seconds, Duration? duration}) {
+  static void showWarningToast(
+    BuildContext context,
+    String message, {
+    int? seconds,
+    Duration? duration,
+  }) {
     showToast(
       context: context,
       message: message,
@@ -128,8 +142,12 @@ class CustomFlutterToast {
     );
   }
 
-  static void showInfoToast(BuildContext context, String message,
-      {int? seconds, Duration? duration}) {
+  static void showInfoToast(
+    BuildContext context,
+    String message, {
+    int? seconds,
+    Duration? duration,
+  }) {
     showToast(
       context: context,
       message: message,
@@ -183,10 +201,7 @@ class _ToastAnimationState extends State<_ToastAnimation>
   Widget build(BuildContext context) {
     return SlideTransition(
       position: _slide,
-      child: FadeTransition(
-        opacity: _fade,
-        child: widget.child,
-      ),
+      child: FadeTransition(opacity: _fade, child: widget.child),
     );
   }
 }

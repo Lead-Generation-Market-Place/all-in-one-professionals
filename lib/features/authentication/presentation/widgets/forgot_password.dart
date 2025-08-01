@@ -8,7 +8,8 @@ class ForgotPasswordBottomSheet extends StatefulWidget {
   const ForgotPasswordBottomSheet({super.key});
 
   @override
-  State<ForgotPasswordBottomSheet> createState() => _ForgotPasswordBottomSheetState();
+  State<ForgotPasswordBottomSheet> createState() =>
+      _ForgotPasswordBottomSheetState();
 }
 
 class _ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
@@ -73,9 +74,11 @@ class _ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
               text: 'Send Reset Link',
               onPressed: isEmailValid
                   ? () {
-                    CustomFlutterToast.showSuccessToast(context, 'Reset Link send successfully, check your email.');
+                      CustomFlutterToast.showSuccessToast(
+                        context,
+                        'Reset Link send successfully, check your email.',
+                      );
                       Navigator.pop(context);
-                     
                     }
                   : null,
               enabled: isEmailValid,

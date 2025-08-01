@@ -15,14 +15,23 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
-    final provider=Provider.of<SignupController>(listen: false,context);
-    return Scaffold(appBar: AppBar(title: Text('Signup'),),
-    body: Center(
-      child: ElevatedButton(onPressed: (){
-        provider.addUser('NOor Hmad', 'Bashery', 'email', 'password', 'confirmPassword');
-      }, child: Text('Press')),
-    ),
-    
+    final provider = Provider.of<SignupController>(listen: false, context);
+    return Scaffold(
+      appBar: AppBar(title: Text('Signup')),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            provider.addUser(
+              'NOor Hmad',
+              'Bashery',
+              'email',
+              'password',
+              'confirmPassword',
+            );
+          },
+          child: Text('Press'),
+        ),
+      ),
     );
   }
 }

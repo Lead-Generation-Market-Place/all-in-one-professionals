@@ -9,9 +9,7 @@ class HomeTab extends StatelessWidget {
       itemCount: 10,
       itemBuilder: (context, index) => Card(
         margin: const EdgeInsets.all(10),
-        child: ListTile(
-          title: Text('Home Post $index'),
-        ),
+        child: ListTile(title: Text('Home Post $index')),
       ),
     );
   }

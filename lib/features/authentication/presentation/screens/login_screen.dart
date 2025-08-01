@@ -196,14 +196,19 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                             child: Text(
                               'Forgot password?',
-                              style: TextStyle(color: AppColors.primaryBlue),
+                              style: TextStyle(color: AppColors.black),
                             ),
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRouter.signUpAsProfessional,
+                              );
+                            },
                             child: Text(
-                              'Need help?',
-                              style: TextStyle(color: AppColors.primaryBlue),
+                              'Sign Up as Professional',
+                              style: TextStyle(color: AppColors.black),
                             ),
                           ),
                         ],
@@ -229,7 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       'Want to Shop on Groupon?',
-                      style: TextStyle(color: AppColors.primaryBlue),
+                      style: TextStyle(color: AppColors.black),
                     ),
                   ),
                   TextButton(
@@ -241,7 +246,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       'Get the Groupon app.',
-                      style: TextStyle(color: AppColors.primaryBlue),
+                      style: TextStyle(color: AppColors.black),
                     ),
                   ),
                 ],

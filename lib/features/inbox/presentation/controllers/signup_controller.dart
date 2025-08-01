@@ -5,13 +5,23 @@ class SignupController extends ChangeNotifier {
   final SignupUsecase signupUsecase;
   SignupController(this.signupUsecase);
   bool isLoading = false;
-  
 
-  Future<void> addUser(String firstName,String lastName,String email,String password,String confirmPassword) async {
+  Future<void> addUser(
+    String firstName,
+    String lastName,
+    String email,
+    String password,
+    String confirmPassword,
+  ) async {
     try {
       isLoading = true;
-  final user = await signupUsecase.call(firstName, lastName, email, password, confirmPassword);
-  
+      final user = await signupUsecase.call(
+        firstName,
+        lastName,
+        email,
+        password,
+        confirmPassword,
+      );
     } catch (e) {
       print('$e');
     } finally {

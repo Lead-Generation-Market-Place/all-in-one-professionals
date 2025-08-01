@@ -6,11 +6,7 @@ class AuthUserDatasource {
 
   AuthUserDatasource(this.apiService);
 
-  Future<AuthUserModel> loginUser(
-    String email,
-    String password,
-  
-  ) async {
+  Future<AuthUserModel> loginUser(String email, String password) async {
     final response = await apiService.post(
       '/login/',
       data: {'email': email, 'password': password},

@@ -6,16 +6,17 @@ import 'package:yelpax_pro/core/error/failures/failure.dart';
 
 class ErrorHandler {
   static final _logger = Logger();
-  
+
   static Failure mapExceptionToFailure(Exception e) {
     _logger.e('Exception caught', error: e, stackTrace: StackTrace.current);
-    
+
     if (e is ServerException) return ServerFailure(e.message);
     if (e is NetworkException) return NetworkFailure(e.message);
     if (e is ValidationException) return ValidationFailure(e.message);
     if (e is CacheException) return CacheFailure(e.message);
-    if (e is SocketException) return NoInternetFailure('No internet connection');
-    
+    if (e is SocketException)
+      return NoInternetFailure('No internet connection');
+
     return GenericFailure('An unexpected error occurred');
   }
 
