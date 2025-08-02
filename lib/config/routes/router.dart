@@ -5,7 +5,10 @@ import 'package:yelpax_pro/features/authentication/presentation/screens/signup_a
 import 'package:yelpax_pro/features/mainHome/presentation/screens/home.dart';
 
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/jobs_screen.dart';
+import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/availability.dart';
+import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/business_name_logo.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/m_services_categories.dart';
+import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/rating.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/signup_process_scree.dart';
 import 'package:yelpax_pro/features/marketPlace/notifications/presentation/screens/notifications_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/profile_screen.dart';
@@ -48,6 +51,16 @@ class AppRouter {
 
   static const String signUpProcessScreen = '/marketplace/signUpProcessScreen';
 
+  static const String signUpProcessBusinessNameLogo =
+      '/marketplace/signUpProcessBusinessNameLogo';
+
+  static const String professionalRating =
+      '/marketplace/professionalRating';
+
+
+  static const String professionalAvailability =
+      '/marketplace/professionalAvailability';
+
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
@@ -86,6 +99,13 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => MServicesCategories());
       case signUpProcessScreen:
         return MaterialPageRoute(builder: (_) => SignupProcessScreem());
+      case signUpProcessBusinessNameLogo:
+        return MaterialPageRoute(builder: (_) => BusinessNameLogo());
+      case professionalRating:
+        return MaterialPageRoute(builder: (_) => Rating());
+
+      case professionalAvailability:
+        return MaterialPageRoute(builder: (_) => AvailabilityScreen());
       case unknownRouteScreen:
         return MaterialPageRoute(
           builder: (_) =>
