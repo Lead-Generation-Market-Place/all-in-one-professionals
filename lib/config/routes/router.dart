@@ -9,6 +9,7 @@ import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentati
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/business_name_logo.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/m_services_categories.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/rating.dart';
+import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/service_question_form.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/signup_process_scree.dart';
 import 'package:yelpax_pro/features/marketPlace/notifications/presentation/screens/notifications_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/profile_screen.dart';
@@ -60,7 +61,8 @@ class AppRouter {
 
   static const String professionalAvailability =
       '/marketplace/professionalAvailability';
-
+  static const String professionalServiceQuestionForm =
+      '/marketplace/professionalServiceQuestionForm';
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
@@ -106,6 +108,9 @@ class AppRouter {
 
       case professionalAvailability:
         return MaterialPageRoute(builder: (_) => AvailabilityScreen());
+
+      case professionalServiceQuestionForm:
+        return MaterialPageRoute(builder: (_) => ServiceQuestionForm());
       case unknownRouteScreen:
         return MaterialPageRoute(
           builder: (_) =>

@@ -1,140 +1,307 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
-import 'package:yelpax_pro/core/constants/app_colors.dart';
 
-class Rating extends StatefulWidget {
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../shared/widgets/custom_button.dart';
+import '../controllers/m_professional_signup_controller.dart';
+
+class Rating extends StatelessWidget {
   const Rating({super.key});
 
   @override
-  State<Rating> createState() => _RatingState();
-}
-
-class _RatingState extends State<Rating> {
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'Get Reviews',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-            color: AppColors.black,
+    return ChangeNotifierProvider(
+      create: (_) => ProfessionalSignUpProvider(),
+      child: SafeArea(
+        bottom: true,
+        top: false,
+        left: false,
+        right: false,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Request Reviews'),
+            centerTitle: true,
+            elevation: 0,
           ),
-        ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        actions: [
-          IconButton(onPressed: (){
-            Navigator.pushNamed(context, AppRouter.professionalAvailability);
-          }, icon: Icon(Icons.arrow_forward))
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header Section
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.star_rate_rounded,
-                    color: Colors.amber,
-                    size: 28,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'Pros with reviews are 5 times more likely to get hired',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.blue.shade800,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Divider with text
-            const Row(
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: Divider(thickness: 1)),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(
-                    'Request Reviews',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-                Expanded(child: Divider(thickness: 1)),
+                const _HeaderSection(),
+                const SizedBox(height: 24),
+                const _EmailInputSection(),
+                const SizedBox(height: 24),
+                const _PreviewCard(),
+                const SizedBox(height: 24),
+                const _TrustCard(),
+                const SizedBox(height: 32),
+                const _NavigationButtons(),
+                const SizedBox(height: 32),
+
               ],
             ),
-            const SizedBox(height: 24),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
-            // Action Buttons
-            _buildActionButton(
-              icon: Icons.message_rounded,
-              iconColor: Colors.green,
-              title: "Text past customers",
-              subtitle: "Send SMS messages to request reviews",
-              onPressed: () {
-                // Handle text action
-              },
-            ),
-            const SizedBox(height: 16),
+class _HeaderSection extends StatelessWidget {
+  const _HeaderSection();
 
-            _buildActionButton(
-              icon: Icons.mail_outline_rounded,
-              iconColor: Colors.red,
-              title: "Email past customers",
-              subtitle: "Send email requests for reviews",
-              onPressed: () {
-                // Handle email action
-              },
-            ),
-            const SizedBox(height: 16),
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Request Customer Reviews',
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Collect reviews from your customers to build trust and credibility',
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+        ),
+      ],
+    );
+  }
+}
 
-            _buildActionButton(
-              icon: Icons.import_contacts_rounded,
-              iconColor: Colors.blue,
-              title: "Import from Google",
-              subtitle: "Import reviews from your Google profile",
-              onPressed: () {
-                // Handle Google import
-              },
-            ),
-            const SizedBox(height: 24),
+class _EmailInputSection extends StatelessWidget {
+  const _EmailInputSection();
 
-            // Other Options
-            Center(
-              child: TextButton(
-                onPressed: () {
-                  // Show other options
-                },
-                child: const Text(
-                  'Other sharing options',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.primaryBlue,
+  @override
+  Widget build(BuildContext context) {
+    final provider = Provider.of<ProfessionalSignUpProvider>(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Customer Emails',
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(height: 12),
+        ...List.generate(provider.emails.length, (index) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Row(
+              children: [
+                Expanded(  // Add this Expanded widget
+                  child: TextField(
+                    onChanged: (val) => provider.updateEmail(index, val),
+                    decoration: InputDecoration(
+                      hintText: 'customer@example.com',
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.grey[300]!),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[50],
+                    ),
+                    keyboardType: TextInputType.emailAddress,
                   ),
                 ),
+                const SizedBox(width: 8),
+                CustomButton(
+                  text: 'Send to',
+                  onPressed: provider.sendingIndex == index
+                      ? null
+                      : () async {
+                    try {
+                      await provider.sendEmail(index);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Sent to ${provider.emails[index]}',
+                          ),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Failed: ${e.toString()}'),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+          );
+        }),
+        TextButton(
+          onPressed: provider.addEmailField,
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              Icon(Icons.add, size: 18),
+              SizedBox(width: 4),
+              Text('Add another email'),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        OutlinedButton(
+          onPressed: () {},
+          style: OutlinedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            side: BorderSide(color: Colors.grey[300]!),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Image.asset('assets/images/google.png', width: 20, height: 20),
+              const SizedBox(width: 8),
+              const Text('Import from Google'),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+class _PreviewCard extends StatelessWidget {
+  const _PreviewCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = Provider.of<ProfessionalSignUpProvider>(context);
+
+    return Card(
+      color: AppColors.white,
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+
+          children: [
+            Text(
+              'EMAIL PREVIEW',
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: Colors.grey[600],
+                letterSpacing: 1,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              provider.businessName,
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            const Text('Review Request', style: TextStyle(color: Colors.grey)),
+            const SizedBox(height: 16),
+            provider.userImageUrl != null
+                ? CircleAvatar(
+              radius: 40,
+              backgroundImage: NetworkImage(
+                'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+              ),
+            )
+
+                : const CircleAvatar(
+                    radius: 40,
+                    backgroundColor: Colors.grey,
+                    child: Icon(Icons.person, size: 40, color: Colors.white),
+                  ),
+            const SizedBox(height: 16),
+            const Text(
+              'How was your experience with us?',
+              style: TextStyle(fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'We\'d love your feedback to help us improve',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.star, color: Colors.amber, size: 24),
+                Icon(Icons.star, color: Colors.amber, size: 24),
+                Icon(Icons.star, color: Colors.amber, size: 24),
+                Icon(Icons.star, color: Colors.amber, size: 24),
+                Icon(Icons.star, color: Colors.amber, size: 24),
+              ],
+            ),
+            const SizedBox(height: 16),
+            CustomButton(text: 'Leave a Review',enabled: true,onPressed: () {},),
+            const SizedBox(height: 8),
+            Text(
+              'Requested by: ${provider.username ?? 'Your Business'}',
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TrustCard extends StatelessWidget {
+  const _TrustCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.blue[50],
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.blue[100]!),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            const Icon(Icons.thumb_up, color: Colors.blue, size: 40),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Build Trust with Reviews',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue[800],
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Positive reviews help attract more customers and grow your business',
+                    style: TextStyle(color: Colors.blue[800]!.withOpacity(0.8)),
+                  ),
+                ],
               ),
             ),
           ],
@@ -142,61 +309,35 @@ class _RatingState extends State<Rating> {
       ),
     );
   }
+}
 
-  Widget _buildActionButton({
-    required IconData icon,
-    required Color iconColor,
-    required String title,
-    required String subtitle,
-    required VoidCallback onPressed,
-  }) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.all(16),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: Colors.grey.shade200, width: 1),
+class _NavigationButtons extends StatelessWidget {
+  const _NavigationButtons();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton(
+            onPressed: () => Navigator.pop(context),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text('Back'),
+          ),
         ),
-        elevation: 0,
-        shadowColor: Colors.transparent,
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.2),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: iconColor, size: 24),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-                ),
-              ],
-            ),
-          ),
-          const Icon(Icons.chevron_right_rounded, color: Colors.grey),
-        ],
-      ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: CustomButton(text: 'Continue',enabled: true,onPressed: (){
+            Navigator.pushNamed(context,AppRouter.professionalAvailability);
+          },)
+        ),
+
+      ],
     );
   }
 }

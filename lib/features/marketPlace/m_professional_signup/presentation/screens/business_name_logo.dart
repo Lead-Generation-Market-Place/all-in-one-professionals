@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/core/constants/app_colors.dart';
-import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/controllers/m_professional_signup.dart';
+import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/controllers/m_professional_signup_controller.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 import 'package:yelpax_pro/shared/widgets/custom_input.dart';
 

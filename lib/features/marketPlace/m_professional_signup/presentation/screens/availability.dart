@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/controllers/m_professional_signup.dart';
+import 'package:yelpax_pro/config/routes/router.dart';
+import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/controllers/m_professional_signup_controller.dart';
+import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-
 
 class AvailabilityScreen extends StatelessWidget {
   const AvailabilityScreen({super.key});
@@ -73,10 +74,7 @@ class _AvailabilityBody extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           'Customers will only request jobs during the times you set. You need at least 12 hours of availability per week.',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey.shade600,
-          ),
+          style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
         ),
       ],
     );
@@ -90,7 +88,8 @@ class _AvailabilityBody extends StatelessWidget {
             _buildRadioOption(
               context,
               title: 'Use any open day or time',
-              description: 'Customers can request jobs during any time your calendar is not blocked.',
+              description:
+                  'Customers can request jobs during any time your calendar is not blocked.',
               value: AvailabilityType.anyTime,
               groupValue: provider.selectedType,
               onChanged: (value) {
@@ -101,7 +100,8 @@ class _AvailabilityBody extends StatelessWidget {
             _buildRadioOption(
               context,
               title: 'Use specific hours',
-              description: 'Note: You\'ll still get messages from customers outside these times.',
+              description:
+                  'Note: You\'ll still get messages from customers outside these times.',
               value: AvailabilityType.businessHours,
               groupValue: provider.selectedType,
               onChanged: (value) {
@@ -115,13 +115,13 @@ class _AvailabilityBody extends StatelessWidget {
   }
 
   Widget _buildRadioOption(
-      BuildContext context, {
-        required String title,
-        required String description,
-        required AvailabilityType value,
-        required AvailabilityType groupValue,
-        required ValueChanged<AvailabilityType?> onChanged,
-      }) {
+    BuildContext context, {
+    required String title,
+    required String description,
+    required AvailabilityType value,
+    required AvailabilityType groupValue,
+    required ValueChanged<AvailabilityType?> onChanged,
+  }) {
     return InkWell(
       onTap: () => onChanged(value),
       borderRadius: BorderRadius.circular(8),
@@ -162,10 +162,7 @@ class _AvailabilityBody extends StatelessWidget {
               padding: const EdgeInsets.only(left: 48.0),
               child: Text(
                 description,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
               ),
             ),
           ],
@@ -222,15 +219,13 @@ class _DayRow extends StatelessWidget {
                 children: [
                   Checkbox(
                     value: provider.selectedDays[day],
-                    onChanged: (value) => provider.updateDaySelection(day, value),
+                    onChanged: (value) =>
+                        provider.updateDaySelection(day, value),
                     activeColor: AppColors.primaryBlue,
                   ),
                   SizedBox(
                     width: 80,
-                    child: Text(
-                      day,
-                      style: const TextStyle(fontSize: 16),
-                    ),
+                    child: Text(day, style: const TextStyle(fontSize: 16)),
                   ),
                   Expanded(
                     child: Text(
@@ -340,16 +335,14 @@ class _SettingsSection extends StatelessWidget {
       children: [
         const Text(
           'Settings',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         _buildSettingItem(
           context,
           title: 'Lead Time',
-          description: 'Set how much notice you need and how far in advance customers can book',
+          description:
+              'Set how much notice you need and how far in advance customers can book',
           children: const [
             _LeadTimeNoticeDropdown(),
             SizedBox(width: 16),
@@ -361,55 +354,44 @@ class _SettingsSection extends StatelessWidget {
           context,
           title: 'Time Zone',
           description: 'Select your time zone',
-          children: const [
-            Expanded(child: _TimeZoneDropdown()),
-          ],
+          children: const [Expanded(child: _TimeZoneDropdown())],
         ),
         const SizedBox(height: 16),
         _buildSettingItem(
           context,
           title: 'Team Capacity',
-          description: 'Set the number of jobs your team can take per time slot',
-          children: const [
-            Expanded(child: _JobsPerSlotDropdown()),
-          ],
+          description:
+              'Set the number of jobs your team can take per time slot',
+          children: const [Expanded(child: _JobsPerSlotDropdown())],
         ),
         const SizedBox(height: 16),
         _buildSettingItem(
           context,
           title: 'Travel Time',
           description: 'Set the time you need between jobs for travel',
-          children: const [
-            Expanded(child: _TravelTimeDropdown()),
-          ],
+          children: const [Expanded(child: _TravelTimeDropdown())],
         ),
       ],
     );
   }
 
   Widget _buildSettingItem(
-      BuildContext context, {
-        required String title,
-        required String description,
-        required List<Widget> children,
-      }) {
+    BuildContext context, {
+    required String title,
+    required String description,
+    required List<Widget> children,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 4),
         Text(
           description,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey.shade600,
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
         ),
         const SizedBox(height: 8),
         Row(children: children),
@@ -430,31 +412,21 @@ class _SaveButton extends StatelessWidget {
 
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
-        onPressed: provider.isLoading ? null : () => _saveBusinessHours(context),
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          backgroundColor: AppColors.primaryBlue,
-        ),
-        child: provider.isLoading
-            ? const CircularProgressIndicator(color: Colors.white)
-            : const Text(
-          'Save Business Hours',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
+      child: CustomButton(
+        text: 'Save Business Hours',
+        onPressed: provider.isLoading
+            ? null
+            : () => _saveBusinessHours(context),
+        enabled: true,
       ),
     );
   }
 
   Future<void> _saveBusinessHours(BuildContext context) async {
-    final provider = Provider.of<ProfessionalSignUpProvider>(context, listen: false);
+    final provider = Provider.of<ProfessionalSignUpProvider>(
+      context,
+      listen: false,
+    );
 
     try {
       provider.isLoading = true;
@@ -466,6 +438,9 @@ class _SaveButton extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Business hours saved successfully')),
       );
+
+
+      Navigator.pushNamed(context, AppRouter.professionalServiceQuestionForm);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error saving business hours: $e')),
@@ -476,7 +451,6 @@ class _SaveButton extends StatelessWidget {
     }
   }
 }
-
 
 class _LeadTimeNoticeDropdown extends StatelessWidget {
   const _LeadTimeNoticeDropdown();
@@ -494,10 +468,7 @@ class _LeadTimeNoticeDropdown extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(horizontal: 12),
         ),
         items: ['1 day', '2 days', '3 days'].map((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
+          return DropdownMenuItem<String>(value: value, child: Text(value));
         }).toList(),
         onChanged: (value) {
           provider.leadTimeNotice = value!;
@@ -508,13 +479,12 @@ class _LeadTimeNoticeDropdown extends StatelessWidget {
   }
 }
 
-
 class _LeadTimeAdvanceDropdown extends StatelessWidget {
   const _LeadTimeAdvanceDropdown();
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of< ProfessionalSignUpProvider>(context);
+    final provider = Provider.of<ProfessionalSignUpProvider>(context);
 
     return Expanded(
       child: DropdownButtonFormField<String>(
@@ -525,10 +495,7 @@ class _LeadTimeAdvanceDropdown extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(horizontal: 12),
         ),
         items: ['24 months', '18 months', '12 months'].map((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
+          return DropdownMenuItem<String>(value: value, child: Text(value));
         }).toList(),
         onChanged: (value) {
           provider.leadTimeAdvance = value!;
@@ -538,7 +505,6 @@ class _LeadTimeAdvanceDropdown extends StatelessWidget {
     );
   }
 }
-
 
 class _TimeZoneDropdown extends StatelessWidget {
   const _TimeZoneDropdown();
@@ -554,19 +520,17 @@ class _TimeZoneDropdown extends StatelessWidget {
         border: const OutlineInputBorder(),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12),
       ),
-      items: [
-        'Pacific Time Zone',
-        'Eastern Time Zone',
-        'Central Time Zone',
-        'Mountain Time Zone',
-        'Alaska Time Zone',
-        'Hawaii-Aleutian Time Zone',
-      ].map((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
+      items:
+          [
+            'Pacific Time Zone',
+            'Eastern Time Zone',
+            'Central Time Zone',
+            'Mountain Time Zone',
+            'Alaska Time Zone',
+            'Hawaii-Aleutian Time Zone',
+          ].map((String value) {
+            return DropdownMenuItem<String>(value: value, child: Text(value));
+          }).toList(),
       onChanged: (value) {
         provider.timeZone = value!;
         provider.notifyListeners();
@@ -574,7 +538,6 @@ class _TimeZoneDropdown extends StatelessWidget {
     );
   }
 }
-
 
 class _JobsPerSlotDropdown extends StatelessWidget {
   const _JobsPerSlotDropdown();
@@ -590,11 +553,10 @@ class _JobsPerSlotDropdown extends StatelessWidget {
         border: const OutlineInputBorder(),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12),
       ),
-      items: ['1 job', '2 jobs', '3 jobs', '4 jobs', '5 jobs'].map((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
+      items: ['1 job', '2 jobs', '3 jobs', '4 jobs', '5 jobs'].map((
+        String value,
+      ) {
+        return DropdownMenuItem<String>(value: value, child: Text(value));
       }).toList(),
       onChanged: (value) {
         provider.jobsPerSlot = value!;
@@ -618,19 +580,17 @@ class _TravelTimeDropdown extends StatelessWidget {
         border: const OutlineInputBorder(),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12),
       ),
-      items: [
-        '15 minutes',
-        '30 minutes',
-        '45 minutes',
-        '1 hour',
-        '1.5 hours',
-        '2 hours',
-      ].map((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
+      items:
+          [
+            '15 minutes',
+            '30 minutes',
+            '45 minutes',
+            '1 hour',
+            '1.5 hours',
+            '2 hours',
+          ].map((String value) {
+            return DropdownMenuItem<String>(value: value, child: Text(value));
+          }).toList(),
       onChanged: (value) {
         provider.travelTime = value!;
         provider.notifyListeners();
