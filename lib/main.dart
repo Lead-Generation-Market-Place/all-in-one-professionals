@@ -100,31 +100,29 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
 
-    return MaterialApp(
-      navigatorKey: navigatorKey,
-
-      onGenerateRoute: AppRouter.generateRoute,
-      onUnknownRoute: (settings) => AppRouter.unknownRoute(settings),
-      locale: localeProvider.locale ?? const Locale('en'),
-      supportedLocales: L10n.all,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-
-      title: 'Yelpax Pro',
-      theme: themeProvider.themeData,
-      debugShowCheckedModeBanner: false,
-      home:
-          _startScreen ??
-          const Scaffold(
-            // Show loading indicator before SharedPreferences is ready
-            body: Center(child: CircularProgressIndicator()),
-          ),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          navigatorKey: navigatorKey,
+          onGenerateRoute: AppRouter.generateRoute,
+          onUnknownRoute: (settings) => AppRouter.unknownRoute(settings),
+          locale: localeProvider.locale ?? const Locale('en'),
+          supportedLocales: L10n.all,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          title: 'Yelpax Pro',
+          theme: themeProvider.themeData,
+          debugShowCheckedModeBanner: false,
+          home: _startScreen ??
+              const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              ),
+        );
+      },
     );
-  }
-}
+  }}

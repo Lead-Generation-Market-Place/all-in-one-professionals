@@ -21,85 +21,92 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    return Scaffold(
-      appBar: AppBar(title: const Text("Service Questions"), elevation: 0),
-      body: Column(
-        children: [
-          // Progress bar would go here (you'll need to implement this widget)
-          // const ProgressBar(currentStep: 5, totalSteps: 4),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Please review and confirm your selections",
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 16),
+    return SafeArea(
+      top: false,
+      bottom: true,
+      left: false,
+      right: false,
 
-                  if (controller.questions.isEmpty)
-                    const Center(child: Text("No questions available."))
-                  else
-                    ...controller.questions.map((question) {
-                      return _buildQuestionCard(controller, question);
-                    }).toList(),
+      child: Scaffold(
+        appBar: AppBar(title: const Text("Service Questions"), elevation: 0),
+        body: Column(
+          children: [
+            // Progress bar would go here (you'll need to implement this widget)
+            // const ProgressBar(currentStep: 5, totalSteps: 4),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Please review and confirm your selections",
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 16),
+
+                    if (controller.questions.isEmpty)
+                      const Center(child: Text("No questions available."))
+                    else
+                      ...controller.questions.map((question) {
+                        return _buildQuestionCard(controller, question);
+                      }).toList(),
+                  ],
+                ),
+              ),
+            ),
+
+            // Bottom buttons
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, -4),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                    ),
+                    child: const Text("Back"),
+                  ),
+                  const SizedBox(width: 16),
+
+                  CustomButton(
+                    text: 'Next',
+                    onPressed: controller.isSubmitting
+                        ? null
+                        : () async {
+                            final success = await controller.submitAnswers();
+                            if (success && mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Submitted successfully'),
+                                ),
+                              );
+                              // Navigate to next screen
+                              // Navigator.push(context, MaterialPageRoute(builder: (context) => NextScreen()));
+                            }
+                          },
+                  ),
                 ],
               ),
             ),
-          ),
-
-          // Bottom buttons
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, -4),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 10,
-                    ),
-                  ),
-                  child: const Text("Back"),
-                ),
-                const SizedBox(width: 16),
-
-                CustomButton(
-                  text: 'Next',
-                  onPressed: controller.isSubmitting
-                      ? null
-                      : () async {
-                          final success = await controller.submitAnswers();
-                          if (success && mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Submitted successfully'),
-                              ),
-                            );
-                            // Navigate to next screen
-                            // Navigator.push(context, MaterialPageRoute(builder: (context) => NextScreen()));
-                          }
-                        },
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

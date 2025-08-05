@@ -42,6 +42,8 @@ class _CustomInputFieldState extends State<CustomInputField> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return TextFormField(
       enabled: widget.isEnabled,
       keyboardType: widget.inputType,
@@ -49,46 +51,43 @@ class _CustomInputFieldState extends State<CustomInputField> {
       controller: widget.controller,
       validator: widget.validator,
       onChanged: widget.onChanged,
+      style: theme.textTheme.bodyMedium?.copyWith(
+        color: theme.colorScheme.onSurface,
+      ),
       decoration: InputDecoration(
-        labelText: widget.label, // Floating label inside border
+        labelText: widget.label,
+        labelStyle: theme.inputDecorationTheme.labelStyle,
         hintText: widget.hintText,
-        prefixIcon: widget.prefixIcon != null ? Icon(widget.prefixIcon) : null,
+        hintStyle: theme.inputDecorationTheme.hintStyle,
+        prefixIcon: widget.prefixIcon != null
+            ? Icon(widget.prefixIcon, color: theme.inputDecorationTheme.iconColor)
+            : null,
         suffixIcon: widget.isPassword
             ? IconButton(
-                icon: Icon(
-                  _obscureText ? Icons.visibility : Icons.visibility_off,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _obscureText = !_obscureText;
-                  });
-                },
-              )
-            : (widget.suffixIcon != null ? Icon(widget.suffixIcon) : null),
+          icon: Icon(
+            _obscureText ? Icons.visibility : Icons.visibility_off,
+            color: theme.inputDecorationTheme.iconColor,
+          ),
+          onPressed: () {
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },
+        )
+            : (widget.suffixIcon != null
+            ? Icon(widget.suffixIcon, color: theme.inputDecorationTheme.iconColor)
+            : null),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 14,
         ),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: AppColors.primaryBlue,
-            width: 1.8,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.error, width: 1.5),
-        ),
-        filled: true,
-        fillColor: widget.isEnabled ? AppColors.white : Colors.grey[200],
-        errorStyle: const TextStyle(
-          color: AppColors.error,
-          fontSize: 13,
-          fontWeight: FontWeight.w500,
-          height: 1.2,
-        ),
+        border: theme.inputDecorationTheme.border,
+        enabledBorder: theme.inputDecorationTheme.enabledBorder,
+        focusedBorder: theme.inputDecorationTheme.focusedBorder,
+        errorBorder: theme.inputDecorationTheme.errorBorder,
+        filled: theme.inputDecorationTheme.filled,
+        fillColor: theme.inputDecorationTheme.fillColor,
+        errorStyle: theme.inputDecorationTheme.errorStyle,
       ),
     );
   }

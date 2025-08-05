@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
-import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/controllers/profile_provider.dart';
 import 'package:yelpax_pro/shared/widgets/bottom_navbar.dart';
@@ -14,6 +13,7 @@ class BusinessInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     bool isSetupFinished = false;
 
     final profileProvider = Provider.of<ProfileProvider>(
@@ -26,7 +26,6 @@ class BusinessInfo extends StatelessWidget {
         bottomNavigationBar: const BottomNavbar(),
         body: Column(
           children: [
-            // Black label banner
             if (!isSetupFinished)
               ProfileCompletionBanner(
                 stepNumber: 3,
@@ -39,10 +38,10 @@ class BusinessInfo extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: theme.cardTheme.color,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: theme.shadowColor.withOpacity(0.1),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -54,21 +53,21 @@ class BusinessInfo extends StatelessWidget {
                   Row(
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.arrow_back),
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: theme.iconTheme.color,
+                        ),
                         onPressed: () => Navigator.pop(context),
                       ),
                       const SizedBox(width: 8),
-                      const Text(
+                      Text(
                         'Business Information',
-                        style: TextStyle(
-                          fontSize: 20,
+                        style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w600,
-                          fontFamily: 'Poppins',
                         ),
                       ),
                     ],
                   ),
-
                   CustomButton(
                     text: 'Save',
                     onPressed: () {
@@ -76,21 +75,36 @@ class BusinessInfo extends StatelessWidget {
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: const Text('Confirm Save'),
-                            content: const Text(
+                            backgroundColor: theme.cardTheme.color,
+                            title: Text(
+                              'Confirm Save',
+                              style: theme.textTheme.titleMedium,
+                            ),
+                            content: Text(
                               'Are you sure you want to save your business information?',
+                              style: theme.textTheme.bodyMedium,
                             ),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(context),
-                                child: const Text('No'),
+                                child: Text(
+                                  'No',
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                ),
                               ),
                               TextButton(
                                 onPressed: () async {
-                                  Navigator.pop(context); // Close dialog
+                                  Navigator.pop(context);
                                   await profileProvider.saveBusinessInfo();
                                 },
-                                child: const Text('Yes'),
+                                child: Text(
+                                  'Yes',
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -114,10 +128,9 @@ class BusinessInfo extends StatelessWidget {
                   child: Column(
                     children: [
                       const SizedBox(height: 40),
-                      const Text(
+                      Text(
                         'About your business',
-                        style: TextStyle(
-                          fontSize: 24,
+                        style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -139,10 +152,9 @@ class BusinessInfo extends StatelessWidget {
                       ),
                       const SizedBox(height: 32),
 
-                      const Text(
+                      Text(
                         'Contact information',
-                        style: TextStyle(
-                          fontSize: 24,
+                        style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -178,7 +190,7 @@ class BusinessInfo extends StatelessWidget {
                         hintText: '22041',
                         inputType: TextInputType.number,
                         validator: (value) =>
-                            value!.isEmpty ? 'Zip code is required' : null,
+                        value!.isEmpty ? 'Zip code is required' : null,
                       ),
                       const SizedBox(height: 16),
 
@@ -190,10 +202,9 @@ class BusinessInfo extends StatelessWidget {
                       ),
                       const SizedBox(height: 32),
 
-                      const Text(
+                      Text(
                         'Payment methods accepted',
-                        style: TextStyle(
-                          fontSize: 24,
+                        style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -203,16 +214,21 @@ class BusinessInfo extends StatelessWidget {
                         builder: (context, provider, child) {
                           return Column(
                             children: provider.availablePaymentMethods.map((
-                              method,
-                            ) {
+                                method,
+                                ) {
                               return CheckboxListTile(
-                                title: Text(method),
+                                title: Text(
+                                  method,
+                                  style: theme.textTheme.bodyMedium,
+                                ),
                                 value: provider.selectedPaymentMethods.contains(
                                   method,
                                 ),
                                 onChanged: (bool? value) {
                                   provider.togglePaymentMethod(method);
                                 },
+                                activeColor: theme.colorScheme.primary,
+                                checkColor: theme.colorScheme.onPrimary,
                               );
                             }).toList(),
                           );
@@ -220,10 +236,9 @@ class BusinessInfo extends StatelessWidget {
                       ),
                       const SizedBox(height: 32),
 
-                      const Text(
+                      Text(
                         'Social media',
-                        style: TextStyle(
-                          fontSize: 24,
+                        style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),

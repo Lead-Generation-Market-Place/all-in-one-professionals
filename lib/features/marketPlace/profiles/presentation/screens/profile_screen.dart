@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
-import 'package:yelpax_pro/core/constants/app_colors.dart';
+
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/controllers/profile_provider.dart';
 import 'package:yelpax_pro/shared/widgets/bottom_navbar.dart';
@@ -26,7 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       left: false,
       right: false,
       child: Scaffold(
-        backgroundColor: Colors.grey[50],
+
         bottomNavigationBar: const BottomNavbar(),
         body: SingleChildScrollView(
           child: Column(
@@ -41,13 +41,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
 
               // Manually add AppBar here below the banner
-              PreferredSize(
-                preferredSize: const Size.fromHeight(kToolbarHeight),
-                child: AppBar(
-                  title: const Text('Search'),
-                  automaticallyImplyLeading: false,
-                ),
-              ),
+              // PreferredSize(
+              //   preferredSize: const Size.fromHeight(kToolbarHeight),
+              //   child: AppBar(
+              //     title: const Text('Search'),
+              //     automaticallyImplyLeading: false,
+              //   ),
+              // ),
               // Profile Header
               _buildProfileHeader(),
 
@@ -90,28 +90,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
+          Text(
             'Profile',
-            style: TextStyle(
-              fontSize: 24,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.black, // Changed from AppColors.textPrimary
             ),
           ),
           Row(
             children: [
               IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.calendar_today,
-                  color: AppColors.black, // Changed from AppColors.neutral700
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 onPressed: () {},
               ),
               IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.settings,
-                  color: AppColors.black,
-                ), // Changed from AppColors.neutral700
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 onPressed: () {},
               ),
             ],
@@ -136,12 +134,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
                 child: const Row(
                   children: [
-                    Icon(Icons.edit, color: AppColors.black, size: 20),
+                    Icon(Icons.edit,  size: 20),
                     SizedBox(width: 4),
                     Text(
                       'Edit',
                       style: TextStyle(
-                        color: AppColors.black,
+
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -159,7 +157,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 height: 180,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.black, width: 4),
+                  border: Border.all( width: 4),
                 ),
                 child: ClipOval(
                   child: Image.network(
@@ -178,7 +176,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.black,
+
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 2),
                   ),
@@ -198,7 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.neutral700,
+
                 ),
               );
             },
@@ -214,7 +212,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.neutral700,
+
                 ),
               );
             },
@@ -238,7 +236,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onPressed: () {},
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    side: const BorderSide(color: AppColors.black, width: 1.5),
+                    side: const BorderSide( width: 1.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -246,7 +244,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: const Text(
                     'See how you rank',
                     style: TextStyle(
-                      color: AppColors.black,
+
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -258,7 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.black,
+
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -267,8 +265,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: const Text(
                     'Preview profile',
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
+
+                     fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -294,7 +292,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.black, // Changed from AppColors.textPrimary
+
             ),
           ),
           const SizedBox(height: 16),
@@ -347,7 +345,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const Text(
                 'Your introduction',
                 style: TextStyle(
-                  color: Colors.black,
+
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -358,12 +356,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
                 child: const Row(
                   children: [
-                    Icon(Icons.edit, color: AppColors.black, size: 20),
+                    Icon(Icons.edit,  size: 20),
                     SizedBox(width: 4),
                     Text(
                       'Edit',
                       style: TextStyle(
-                        color: AppColors.black,
+
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -381,16 +379,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // 6. Credentials Section Widget
   Widget _buildCredentialsSection() {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardTheme.color, // Use card color from theme
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: theme.shadowColor.withOpacity(0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -400,28 +400,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              children: const [
+              children: [
                 Icon(
                   Icons.person_outline,
-                  color: Colors.grey,
-                ), // Changed from AppColors.neutral700
-                SizedBox(width: 12),
+                  color: theme.iconTheme.color,
+                ),
+                const SizedBox(width: 12),
                 Text(
                   'Credentials',
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Colors.black, // Changed from AppColors.textPrimary
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 12),
-            const Text(
+            Text(
               'Add a background check badge to your profile by getting a check from our third party website checker. This will help you win customer\'s trust and get hired more.',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey, // Changed from AppColors.textSecondary
+              style: theme.textTheme.bodyMedium?.copyWith(
                 height: 1.5,
               ),
             ),
@@ -435,14 +431,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
-                  side: const BorderSide(color: AppColors.black),
+                  side: BorderSide(color: theme.colorScheme.primary), // Use primary color for border
                 ),
               ),
-              child: const Text(
+              child: Text(
                 'Start a background check',
-                style: TextStyle(
-                  color: AppColors.black,
-                  fontSize: 16,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: theme.colorScheme.primary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -452,9 +447,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-
   // 7. Professional License Section Widget
   Widget _buildProfessionalLicenseSection() {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -463,11 +459,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.cardTheme.color, // Use card color from theme
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: theme.shadowColor.withOpacity(0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -477,19 +473,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  children: const [
+                  children: [
                     Icon(
                       Icons.person_outline,
-                      color: Colors.grey,
-                    ), // Changed from AppColors.neutral700
-                    SizedBox(width: 12),
+                      color: theme.iconTheme.color,
+                    ),
+                    const SizedBox(width: 12),
                     Text(
                       'Professional license',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color:
-                            Colors.black, // Changed from AppColors.textPrimary
                       ),
                     ),
                   ],
@@ -498,12 +491,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Customers prefer to hire licensed professionals. If you don\'t already have a license, we recommend that you get one.',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color:
-                            Colors.grey, // Changed from AppColors.textSecondary
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         height: 1.5,
                       ),
                     ),
@@ -522,14 +512,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
-                          side: const BorderSide(color: AppColors.black),
+                          side: BorderSide(color: theme.colorScheme.primary),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Add a license',
-                        style: TextStyle(
-                          color: AppColors.black,
-                          fontSize: 16,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -547,16 +536,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // 8. Photos & Videos Section Widget
   Widget _buildPhotosVideosSection() {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardTheme.color,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: theme.shadowColor.withOpacity(0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -568,27 +559,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Photos & Videos',
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Colors.black, // Changed from AppColors.textPrimary
                   ),
                 ),
                 TextButton.icon(
                   onPressed: () {
                     Navigator.pushNamed(context, AppRouter.addPhotosAndVideoes);
                   },
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.edit,
-                    color: AppColors.black,
                     size: 18,
+                    color: theme.colorScheme.primary,
                   ),
-                  label: const Text(
+                  label: Text(
                     'Edit',
-                    style: TextStyle(
-                      color: AppColors.black,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -617,14 +606,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
+                        border: Border.all(
+                          color: theme.dividerTheme.color ?? Colors.grey,
+                        ),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Icon(
                           Icons.add_circle_outline,
-                          color: AppColors.black,
                           size: 36,
+                          color: theme.colorScheme.primary,
                         ),
                       ),
                     ),
@@ -653,24 +644,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(
+                  color: theme.dividerTheme.color ?? Colors.grey,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     "Show off your business",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     "Include photos of your work (before and after), team, workspace, or equipment.",
-                    style: TextStyle(fontSize: 14, color: Colors.black54),
+                    style: theme.textTheme.bodySmall,
                   ),
                   const SizedBox(height: 16),
-                  // CustomButton(text: 'Add Photos',enabled: true,onPressed: (){
-
-                  // },),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pushNamed(
@@ -679,15 +671,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.black,
+                      backgroundColor: theme.colorScheme.primary,
+                      foregroundColor: theme.colorScheme.onPrimary,
                       padding: const EdgeInsets.symmetric(
                         vertical: 15,
                         horizontal: 25,
                       ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                    child: const Text(
+                    child: Text(
                       "Add photos",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      style: theme.textTheme.labelLarge,
                     ),
                   ),
                 ],
@@ -698,9 +694,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-
   // 9. Featured Projects Section Widget
   Widget _buildFeaturedProjectsSection() {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -709,11 +706,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.cardTheme.color,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: theme.shadowColor.withOpacity(0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -724,12 +721,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Row(
                   children: [
-                    const Text(
+                    Text(
                       'Featured Projects',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: Colors.black,
                       ),
                     ),
                     const Spacer(),
@@ -740,8 +735,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           AppRouter.addFeatureProject,
                         );
                       },
-                      icon: const Icon(Icons.add_circle_outline_rounded),
-                      label: const Text('Add Project'),
+                      icon: Icon(
+                        Icons.add_circle_outline_rounded,
+                        color: theme.colorScheme.primary,
+                      ),
+                      label: Text(
+                        'Add Project',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -750,8 +753,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Container(
                     height: 200,
                     width: double.infinity,
-                    color: AppColors
-                        .background, // Optional: just to visualize the container
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: theme.dividerTheme.color ?? Colors.grey,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                     child: Center(
                       child: IconButton(
                         onPressed: () {
@@ -759,8 +766,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             context,
                             AppRouter.addFeatureProject,
                           );
-                        }, // Change to your function
-                        icon: const Icon(Icons.add, size: 40),
+                        },
+                        icon: Icon(
+                          Icons.add,
+                          size: 40,
+                          color: theme.colorScheme.primary,
+                        ),
                       ),
                     ),
                   ),
@@ -774,6 +785,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildReviewSection() {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -782,11 +795,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.cardTheme.color,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: theme.shadowColor.withOpacity(0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -795,35 +808,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   "Reviews",
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
                   ),
                 ),
                 const SizedBox(height: 12),
                 Row(
-                  children: const [
+                  children: [
                     Text(
                       "0.0",
-                      style: TextStyle(
-                        fontSize: 28,
+                      style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.teal,
+                        color: theme.colorScheme.primary,
                       ),
                     ),
-                    SizedBox(width: 8),
-                    Icon(Icons.star_border, color: Colors.teal),
-                    Icon(Icons.star_border, color: Colors.teal),
-                    Icon(Icons.star_border, color: Colors.teal),
-                    Icon(Icons.star_border, color: Colors.teal),
-                    Icon(Icons.star_border, color: Colors.teal),
+                    const SizedBox(width: 8),
+                    ...List.generate(5, (index) => Icon(
+                      Icons.star_border,
+                      color: theme.colorScheme.primary,
+                    )),
                   ],
                 ),
                 const SizedBox(height: 4),
-                const Text("0 reviews", style: TextStyle(color: Colors.grey)),
+                Text(
+                  "0 reviews",
+                  style: theme.textTheme.bodySmall,
+                ),
                 const SizedBox(height: 16),
                 ...List.generate(5, (index) {
                   return Padding(
@@ -832,18 +844,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         Text(
                           "${5 - index} ★",
-                          style: const TextStyle(color: Colors.grey),
+                          style: theme.textTheme.bodySmall,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: LinearProgressIndicator(
                             value: 0,
-                            backgroundColor: Colors.grey.shade200,
-                            color: Colors.grey,
+                            backgroundColor: theme.colorScheme.surfaceVariant,
+                            color: theme.colorScheme.primary,
                           ),
                         ),
                         const SizedBox(width: 8),
-                        const Text("0%"),
+                        Text(
+                          "0%",
+                          style: theme.textTheme.bodySmall,
+                        ),
                       ],
                     ),
                   );
@@ -853,42 +868,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300),
+                    color: theme.colorScheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(12),
-                    color: Colors.white,
+                    border: Border.all(
+                      color: theme.dividerTheme.color ?? Colors.grey,
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        children: const [
+                        children: [
                           Icon(
                             Icons.emoji_emotions,
                             size: 28,
-                            color: Colors.black,
+                            color: theme.colorScheme.primary,
                           ),
-                          SizedBox(width: 6),
-                          Icon(Icons.star, size: 24, color: Colors.amber),
-                          SizedBox(width: 6),
+                          const SizedBox(width: 6),
+                          Icon(
+                            Icons.star,
+                            size: 24,
+                            color: theme.colorScheme.primary,
+                          ),
+                          const SizedBox(width: 6),
                           Icon(
                             Icons.favorite,
                             size: 24,
-                            color: Colors.lightBlue,
+                            color: theme.colorScheme.primary,
                           ),
                         ],
                       ),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         "Import and request reviews",
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         "Get reviews from past customers, even if they're not on Thumbtack.",
-                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                        style: theme.textTheme.bodySmall,
                       ),
                       const SizedBox(height: 16),
                       CustomButton(
@@ -906,7 +926,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-
   Widget _buildInfoItem({
     required IconData icon,
     required String title,
@@ -921,31 +940,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+
           borderRadius: BorderRadius.circular(12),
         ),
         child: ListTile(
-          leading: Icon(icon), // Changed from AppColors.neutral700
+          leading: Icon(icon),
           title: Text(
             title,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: Colors.black, // Changed from AppColors.textPrimary
+
             ),
           ),
           subtitle: Text(
             value,
             style: TextStyle(
               fontSize: 14,
-              color: isPlaceholder
-                  ? Colors.grey[600] // Changed from AppColors.textTertiary
-                  : Colors.grey, // Changed from AppColors.textSecondary
+
             ),
           ),
           trailing: const Icon(
             Icons.chevron_right,
-            color: Colors.grey, // Changed from AppColors.neutral700
+
           ),
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
@@ -967,31 +984,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+
           borderRadius: BorderRadius.circular(12),
         ),
         child: ListTile(
-          leading: Icon(icon), // Changed from AppColors.neutral700
+          leading: Icon(icon),
           title: Text(
             title,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: Colors.black, // Changed from AppColors.textPrimary
+
             ),
           ),
           subtitle: Text(
             value,
             style: TextStyle(
               fontSize: 14,
-              color: isPlaceholder
-                  ? Colors.grey[600] // Changed from AppColors.textTertiary
-                  : Colors.grey, // Changed from AppColors.textSecondary
+
             ),
           ),
           trailing: const Icon(
             Icons.chevron_right,
-            color: Colors.grey, // Changed from AppColors.neutral700
+
           ),
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
@@ -1002,16 +1017,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // Placeholder Widget
   Widget _buildPlaceholder() {
     return Container(
-      color: Colors.grey[200],
+
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.camera_alt, size: 32, color: Colors.grey[500]),
+            Icon(Icons.camera_alt, size: 32,),
             const SizedBox(height: 8),
             Text(
               'Add Photo',
-              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+              style: TextStyle(fontSize: 14, ),
             ),
           ],
         ),

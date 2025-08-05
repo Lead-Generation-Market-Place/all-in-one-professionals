@@ -35,11 +35,13 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
   }
 
   Widget buildQuestion({
+    required BuildContext context,
     required String title,
     required TextEditingController controllerText,
     required bool hasTyped,
     required int charCount,
   }) {
+    final theme = Theme.of(context);
     final remaining = 50 - charCount;
 
     return Column(
@@ -47,13 +49,15 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
       children: [
         Text(
           title,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 8),
         CustomInputField(
           controller: controllerText,
-          hintText: 'text',
-          label: 'text',
+          hintText: 'Enter your answer',
+          label: 'Your answer',
           validator: validateMin50IfTyped,
         ),
         if (!hasTyped)
@@ -61,7 +65,9 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
             alignment: Alignment.centerRight,
             child: Text(
               'Minimum 50 characters needed',
-              style: const TextStyle(color: Colors.green, fontSize: 12),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.primary,
+              ),
             ),
           )
         else if (remaining > 0)
@@ -69,7 +75,9 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
             alignment: Alignment.centerRight,
             child: Text(
               '$remaining more characters needed',
-              style: const TextStyle(color: Colors.red, fontSize: 12),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.error,
+              ),
             ),
           ),
         const SizedBox(height: 20),
@@ -79,40 +87,62 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final profileProvider = Provider.of<ProfileProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Business FAQs'),
+        title: Text(
+          'Business FAQs',
+          style: theme.textTheme.titleLarge,
+        ),
         actions: [
-          CustomButton(
-            text: 'Save',
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Confirm Save'),
-                    content: const Text(
-                      'Are you sure you want to save your answers?',
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: CustomButton(
+              text: 'Save',
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      backgroundColor: theme.cardTheme.color,
+                      title: Text(
+                        'Confirm Save',
+                        style: theme.textTheme.titleMedium,
+                      ),
+                      content: Text(
+                        'Are you sure you want to save your answers?',
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(
+                            'No',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            await profileProvider.answeredBusinessFaqsQuestion();
+                          },
+                          child: Text(
+                            'Yes',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('No'),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          Navigator.pop(context); // Close dialog
-                          await profileProvider.answeredBusinessFaqsQuestion();
-                        },
-                        child: const Text('Yes'),
-                      ),
-                    ],
-                  ),
-                );
-              }
-            },
+                  );
+                }
+              },
+            ),
           ),
         ],
       ),
@@ -129,8 +159,9 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                     selector: (_, provider) => provider.firstBusinessCharCount,
                     builder: (context, charCount, child) {
                       return buildQuestion(
+                        context: context,
                         title:
-                            'What should the customer know about your pricing (e.g., discounts, fees)?',
+                        'What should the customer know about your pricing (e.g., discounts, fees)?',
                         controllerText: profileProvider.firstBusinessQuestion,
                         hasTyped: hasTyped,
                         charCount: charCount,
@@ -146,8 +177,9 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                     selector: (_, provider) => provider.secondBusinessCharCount,
                     builder: (context, charCount, child) {
                       return buildQuestion(
+                        context: context,
                         title:
-                            'What is your typical process for working with a new customer?',
+                        'What is your typical process for working with a new customer?',
                         controllerText: profileProvider.secondBusinessQuestion,
                         hasTyped: hasTyped,
                         charCount: charCount,
@@ -163,8 +195,9 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                     selector: (_, provider) => provider.thirdBusinessCharCount,
                     builder: (context, charCount, child) {
                       return buildQuestion(
+                        context: context,
                         title:
-                            'What education and/or training do you have that relates to your work?',
+                        'What education and/or training do you have that relates to your work?',
                         controllerText: profileProvider.thirdBusinessQuestion,
                         hasTyped: hasTyped,
                         charCount: charCount,
@@ -180,8 +213,9 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                     selector: (_, provider) => provider.fourthBusinessCharCount,
                     builder: (context, charCount, child) {
                       return buildQuestion(
+                        context: context,
                         title:
-                            'How did you get started doing this type of work?',
+                        'How did you get started doing this type of work?',
                         controllerText: profileProvider.fourthBusinessQuestion,
                         hasTyped: hasTyped,
                         charCount: charCount,
@@ -197,6 +231,7 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                     selector: (_, provider) => provider.fifthBusinessCharCount,
                     builder: (context, charCount, child) {
                       return buildQuestion(
+                        context: context,
                         title: 'What type of customer have you worked with?',
                         controllerText: profileProvider.fifthBusinessQuestion,
                         hasTyped: hasTyped,
@@ -213,8 +248,9 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                     selector: (_, provider) => provider.sixthBusinessCharCount,
                     builder: (context, charCount, child) {
                       return buildQuestion(
+                        context: context,
                         title:
-                            'Describe a recent project you are fond of. How long did it take?',
+                        'Describe a recent project you are fond of. How long did it take?',
                         controllerText: profileProvider.sixthBusinessQuestion,
                         hasTyped: hasTyped,
                         charCount: charCount,
@@ -228,11 +264,12 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                 builder: (context, hasTyped, child) {
                   return Selector<ProfileProvider, int>(
                     selector: (_, provider) =>
-                        provider.seventhBusinessCharCount,
+                    provider.seventhBusinessCharCount,
                     builder: (context, charCount, child) {
                       return buildQuestion(
+                        context: context,
                         title:
-                            'What advice you would give a customer looking to hire a provider in your area of work?',
+                        'What advice you would give a customer looking to hire a provider in your area of work?',
                         controllerText: profileProvider.seventhBusinessQuestion,
                         hasTyped: hasTyped,
                         charCount: charCount,
@@ -248,8 +285,9 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                     selector: (_, provider) => provider.eighthBusinessCharCount,
                     builder: (context, charCount, child) {
                       return buildQuestion(
+                        context: context,
                         title:
-                            'What questions should customers think through before talking to professionals about their project?',
+                        'What questions should customers think through before talking to professionals about their project?',
                         controllerText: profileProvider.eighthBusinessQuestion,
                         hasTyped: hasTyped,
                         charCount: charCount,

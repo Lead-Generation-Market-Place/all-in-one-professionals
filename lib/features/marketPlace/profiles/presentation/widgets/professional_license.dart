@@ -9,6 +9,7 @@ class ProfessionalLicense extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final profileProvider = Provider.of<ProfileProvider>(
       context,
       listen: false,
@@ -20,17 +21,20 @@ class ProfessionalLicense extends StatelessWidget {
     });
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
             const SizedBox(height: 20),
-
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               width: double.infinity,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(color: Colors.grey, width: 0.5),
+                  bottom: BorderSide(
+                    color: theme.dividerTheme.color ?? Colors.grey,
+                    width: 0.5,
+                  ),
                 ),
               ),
               child: Row(
@@ -39,14 +43,16 @@ class ProfessionalLicense extends StatelessWidget {
                   Row(
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.arrow_back),
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: theme.iconTheme.color,
+                        ),
                         onPressed: () => Navigator.pop(context),
                       ),
                       const SizedBox(width: 8),
-                      const Text(
+                      Text(
                         'Professional License',
-                        style: TextStyle(
-                          fontSize: 20,
+                        style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -57,32 +63,51 @@ class ProfessionalLicense extends StatelessWidget {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: const Text('Confirm Save'),
-                          content: const Text(
+                          backgroundColor: theme.cardTheme.color,
+                          title: Text(
+                            'Confirm Save',
+                            style: theme.textTheme.titleMedium,
+                          ),
+                          content: Text(
                             'Are you sure you want to save your license information?',
+                            style: theme.textTheme.bodyMedium,
                           ),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context),
-                              child: const Text('No'),
+                              child: Text(
+                                'No',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: theme.colorScheme.primary,
+                                ),
+                              ),
                             ),
                             TextButton(
                               onPressed: () async {
                                 Navigator.pop(context);
                                 await profileProvider.saveProfessionalLicense();
                               },
-                              child: const Text('Yes'),
+                              child: Text(
+                                'Yes',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: theme.colorScheme.primary,
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       );
                     },
-                    child: const Text('Save'),
+                    child: Text(
+                      'Save',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
-
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
@@ -90,31 +115,44 @@ class ProfessionalLicense extends StatelessWidget {
                   builder: (context, provider, _) => Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Customers prefer to hire licensed professionals.\nThumbstack will check the license information you provide against the state\'s public licensing database.',
-                        style: TextStyle(fontSize: 16, color: Colors.black87),
+                        style: theme.textTheme.bodyMedium,
                       ),
                       const SizedBox(height: 25),
-                      CustomDropdown<String>(
-                        hintText: 'Select state',
-                        items: provider.states,
-                        initialItem: provider.selectedState.isNotEmpty
-                            ? provider.selectedState
-                            : null,
-                        onChanged: (value) =>
-                            provider.setSelectedState(value.toString()),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: theme.inputDecorationTheme.fillColor,
+                          borderRadius: BorderRadius.circular(12),
+                          border: _getBoxBorderFromInputBorder(theme.inputDecorationTheme.border),
+                        ),
+                        child: CustomDropdown<String>(
+                          hintText: 'Select state',
+                          items: provider.states,
+                          initialItem: provider.selectedState.isNotEmpty
+                              ? provider.selectedState
+                              : null,
+                          onChanged: (value) =>
+                              provider.setSelectedState(value.toString()),
+                        ),
                       ),
                       const SizedBox(height: 25),
-                      CustomDropdown<String>(
-                        hintText: 'Select license type',
-                        items: provider.licenseTypes,
-                        initialItem: provider.selectedLicenseType.isNotEmpty
-                            ? provider.selectedLicenseType
-                            : null,
-                        onChanged: (value) =>
-                            provider.setSelectedLicenseType(value.toString()),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: theme.inputDecorationTheme.fillColor,
+                          borderRadius: BorderRadius.circular(12),
+                          border: _getBoxBorderFromInputBorder(theme.inputDecorationTheme.border),
+                        ),
+                        child: CustomDropdown<String>(
+                          hintText: 'Select license type',
+                          items: provider.licenseTypes,
+                          initialItem: provider.selectedLicenseType.isNotEmpty
+                              ? provider.selectedLicenseType
+                              : null,
+                          onChanged: (value) =>
+                              provider.setSelectedLicenseType(value.toString()),
+                        ),
                       ),
-
                       const SizedBox(height: 25),
                       CustomInputField(
                         controller: provider.licenseNumberController,
@@ -138,4 +176,16 @@ class ProfessionalLicense extends StatelessWidget {
       ),
     );
   }
+
+
+}BoxBorder? _getBoxBorderFromInputBorder(InputBorder? inputBorder) {
+  if (inputBorder == null) return null;
+  if (inputBorder is OutlineInputBorder) {
+    return Border.all(
+      color: inputBorder.borderSide.color,
+      width: inputBorder.borderSide.width,
+      style: inputBorder.borderSide.style,
+    );
+  }
+  return null;
 }

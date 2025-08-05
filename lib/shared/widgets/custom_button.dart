@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:yelpax_pro/core/constants/app_colors.dart';
 
 enum CustomButtonType { primary, secondary, outline, text }
-
 enum CustomButtonSize { small, medium, large }
 
 class CustomButton extends StatelessWidget {
@@ -36,6 +34,7 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final isDisabled = !enabled || isLoading || onPressed == null;
 
     return Container(
@@ -47,31 +46,19 @@ class CustomButton extends StatelessWidget {
         child: InkWell(
           onTap: isDisabled ? null : onPressed,
           borderRadius: BorderRadius.circular(12),
-          splashColor: isDisabled ? Colors.transparent : null,
-          highlightColor: isDisabled ? Colors.transparent : null,
+          splashColor: isDisabled ? Colors.transparent : theme.splashColor,
+          highlightColor: isDisabled ? Colors.transparent : theme.highlightColor,
           child: Ink(
             decoration: BoxDecoration(
-              color: _getBackgroundColor(isDisabled),
+              color: _getBackgroundColor(context, isDisabled),
               borderRadius: BorderRadius.circular(12),
-              border: type == CustomButtonType.outline && !isDisabled
-                  ? Border.all(color: AppColors.black)
-                  : type == CustomButtonType.outline && isDisabled
-                  ? Border.all(color: AppColors.lighten(Colors.white))
-                  : null,
-              boxShadow: type != CustomButtonType.text && !isDisabled
-                  ? [
-                      BoxShadow(
-                        color: AppColors.black,
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ]
-                  : null,
+              border: _getBorder(context, isDisabled),
+              boxShadow: _getBoxShadow(context, isDisabled),
             ),
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _buildContent(isDisabled),
+                child: _buildContent(context, isDisabled),
               ),
             ),
           ),
@@ -80,7 +67,7 @@ class CustomButton extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(bool isDisabled) {
+  Widget _buildContent(BuildContext context, bool isDisabled) {
     if (isLoading) {
       return SizedBox(
         height: _getLoaderSize(),
@@ -92,7 +79,7 @@ class CustomButton extends StatelessWidget {
       );
     }
 
-    final textStyle = _getTextStyle(isDisabled);
+    final textStyle = _getTextStyle(context, isDisabled);
     final iconSize = _getIconSize();
 
     if (icon != null) {
@@ -110,30 +97,33 @@ class CustomButton extends StatelessWidget {
     return Text(text, style: textStyle);
   }
 
-  Color _getBackgroundColor(bool isDisabled) {
-    if (isLoading) {
-      return AppColors.black;
-    }
+  Color _getBackgroundColor(BuildContext context, bool isDisabled) {
+    final theme = Theme.of(context);
 
+    if (isLoading) return theme.colorScheme.primary;
     if (isDisabled) {
       return type == CustomButtonType.text
           ? Colors.transparent
-          : AppColors.neutral200;
+          : theme.disabledColor;
     }
 
     switch (type) {
       case CustomButtonType.primary:
-        return AppColors.black;
+        return theme.colorScheme.primary;
       case CustomButtonType.secondary:
-        return AppColors.black;
+        return theme.colorScheme.secondary;
       case CustomButtonType.outline:
       case CustomButtonType.text:
         return Colors.transparent;
     }
   }
 
-  TextStyle _getTextStyle(bool isDisabled) {
-    final baseStyle = TextStyle(
+  TextStyle _getTextStyle(BuildContext context, bool isDisabled) {
+    final theme = Theme.of(context);
+    final baseStyle = theme.textTheme.labelLarge?.copyWith(
+      fontWeight: FontWeight.w600,
+      fontSize: _getFontSize(),
+    ) ?? TextStyle(
       fontWeight: FontWeight.w600,
       fontSize: _getFontSize(),
     );
@@ -141,69 +131,78 @@ class CustomButton extends StatelessWidget {
     if (isDisabled) {
       return baseStyle.copyWith(
         color: type == CustomButtonType.text
-            ? AppColors.neutral400
-            : AppColors.neutral500,
+            ? theme.disabledColor
+            : theme.disabledColor,
       );
     }
 
     switch (type) {
       case CustomButtonType.primary:
+        return baseStyle.copyWith(color: theme.colorScheme.onPrimary);
       case CustomButtonType.secondary:
-        return baseStyle.copyWith(color: Colors.white);
+        return baseStyle.copyWith(color: theme.colorScheme.onSecondary);
       case CustomButtonType.outline:
       case CustomButtonType.text:
-        return baseStyle.copyWith(color: AppColors.primaryBlue);
+        return baseStyle.copyWith(color: theme.colorScheme.primary);
     }
+  }
+
+  Border? _getBorder(BuildContext context, bool isDisabled) {
+    final theme = Theme.of(context);
+
+    if (type == CustomButtonType.outline) {
+      return Border.all(
+        color: isDisabled
+            ? theme.disabledColor
+            : theme.colorScheme.primary,
+      );
+    }
+    return null;
+  }
+
+  List<BoxShadow>? _getBoxShadow(BuildContext context, bool isDisabled) {
+    final theme = Theme.of(context);
+
+    if (type == CustomButtonType.text || isDisabled) return null;
+
+    return [
+      BoxShadow(
+        color: theme.shadowColor.withOpacity(0.2),
+        blurRadius: 8,
+        offset: const Offset(0, 4),
+      ),
+    ];
   }
 
   double _getHeight() {
     switch (size) {
-      case CustomButtonSize.small:
-        return 32;
-      case CustomButtonSize.medium:
-        return 44;
-      case CustomButtonSize.large:
-        return 56;
+      case CustomButtonSize.small: return 32;
+      case CustomButtonSize.medium: return 44;
+      case CustomButtonSize.large: return 56;
     }
   }
 
   double _getFontSize() {
     switch (size) {
-      case CustomButtonSize.small:
-        return 12;
-      case CustomButtonSize.medium:
-        return 14;
-      case CustomButtonSize.large:
-        return 16;
+      case CustomButtonSize.small: return 12;
+      case CustomButtonSize.medium: return 14;
+      case CustomButtonSize.large: return 16;
     }
   }
 
   double _getIconSize() {
     switch (size) {
-      case CustomButtonSize.small:
-        return 16;
-      case CustomButtonSize.medium:
-        return 20;
-      case CustomButtonSize.large:
-        return 24;
+      case CustomButtonSize.small: return 16;
+      case CustomButtonSize.medium: return 20;
+      case CustomButtonSize.large: return 24;
     }
   }
 
   double _getLoaderSize() {
     switch (size) {
-      case CustomButtonSize.small:
-        return 24;
-      case CustomButtonSize.medium:
-        return 36;
-      case CustomButtonSize.large:
-        return 48;
+      case CustomButtonSize.small: return 24;
+      case CustomButtonSize.medium: return 36;
+      case CustomButtonSize.large: return 48;
     }
   }
-
-  static styleFrom({
-    required Color backgroundColor,
-    required Color foregroundColor,
-    required int elevation,
-    required BorderSide side,
-  }) {}
 }
