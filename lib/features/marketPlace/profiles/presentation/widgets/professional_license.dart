@@ -22,92 +22,61 @@ class ProfessionalLicense extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text('Professional License'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  backgroundColor: theme.cardTheme.color,
+                  title: Text(
+                    'Confirm Save',
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  content: Text(
+                    'Are you sure you want to save your license information?',
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        'No',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        Navigator.pop(context);
+                        await profileProvider.saveProfessionalLicense();
+                      },
+                      child: Text(
+                        'Yes',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+            child: Text(
+              'Save',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.primary,
+              ),
+            ),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: theme.dividerTheme.color ?? Colors.grey,
-                    width: 0.5,
-                  ),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: theme.iconTheme.color,
-                        ),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Professional License',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          backgroundColor: theme.cardTheme.color,
-                          title: Text(
-                            'Confirm Save',
-                            style: theme.textTheme.titleMedium,
-                          ),
-                          content: Text(
-                            'Are you sure you want to save your license information?',
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(
-                                'No',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.primary,
-                                ),
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                Navigator.pop(context);
-                                await profileProvider.saveProfessionalLicense();
-                              },
-                              child: Text(
-                                'Yes',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.primary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    child: Text(
-                      'Save',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
@@ -121,12 +90,13 @@ class ProfessionalLicense extends StatelessWidget {
                       ),
                       const SizedBox(height: 25),
                       Container(
-                        decoration: BoxDecoration(
-                          color: theme.inputDecorationTheme.fillColor,
-                          borderRadius: BorderRadius.circular(12),
-                          border: _getBoxBorderFromInputBorder(theme.inputDecorationTheme.border),
-                        ),
                         child: CustomDropdown<String>(
+                          decoration: CustomDropdownDecoration(
+                            closedFillColor: Theme.of(context).highlightColor,
+                            expandedFillColor: Theme.of(
+                              context,
+                            ).scaffoldBackgroundColor,
+                          ),
                           hintText: 'Select state',
                           items: provider.states,
                           initialItem: provider.selectedState.isNotEmpty
@@ -138,13 +108,15 @@ class ProfessionalLicense extends StatelessWidget {
                       ),
                       const SizedBox(height: 25),
                       Container(
-                        decoration: BoxDecoration(
-                          color: theme.inputDecorationTheme.fillColor,
-                          borderRadius: BorderRadius.circular(12),
-                          border: _getBoxBorderFromInputBorder(theme.inputDecorationTheme.border),
-                        ),
                         child: CustomDropdown<String>(
+                          decoration: CustomDropdownDecoration(
+                            closedFillColor: Theme.of(context).highlightColor,
+                            expandedFillColor: Theme.of(
+                              context,
+                            ).scaffoldBackgroundColor,
+                          ),
                           hintText: 'Select license type',
+
                           items: provider.licenseTypes,
                           initialItem: provider.selectedLicenseType.isNotEmpty
                               ? provider.selectedLicenseType
@@ -176,9 +148,9 @@ class ProfessionalLicense extends StatelessWidget {
       ),
     );
   }
+}
 
-
-}BoxBorder? _getBoxBorderFromInputBorder(InputBorder? inputBorder) {
+BoxBorder? _getBoxBorderFromInputBorder(InputBorder? inputBorder) {
   if (inputBorder == null) return null;
   if (inputBorder is OutlineInputBorder) {
     return Border.all(

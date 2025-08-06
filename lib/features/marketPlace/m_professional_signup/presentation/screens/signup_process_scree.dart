@@ -17,22 +17,18 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Complete Your Profile',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
-            color: AppColors.black,
-          ),
+
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 22),
           onPressed: () => Navigator.pop(context),
         ),
         elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: AppColors.black,
+
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -43,8 +39,7 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
               'Complete these steps to start getting leads',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey.shade700,
-                fontWeight: FontWeight.w500,
+
               ),
             ),
             const SizedBox(height: 8),
@@ -205,7 +200,6 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: completed
@@ -261,7 +255,7 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.black,
+
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -269,7 +263,7 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
                       description,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey.shade600,
+
                       ),
                     ),
                   ],
@@ -281,13 +275,13 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
                 const Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 20,
-                  color: Colors.grey,
+
                 ),
               if (!enabled && !completed)
                 const Icon(
                   Icons.lock_outline_rounded,
                   size: 20,
-                  color: Colors.grey,
+
                 ),
             ],
           ),

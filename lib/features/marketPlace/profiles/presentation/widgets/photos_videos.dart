@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/controllers/profile_provider.dart';
 
 class PhotosVideos extends StatefulWidget {
@@ -26,13 +25,12 @@ class _PhotosVideosState extends State<PhotosVideos> {
     final profileProvider = Provider.of<ProfileProvider>(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      appBar: AppBar(title: Text('Photos & Videos')),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
             const SizedBox(height: 20),
-
-            _buildAppBar(context),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -50,45 +48,12 @@ class _PhotosVideosState extends State<PhotosVideos> {
     );
   }
 
-  Widget _buildAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
-          ),
-          const SizedBox(width: 8),
-          const Text(
-            'Photos & Videos',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildSuggestions() {
     return Container(
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -107,11 +72,7 @@ class _PhotosVideosState extends State<PhotosVideos> {
           const SizedBox(height: 16),
           const Text(
             'Press and hold photos to drag and rearrange.',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-              fontStyle: FontStyle.italic,
-            ),
+            style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
           ),
         ],
       ),
@@ -123,9 +84,9 @@ class _PhotosVideosState extends State<PhotosVideos> {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Colors.grey[600]),
+          Icon(icon, size: 20),
           const SizedBox(width: 12),
-          Text(text, style: TextStyle(fontSize: 15, color: Colors.grey[800])),
+          Text(text, style: TextStyle(fontSize: 15)),
         ],
       ),
     );
@@ -180,15 +141,10 @@ class _PhotosVideosState extends State<PhotosVideos> {
               if (isVideo)
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Center(
-                    child: Icon(
-                      Icons.play_circle_outline,
-                      color: Colors.white,
-                      size: 32,
-                    ),
+                    child: Icon(Icons.play_circle_outline, size: 32),
                   ),
                 ),
             ],
@@ -201,19 +157,12 @@ class _PhotosVideosState extends State<PhotosVideos> {
   Widget _buildAddPhotoButton(ProfileProvider provider) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[100],
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey[300]!),
       ),
       child: InkWell(
         onTap: () => _showImagePickerBottomSheet(context, provider),
-        child: Center(
-          child: Icon(
-            Icons.add_circle_outline,
-            size: 32,
-            color: Colors.blue[400],
-          ),
-        ),
+        child: Center(child: Icon(Icons.add_circle_outline, size: 32)),
       ),
     );
   }
@@ -227,7 +176,6 @@ class _PhotosVideosState extends State<PhotosVideos> {
       backgroundColor: Colors.transparent,
       builder: (_) => Container(
         decoration: const BoxDecoration(
-          color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(

@@ -1,7 +1,8 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
-import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
+
+import '../../../../../core/constants/app_colors.dart';
 
 class MSubCategory {
   final int id;
@@ -81,47 +82,62 @@ class _MServicesCategoriesState extends State<MServicesCategories> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: const Text(
-            'Services you offer',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          actions: [
-            if (selectedSubCategories.isNotEmpty && selectedServices.isNotEmpty)
-              CustomButton(
-                text: 'Save',
-                onPressed: () {
-                  Navigator.pop(context, selectedServices);
-                },
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        automaticallyImplyLeading: false,
+        title: const Text('Select services you offer',style: TextStyle(color:  AppColors.primaryBlue),),
+        actions: [
+          if (selectedSubCategories.isNotEmpty && selectedServices.isNotEmpty)
+            CustomButton(
+              text: 'Save',
+              onPressed: () {
+                Navigator.pop(context, selectedServices);
+              },
+            ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            const SizedBox(height: 40),
+
+            CustomDropdown.multiSelectSearch(
+              decoration: CustomDropdownDecoration(
+                searchFieldDecoration: SearchFieldDecoration(
+                    fillColor:Theme.of(context).scaffoldBackgroundColor
+                ),
+                closedFillColor: Theme.of(context).colorScheme.surface,
+                expandedFillColor: Theme.of(context).colorScheme.surface,
+                listItemDecoration: ListItemDecoration(
+                  selectedColor: Theme.of(context).scaffoldBackgroundColor,
+                ),
+              ),
+              hintText: "Select Subcategories",
+              items: subCategories,
+              initialItems: selectedSubCategories,
+              onListChanged: onSubCategoriesChanged,
+            ),
+            const SizedBox(height: 20),
+            if (filteredServices.isNotEmpty)
+              CustomDropdown.multiSelectSearch(
+                decoration: CustomDropdownDecoration(
+                  searchFieldDecoration: SearchFieldDecoration(
+                    fillColor:Theme.of(context).scaffoldBackgroundColor
+                  ),
+                  closedFillColor: Theme.of(context).colorScheme.surface,
+                  expandedFillColor: Theme.of(context).colorScheme.surface,
+                  listItemDecoration: ListItemDecoration(
+                    selectedColor: Theme.of(context).scaffoldBackgroundColor,
+                  ),
+                ),
+                hintText: "Select Services",
+                items: filteredServices,
+                initialItems: selectedServices,
+                onListChanged: onServicesChanged,
               ),
           ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-
-              CustomDropdown.multiSelectSearch(
-                hintText: "Select Subcategories",
-                items: subCategories,
-                initialItems: selectedSubCategories,
-                onListChanged: onSubCategoriesChanged,
-              ),
-              const SizedBox(height: 20),
-              if (filteredServices.isNotEmpty)
-                CustomDropdown.multiSelectSearch(
-                  hintText: "Select Services",
-                  items: filteredServices,
-                  initialItems: selectedServices,
-                  onListChanged: onServicesChanged,
-                ),
-            ],
-          ),
         ),
       ),
     );

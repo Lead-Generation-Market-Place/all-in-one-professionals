@@ -28,6 +28,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
       right: false,
 
       child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(title: const Text("Service Questions"), elevation: 0),
         body: Column(
           children: [
@@ -41,7 +42,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
                   children: [
                     const Text(
                       "Please review and confirm your selections",
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                      style: TextStyle(fontSize: 14,),
                     ),
                     const SizedBox(height: 16),
 
@@ -60,7 +61,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -121,7 +122,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey[200]!),
       ),

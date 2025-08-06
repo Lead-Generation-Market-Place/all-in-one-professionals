@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/controllers/profile_provider.dart';
 import 'package:yelpax_pro/shared/widgets/custom_input.dart';
 
 class ProfilePictureEdit extends StatelessWidget {
   ProfilePictureEdit({super.key});
+
   final formKeyEditProfilePicture = GlobalKey<FormState>();
 
   @override
@@ -15,22 +15,14 @@ class ProfilePictureEdit extends StatelessWidget {
     final profileProvider = Provider.of<ProfileProvider>(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Basic info',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        title: const Text('Basic info', style: TextStyle()),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -38,8 +30,7 @@ class ProfilePictureEdit extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 20),
-              // Profile Image with Edit Icon
+              const SizedBox(height: 20), // Profile Image with Edit Icon
               Container(
                 width: 180,
                 height: 180,
@@ -54,10 +45,7 @@ class ProfilePictureEdit extends StatelessWidget {
                           height: 180,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(
-                              color: AppColors.black,
-                              width: 2,
-                            ),
+                            border: Border.all(width: 2),
                           ),
                           child: imageUrl.isNotEmpty
                               ? ClipOval(
@@ -82,41 +70,27 @@ class ProfilePictureEdit extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppColors.black,
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
+                          color: Theme.of(context).unselectedWidgetColor,
+                          border: Border.all(width: 2),
                         ),
-                        child: const Icon(
-                          Icons.edit,
-                          color: Colors.white,
-                          size: 16,
-                        ),
+                        child: const Icon(Icons.edit, size: 16),
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
-              // Change Photo Button
+              const SizedBox(height: 16), // Change Photo Button
               TextButton(
                 onPressed: () {
                   profileProvider.showImagePickerBottomSheet(context);
                 },
-                child: const Text(
-                  'Change photo',
-                  style: TextStyle(
-                    color: AppColors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                child: const Text('Change photo'),
               ),
-              const SizedBox(height: 32),
-              // Examples and Tips Section
+              const SizedBox(height: 32), // Examples and Tips Section
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.grey[50],
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -125,20 +99,9 @@ class ProfilePictureEdit extends StatelessWidget {
                     // Examples and Tips Header
                     Row(
                       children: [
-                        Icon(
-                          Icons.lightbulb_outline,
-                          color: Colors.grey[700],
-                          size: 24,
-                        ),
+                        Icon(Icons.lightbulb_outline, size: 24),
                         const SizedBox(width: 8),
-                        Text(
-                          'Examples and tips',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey[800],
-                          ),
-                        ),
+                        Text('Examples and tips'),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -155,7 +118,7 @@ class ProfilePictureEdit extends StatelessWidget {
                           height: 70,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.grey[300],
+
                             image: DecorationImage(
                               image: AssetImage(
                                 'assets/images/${index + 1}.jpg',
@@ -175,8 +138,7 @@ class ProfilePictureEdit extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-              // Business Name Section
+              const SizedBox(height: 24), // Business Name Section
               Form(
                 key: formKeyEditProfilePicture,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -221,11 +183,7 @@ class ProfilePictureEdit extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
-        children: [
-          const Text('•', style: TextStyle(fontSize: 16, color: Colors.grey)),
-          const SizedBox(width: 8),
-          Text(text, style: TextStyle(fontSize: 16, color: Colors.grey)),
-        ],
+        children: [const Text('•'), const SizedBox(width: 8), Text(text)],
       ),
     );
   }

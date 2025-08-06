@@ -56,10 +56,11 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
         .toList();
 
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Business Information',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+
         ),
       ),
       body: Padding(
@@ -86,7 +87,7 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: AppColors.black,
+
                                 width: 2,
                               ),
                             ),
@@ -115,13 +116,13 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: AppColors.black,
+
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white, width: 2),
                           ),
                           child: const Icon(
                             Icons.edit,
-                            color: Colors.white,
+
                             size: 16,
                           ),
                         ),
@@ -166,6 +167,12 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
 
                 // --- Business Type Dropdown ---
                 CustomDropdown<String>(
+                  decoration: CustomDropdownDecoration(
+                    closedFillColor: Theme.of(context).highlightColor,
+                    expandedFillColor: Theme.of(
+                      context,
+                    ).scaffoldBackgroundColor,
+                  ),
                   hintText: 'Select Business Type',
                   items: businessList,
                   initialItem: selectedBusinessType,

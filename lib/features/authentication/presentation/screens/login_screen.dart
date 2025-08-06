@@ -1,10 +1,8 @@
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/web.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
-
 import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/features/authentication/presentation/widgets/forgot_password.dart';
-
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 import 'package:yelpax_pro/shared/widgets/custom_flutter_toast.dart';
 import 'package:yelpax_pro/shared/widgets/custom_input.dart';
@@ -59,7 +57,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+
       body: SafeArea(
         child: Column(
           children: [
@@ -125,32 +124,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 16),
 
                       /// Country Dropdown
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.neutral200),
+                      /// Country Dropdown
+                      CustomDropdown<String>(
+                        decoration: CustomDropdownDecoration(
+                          closedFillColor: Theme.of(context).highlightColor,
+                          expandedFillColor: Theme.of(context).scaffoldBackgroundColor,
                         ),
-                        child: DropdownButtonFormField<String>(
-                          value: _selectedCountry,
-                          hint: const Text("Select country"),
-                          items: _countries.map((country) {
-                            return DropdownMenuItem<String>(
-                              value: country,
-                              child: Text(country),
-                            );
-                          }).toList(),
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedCountry = value!;
-                            });
-                            _validateForm();
-                          },
-                        ),
+                        hintText: 'Select a Country',
+                        items: _countries,
+                        initialItem: _selectedCountry,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedCountry = value;
+                          });
+                          _validateForm();
+                        },
                       ),
+
 
                       const SizedBox(height: 24),
 
@@ -196,7 +186,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                             child: Text(
                               'Forgot password?',
-                              style: TextStyle(color: AppColors.black),
                             ),
                           ),
                           TextButton(
@@ -208,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                             child: Text(
                               'Sign Up as Professional',
-                              style: TextStyle(color: AppColors.black),
+
                             ),
                           ),
                         ],
@@ -234,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       'Want to Shop on Groupon?',
-                      style: TextStyle(color: AppColors.black),
+
                     ),
                   ),
                   TextButton(
@@ -246,7 +235,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       'Get the Groupon app.',
-                      style: TextStyle(color: AppColors.black),
+
                     ),
                   ),
                 ],

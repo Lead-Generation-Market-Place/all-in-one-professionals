@@ -49,9 +49,8 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
       children: [
         Text(
           title,
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+
+
         ),
         const SizedBox(height: 8),
         CustomInputField(
@@ -94,7 +93,7 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
       appBar: AppBar(
         title: Text(
           'Business FAQs',
-          style: theme.textTheme.titleLarge,
+
         ),
         actions: [
           Padding(
@@ -109,20 +108,18 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                       backgroundColor: theme.cardTheme.color,
                       title: Text(
                         'Confirm Save',
-                        style: theme.textTheme.titleMedium,
+
                       ),
                       content: Text(
                         'Are you sure you want to save your answers?',
-                        style: theme.textTheme.bodyMedium,
+
                       ),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context),
                           child: Text(
                             'No',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.primary,
-                            ),
+
                           ),
                         ),
                         TextButton(
@@ -132,9 +129,7 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                           },
                           child: Text(
                             'Yes',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.primary,
-                            ),
+
                           ),
                         ),
                       ],

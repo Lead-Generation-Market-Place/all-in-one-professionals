@@ -84,21 +84,22 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
     final categoryName = categoriesList.map((e) => e.categoryName).toList();
 
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Professional Signup',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+
           ),
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pushNamed(context, AppRouter.login),
         ),
-        backgroundColor: AppColors.black,
+
         elevation: 0,
       ),
       body: SafeArea(
@@ -111,7 +112,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
                 // Progress indicator
                 LinearProgressIndicator(
                   value: (_currentPage + 1) / 2,
-                  backgroundColor: Colors.grey[200],
+
                   valueColor: AlwaysStoppedAnimation<Color>(AppColors.black),
                   minHeight: 6,
                 ),
@@ -121,7 +122,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
                 Text(
                   'Step ${_currentPage + 1} of 2',
                   style: const TextStyle(
-                    color: AppColors.black,
+
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -149,7 +150,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
                           onPressed: () => _goToPreviousPage(),
                           style: OutlinedButton.styleFrom(
                             minimumSize: const Size(120, 50),
-                            side: BorderSide(color: AppColors.primaryBlue),
+
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -157,7 +158,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
                           child: const Text(
                             'Back',
                             style: TextStyle(
-                              color: AppColors.primaryBlue,
+
                               fontSize: 16,
                             ),
                           ),
@@ -192,7 +193,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
             child: Text(
               'Business Information',
               style: TextStyle(
-                color: AppColors.black,
+
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
@@ -222,7 +223,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+
             ),
           ),
           const SizedBox(height: 8),
@@ -246,12 +247,11 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
               );
             },
             decoration: CustomDropdownDecoration(
-              closedFillColor: Colors.grey[100],
-              expandedFillColor: Colors.grey[100],
-              closedBorder: Border.all(color: Colors.grey[300]!),
-              expandedBorder: Border.all(color: Colors.grey[300]!),
-              listItemStyle: const TextStyle(fontSize: 16),
-              hintStyle: TextStyle(color: Colors.grey[600]),
+              searchFieldDecoration: SearchFieldDecoration(fillColor: Theme.of(context).colorScheme.surface),
+              closedFillColor: Theme.of(context).highlightColor,
+              expandedFillColor: Theme.of(
+                context,
+              ).scaffoldBackgroundColor,
             ),
             validator: (value) {
               if (selectedCountryId == null) {
@@ -268,11 +268,18 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+
             ),
           ),
           const SizedBox(height: 8),
           CustomDropdown.search(
+            decoration: CustomDropdownDecoration(
+              searchFieldDecoration: SearchFieldDecoration(fillColor: Theme.of(context).colorScheme.surface),
+              closedFillColor: Theme.of(context).highlightColor,
+              expandedFillColor: Theme.of(
+                context,
+              ).scaffoldBackgroundColor,
+            ),
             hintText: 'Select your business type',
             items: categoryName,
             initialItem: selectedCategoryId != null
@@ -291,14 +298,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
                 'Selected Category id: ${selectedCategory.id}, Category Name: ${selectedCategory.categoryName}',
               );
             },
-            decoration: CustomDropdownDecoration(
-              closedFillColor: Colors.grey[100],
-              expandedFillColor: Colors.grey[100],
-              closedBorder: Border.all(color: Colors.grey[300]!),
-              expandedBorder: Border.all(color: Colors.grey[300]!),
-              listItemStyle: const TextStyle(fontSize: 16),
-              hintStyle: TextStyle(color: Colors.grey[600]),
-            ),
+
             validator: (value) {
               if (selectedCategoryId == null) {
                 return 'Please select a business type';
@@ -393,7 +393,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
             child: Text(
               'Personal Information',
               style: TextStyle(
-                color: AppColors.black,
+
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
@@ -471,7 +471,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
               Checkbox(
                 value: true, // You should manage this state properly
                 onChanged: (value) {},
-                activeColor: AppColors.black,
+
               ),
               const Expanded(
                 child: Text(
@@ -540,7 +540,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
                 Navigator.pop(context); // Close dialog
                 Navigator.pushNamed(
                   context,
-                  AppRouter.mServicesAndCategories,
+                  AppRouter.login,
                 ); // Redirect to login
               },
               child: const Text('OK'),

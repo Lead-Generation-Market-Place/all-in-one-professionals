@@ -4,6 +4,7 @@ import 'package:yelpax_pro/config/routes/router.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../shared/widgets/custom_button.dart';
+import '../../../../../shared/widgets/custom_input.dart';
 import '../controllers/m_professional_signup_controller.dart';
 
 class Rating extends StatelessWidget {
@@ -19,6 +20,7 @@ class Rating extends StatelessWidget {
         left: false,
         right: false,
         child: Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: AppBar(
             title: const Text('Request Reviews'),
             centerTitle: true,
@@ -39,7 +41,6 @@ class Rating extends StatelessWidget {
                 const SizedBox(height: 32),
                 const _NavigationButtons(),
                 const SizedBox(height: 32),
-
               ],
             ),
           ),
@@ -59,17 +60,13 @@ class _HeaderSection extends StatelessWidget {
       children: [
         Text(
           'Request Customer Reviews',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Text(
           'Collect reviews from your customers to build trust and credibility',
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
         ),
       ],
     );
@@ -86,36 +83,21 @@ class _EmailInputSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Customer Emails',
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500),
-        ),
+        Text('Customer Emails'),
         const SizedBox(height: 12),
         ...List.generate(provider.emails.length, (index) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: Row(
               children: [
-                Expanded(  // Add this Expanded widget
-                  child: TextField(
+                Expanded(
+                  // Add this Expanded widget
+                  child: CustomInputField(
+                    hintText: 'customer@example.com',
+                    label: 'Email',
                     onChanged: (val) => provider.updateEmail(index, val),
-                    decoration: InputDecoration(
-                      hintText: 'customer@example.com',
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey[300]!),
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[50],
-                    ),
-                    keyboardType: TextInputType.emailAddress,
                   ),
+
                 ),
                 const SizedBox(width: 8),
                 CustomButton(
@@ -123,25 +105,25 @@ class _EmailInputSection extends StatelessWidget {
                   onPressed: provider.sendingIndex == index
                       ? null
                       : () async {
-                    try {
-                      await provider.sendEmail(index);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Sent to ${provider.emails[index]}',
-                          ),
-                          behavior: SnackBarBehavior.floating,
-                        ),
-                      );
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Failed: ${e.toString()}'),
-                          behavior: SnackBarBehavior.floating,
-                        ),
-                      );
-                    }
-                  },
+                          try {
+                            await provider.sendEmail(index);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Sent to ${provider.emails[index]}',
+                                ),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Failed: ${e.toString()}'),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          }
+                        },
                 ),
               ],
             ),
@@ -162,28 +144,14 @@ class _EmailInputSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        OutlinedButton(
-          onPressed: () {},
-          style: OutlinedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            side: BorderSide(color: Colors.grey[300]!),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Image.asset('assets/images/google.png', width: 20, height: 20),
-              const SizedBox(width: 8),
-              const Text('Import from Google'),
-            ],
-          ),
-        ),
+
+        CustomButton(text: 'Import from Google',onPressed: (){},enabled: true,)
+
       ],
     );
   }
 }
+
 class _PreviewCard extends StatelessWidget {
   const _PreviewCard();
 
@@ -192,18 +160,17 @@ class _PreviewCard extends StatelessWidget {
     final provider = Provider.of<ProfessionalSignUpProvider>(context);
 
     return Card(
-      color: AppColors.white,
+        color: Theme.of(context).colorScheme.surface,
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-
           children: [
             Text(
               'EMAIL PREVIEW',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Colors.grey[600],
+
                 letterSpacing: 1,
               ),
             ),
@@ -215,16 +182,15 @@ class _PreviewCard extends StatelessWidget {
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            const Text('Review Request', style: TextStyle(color: Colors.grey)),
+            const Text('Review Request',),
             const SizedBox(height: 16),
             provider.userImageUrl != null
                 ? CircleAvatar(
-              radius: 40,
-              backgroundImage: NetworkImage(
-                'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
-              ),
-            )
-
+                    radius: 40,
+                    backgroundImage: NetworkImage(
+                      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+                    ),
+                  )
                 : const CircleAvatar(
                     radius: 40,
                     backgroundColor: Colors.grey,
@@ -239,7 +205,7 @@ class _PreviewCard extends StatelessWidget {
             const SizedBox(height: 8),
             const Text(
               'We\'d love your feedback to help us improve',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
+              style: TextStyle(fontSize: 14),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
@@ -254,11 +220,15 @@ class _PreviewCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            CustomButton(text: 'Leave a Review',enabled: true,onPressed: () {},),
+            CustomButton(
+              text: 'Leave a Review',
+              enabled: true,
+              onPressed: () {},
+            ),
             const SizedBox(height: 8),
             Text(
               'Requested by: ${provider.username ?? 'Your Business'}',
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
+              style: const TextStyle(fontSize: 12,),
             ),
           ],
         ),
@@ -273,17 +243,17 @@ class _TrustCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.blue[50],
+      color: Theme.of(context).colorScheme.surface,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.blue[100]!),
+
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            const Icon(Icons.thumb_up, color: Colors.blue, size: 40),
+            const Icon(Icons.thumb_up, size: 40),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -293,13 +263,13 @@ class _TrustCard extends StatelessWidget {
                     'Build Trust with Reviews',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue[800],
+
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Positive reviews help attract more customers and grow your business',
-                    style: TextStyle(color: Colors.blue[800]!.withOpacity(0.8)),
+
                   ),
                 ],
               ),
@@ -332,11 +302,14 @@ class _NavigationButtons extends StatelessWidget {
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: CustomButton(text: 'Continue',enabled: true,onPressed: (){
-            Navigator.pushNamed(context,AppRouter.professionalAvailability);
-          },)
+          child: CustomButton(
+            text: 'Continue',
+            enabled: true,
+            onPressed: () {
+              Navigator.pushNamed(context, AppRouter.professionalAvailability);
+            },
+          ),
         ),
-
       ],
     );
   }

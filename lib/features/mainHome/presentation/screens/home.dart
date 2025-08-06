@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/features/mainHome/presentation/controllers/business_context_controller.dart';
 import 'package:yelpax_pro/shared/widgets/bottom_navbar.dart';
@@ -36,10 +37,16 @@ class Home extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+
         title: Text(currentContext.name),
         actions: [
+
+            IconButton(onPressed: (){
+              Navigator.pushNamedAndRemoveUntil(context, AppRouter.login, (route) => false,);
+            }, icon: Icon(Icons.logout)),
           // 🌐 Context Switcher Dropdown
           DropdownButton<String>(
+
             value: currentContext.name,
             onChanged: (val) {
               final newCtx = contextProvider.availableContexts.firstWhere(

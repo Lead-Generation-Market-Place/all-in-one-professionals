@@ -14,20 +14,17 @@ class AvailabilityScreen extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => ProfessionalSignUpProvider(),
       child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           title: const Text(
             'Availability',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              color: AppColors.black,
-            ),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
           centerTitle: true,
           elevation: 0,
-          backgroundColor: Colors.transparent,
+
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.black),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -65,16 +62,12 @@ class _AvailabilityBody extends StatelessWidget {
       children: [
         Text(
           'Set your availability',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: AppColors.black,
-          ),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Text(
           'Customers will only request jobs during the times you set. You need at least 12 hours of availability per week.',
-          style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+          style: TextStyle(fontSize: 16),
         ),
       ],
     );
@@ -128,7 +121,6 @@ class _AvailabilityBody extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: groupValue == value
@@ -209,7 +201,6 @@ class _DayRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           decoration: BoxDecoration(
-            color: Colors.white,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: Colors.grey.shade200),
           ),
@@ -235,10 +226,7 @@ class _DayRow extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () => provider.toggleDayEditing(day),
-                    child: Text(
-                      isEditing ? 'Done' : 'Edit',
-                      style: const TextStyle(color: AppColors.primaryBlue),
-                    ),
+                    child: Text(isEditing ? 'Done' : 'Edit'),
                   ),
                 ],
               ),
@@ -315,10 +303,7 @@ class _DayTimeEditor extends StatelessWidget {
         const SizedBox(height: 16),
         TextButton(
           onPressed: () => provider.applyToSelectedDays(day),
-          child: const Text(
-            'Apply to selected days',
-            style: TextStyle(color: AppColors.primaryBlue),
-          ),
+          child: const Text('Apply to selected days'),
         ),
       ],
     );
@@ -389,10 +374,7 @@ class _SettingsSection extends StatelessWidget {
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 4),
-        Text(
-          description,
-          style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-        ),
+        Text(description, style: TextStyle(fontSize: 14)),
         const SizedBox(height: 8),
         Row(children: children),
       ],
@@ -438,7 +420,6 @@ class _SaveButton extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Business hours saved successfully')),
       );
-
 
       Navigator.pushNamed(context, AppRouter.professionalServiceQuestionForm);
     } catch (e) {

@@ -43,6 +43,7 @@ class _JobsScreenState extends State<JobsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       bottomNavigationBar: const BottomNavbar(),
       body: Column(
         children: [
@@ -58,7 +59,7 @@ class _JobsScreenState extends State<JobsScreen> {
           PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: AppBar(
-              title: const Text('Jobs'),
+              title: const Text('Jobs' ,),
 
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),

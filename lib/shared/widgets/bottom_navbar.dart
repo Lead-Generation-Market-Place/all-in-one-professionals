@@ -128,29 +128,46 @@ class BottomNavbar extends StatelessWidget {
     return Consumer<BusinessContextProvider>(
       builder: (context, contextProvider, _) {
         final businessType = contextProvider.currentContext.type;
+        final theme = Theme.of(context);
 
         return Padding(
           padding: const EdgeInsets.all(10),
           child: ClipRRect(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(20),
-              bottomRight: Radius.circular(20),
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-
-            child: SafeArea(
-              child: BottomNavigationBar(
-                backgroundColor: AppColors.black,
-                currentIndex: navProvider.selectedIndex,
-                onTap: (index) {
-                  navProvider.changeIndex(index);
-                  _handleTabNavigation(businessType, index);
-                },
-                type: BottomNavigationBarType.fixed,
-                selectedItemColor: AppColors.white,
-                unselectedItemColor: AppColors.neutral400,
-                items: _buildItems(businessType),
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: theme.colorScheme.shadow.withOpacity(0.1),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: SafeArea(
+                child: BottomNavigationBar(
+                  backgroundColor: theme.colorScheme.surface,
+                  currentIndex: navProvider.selectedIndex,
+                  onTap: (index) {
+                    navProvider.changeIndex(index);
+                    _handleTabNavigation(businessType, index);
+                  },
+                  type: BottomNavigationBarType.fixed,
+                  selectedItemColor: theme.colorScheme.primary,
+                  unselectedItemColor: theme.colorScheme.onSurface.withOpacity(0.6),
+                  selectedLabelStyle: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  unselectedLabelStyle: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  showSelectedLabels: true,
+                  showUnselectedLabels: true,
+                  elevation: 0,
+                  items: _buildItems(businessType),
+                ),
               ),
             ),
           ),

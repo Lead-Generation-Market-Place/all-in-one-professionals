@@ -6,6 +6,10 @@ final darkTheme = ThemeData(
   // Changed to dark
   scaffoldBackgroundColor: Colors.grey[900],
   // Dark background
+  iconTheme: IconThemeData(
+    color: AppColors.primaryBlue
+
+  ),
   useMaterial3: true,
   colorScheme: ColorScheme.dark(
     primary: AppColors.primaryBlue,
@@ -22,7 +26,18 @@ final darkTheme = ThemeData(
     // Text on background
     onSurface: Colors.white, // Text on surfaces (cards)
   ),
+  cardTheme: CardThemeData(
+    color: AppColors.black,
+    elevation: 1,
+    margin: const EdgeInsets.all(8),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    surfaceTintColor: Colors.transparent,
+    shadowColor: Colors.black.withOpacity(0.1),
+  ),
   cardColor: Colors.grey[800],
+
   // Darker cards
   textTheme: const TextTheme(
     titleSmall: TextStyle(
@@ -56,28 +71,29 @@ final darkTheme = ThemeData(
       color: Colors.white,
     ),
   ),
+
   inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: Colors.grey[800], // Dark fill color
     labelStyle: const TextStyle(color: Colors.white70),
-    // Slightly faded
     hintStyle: const TextStyle(color: Colors.white54),
-    // Even lighter
-    fillColor: Colors.grey[800],
-    // Dark fill for inputs
-    iconColor:AppColors.primaryBlue,
-    // Accent color for icons
+    iconColor: AppColors.primaryBlue,
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: const BorderSide(color: Colors.grey),
     ),
-    errorBorder: OutlineInputBorder(
+    enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: Colors.red, width: 1.5),
+      borderSide: const BorderSide(color: Colors.grey),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: const BorderSide(color: Colors.cyan, width: 1.8),
     ),
-    filled: true,
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Colors.red, width: 1.5),
+    ),
     errorStyle: const TextStyle(
       color: Colors.red,
       fontSize: 13,
@@ -85,6 +101,54 @@ final darkTheme = ThemeData(
       height: 1.2,
     ),
   ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+  style: ElevatedButton.styleFrom(
+    backgroundColor: AppColors.primaryBlue,
+    foregroundColor: Colors.white,
+    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8),
+    ),
+    textStyle: const TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      fontFamily: 'Inter',
+    ),
+  ),
+),
+
+  outlinedButtonTheme: OutlinedButtonThemeData(
+    style: OutlinedButton.styleFrom(
+      foregroundColor: AppColors.primaryBlue,
+      side: BorderSide(color: AppColors.primaryBlue),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      textStyle: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        fontFamily: 'Inter',
+      ),
+    ),
+  ),
+
+  textButtonTheme: TextButtonThemeData(
+    style: TextButton.styleFrom(
+      foregroundColor: AppColors.primaryBlue,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      textStyle: const TextStyle(
+        color: AppColors.white,
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        fontFamily: 'Inter',
+      ),
+    ),
+  ),
+
+
+
+
   appBarTheme: const AppBarTheme(
     backgroundColor: Colors.black, // Dark app bar
     titleTextStyle: TextStyle(

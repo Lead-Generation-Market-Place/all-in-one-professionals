@@ -62,9 +62,7 @@ class BusinessInfo extends StatelessWidget {
                       const SizedBox(width: 8),
                       Text(
                         'Business Information',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+
                       ),
                     ],
                   ),

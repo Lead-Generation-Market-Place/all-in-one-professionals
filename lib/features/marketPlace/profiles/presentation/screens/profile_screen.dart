@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
-
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/controllers/profile_provider.dart';
 import 'package:yelpax_pro/shared/widgets/bottom_navbar.dart';
@@ -26,7 +25,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       left: false,
       right: false,
       child: Scaffold(
-
         bottomNavigationBar: const BottomNavbar(),
         body: SingleChildScrollView(
           child: Column(
@@ -92,9 +90,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           Text(
             'Profile',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           Row(
             children: [
@@ -132,18 +130,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onTap: () {
                   Navigator.pushNamed(context, AppRouter.editProfilePicture);
                 },
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(Icons.edit,  size: 20),
-                    SizedBox(width: 4),
-                    Text(
-                      'Edit',
-                      style: TextStyle(
-
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    Icon(
+                      Icons.edit,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
+                    SizedBox(width: 4),
                   ],
                 ),
               ),
@@ -157,7 +151,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 height: 180,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all( width: 4),
+                  border: Border.all(width: 4),
                 ),
                 child: ClipOval(
                   child: Image.network(
@@ -173,14 +167,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onTap: () {
                   Navigator.pushNamed(context, AppRouter.editProfilePicture);
                 },
-                child: Container(
+                child:Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2),
+                    color: Theme.of(context).unselectedWidgetColor,
+                    border: Border.all(width: 2),
                   ),
-                  child: const Icon(Icons.edit, color: Colors.white, size: 16),
+                  child: const Icon(Icons.edit, size: 16),
                 ),
               ),
             ],
@@ -196,7 +190,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-
                 ),
               );
             },
@@ -209,11 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             builder: (context, companyName, child) {
               return Text(
                 companyName,
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-
-                ),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               );
             },
           ),
@@ -236,18 +225,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onPressed: () {},
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    side: const BorderSide( width: 1.5),
+                    side: const BorderSide(width: 1.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   child: const Text(
                     'See how you rank',
-                    style: TextStyle(
-
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -256,7 +241,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -264,11 +248,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   child: const Text(
                     'Preview profile',
-                    style: TextStyle(
-
-                     fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -282,6 +262,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // 5. Business Info Section Widget
   Widget _buildBusinessInfoSection() {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -289,11 +270,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           const Text(
             'Business info',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-
-            ),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           _buildInfoItem(
@@ -344,28 +321,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               const Text(
                 'Your introduction',
-                style: TextStyle(
-
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               GestureDetector(
                 onTap: () {
                   Navigator.pushNamed(context, AppRouter.editYourIntroduction);
                 },
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(Icons.edit,  size: 20),
-                    SizedBox(width: 4),
-                    Text(
-                      'Edit',
-                      style: TextStyle(
-
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    Icon(
+                      Icons.edit,
+                      size: 20,
+                      color: theme.colorScheme.primary,
                     ),
+                    SizedBox(width: 4),
                   ],
                 ),
               ),
@@ -386,7 +355,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: theme.cardTheme.color, // Use card color from theme
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -401,10 +370,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.person_outline,
-                  color: theme.iconTheme.color,
-                ),
+                Icon(Icons.person_outline, color: theme.iconTheme.color),
                 const SizedBox(width: 12),
                 Text(
                   'Credentials',
@@ -417,36 +383,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 12),
             Text(
               'Add a background check badge to your profile by getting a check from our third party website checker. This will help you win customer\'s trust and get hired more.',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                height: 1.5,
-              ),
+              style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
             ),
             const SizedBox(height: 16),
-            TextButton(
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(color: theme.colorScheme.primary), // Use primary color for border
-                ),
-              ),
-              child: Text(
-                'Start a background check',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
+
+
+            CustomButton(text: 'Start a background check',enabled: true,onPressed: (){},),
+
           ],
         ),
       ),
     );
   }
+
   // 7. Professional License Section Widget
   Widget _buildProfessionalLicenseSection() {
     final theme = Theme.of(context);
@@ -459,7 +408,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: theme.cardTheme.color, // Use card color from theme
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
@@ -474,10 +423,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Row(
                   children: [
-                    Icon(
-                      Icons.person_outline,
-                      color: theme.iconTheme.color,
-                    ),
+                    Icon(Icons.person_outline, color: theme.iconTheme.color),
                     const SizedBox(width: 12),
                     Text(
                       'Professional license',
@@ -493,35 +439,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Text(
                       'Customers prefer to hire licensed professionals. If you don\'t already have a license, we recommend that you get one.',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        height: 1.5,
-                      ),
+                      style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
                     ),
                     const SizedBox(height: 16),
-                    TextButton(
+
+                    CustomButton(
+                      text: 'Add Professional License',
                       onPressed: () {
                         Navigator.pushNamed(
                           context,
                           AppRouter.addBusinessLicense,
                         );
                       },
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          side: BorderSide(color: theme.colorScheme.primary),
-                        ),
-                      ),
-                      child: Text(
-                        'Add a license',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      enabled: true,
                     ),
                   ],
                 ),
@@ -543,7 +473,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: theme.cardTheme.color,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -565,7 +495,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                TextButton.icon(
+                IconButton(
                   onPressed: () {
                     Navigator.pushNamed(context, AppRouter.addPhotosAndVideoes);
                   },
@@ -573,13 +503,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Icons.edit,
                     size: 18,
                     color: theme.colorScheme.primary,
-                  ),
-                  label: Text(
-                    'Edit',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
                   ),
                 ),
               ],
@@ -694,6 +617,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+
   // 9. Featured Projects Section Widget
   Widget _buildFeaturedProjectsSection() {
     final theme = Theme.of(context);
@@ -706,7 +630,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: theme.cardTheme.color,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
@@ -728,23 +652,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     const Spacer(),
-                    TextButton.icon(
+                    CustomButton(
                       onPressed: () {
                         Navigator.pushNamed(
                           context,
                           AppRouter.addFeatureProject,
                         );
-                      },
-                      icon: Icon(
-                        Icons.add_circle_outline_rounded,
-                        color: theme.colorScheme.primary,
-                      ),
-                      label: Text(
-                        'Add Project',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.primary,
-                        ),
-                      ),
+                      },text: 'Add Project',
+
                     ),
                   ],
                 ),
@@ -795,7 +710,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: theme.cardTheme.color,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
@@ -825,17 +740,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    ...List.generate(5, (index) => Icon(
-                      Icons.star_border,
-                      color: theme.colorScheme.primary,
-                    )),
+                    ...List.generate(
+                      5,
+                      (index) => Icon(
+                        Icons.star_border,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  "0 reviews",
-                  style: theme.textTheme.bodySmall,
-                ),
+                Text("0 reviews", style: theme.textTheme.bodySmall),
                 const SizedBox(height: 16),
                 ...List.generate(5, (index) {
                   return Padding(
@@ -855,10 +770,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          "0%",
-                          style: theme.textTheme.bodySmall,
-                        ),
+                        Text("0%", style: theme.textTheme.bodySmall),
                       ],
                     ),
                   );
@@ -926,6 +838,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+
   Widget _buildInfoItem({
     required IconData icon,
     required String title,
@@ -939,31 +852,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       borderRadius: BorderRadius.circular(12),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(
-
-          borderRadius: BorderRadius.circular(12),
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
         child: ListTile(
           leading: Icon(icon),
           title: Text(
             title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
-          subtitle: Text(
-            value,
-            style: TextStyle(
-              fontSize: 14,
-
-            ),
-          ),
-          trailing: const Icon(
-            Icons.chevron_right,
-
-          ),
+          subtitle: Text(value, style: TextStyle(fontSize: 14)),
+          trailing: const Icon(Icons.chevron_right),
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
       ),
@@ -983,31 +880,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       borderRadius: BorderRadius.circular(12),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(
-
-          borderRadius: BorderRadius.circular(12),
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
         child: ListTile(
           leading: Icon(icon),
           title: Text(
             title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
-          subtitle: Text(
-            value,
-            style: TextStyle(
-              fontSize: 14,
-
-            ),
-          ),
-          trailing: const Icon(
-            Icons.chevron_right,
-
-          ),
+          subtitle: Text(value, style: TextStyle(fontSize: 14)),
+          trailing: const Icon(Icons.chevron_right),
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
       ),
@@ -1017,17 +898,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // Placeholder Widget
   Widget _buildPlaceholder() {
     return Container(
-
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.camera_alt, size: 32,),
+            Icon(Icons.camera_alt, size: 32),
             const SizedBox(height: 8),
-            Text(
-              'Add Photo',
-              style: TextStyle(fontSize: 14, ),
-            ),
+            Text('Add Photo', style: TextStyle(fontSize: 14)),
           ],
         ),
       ),

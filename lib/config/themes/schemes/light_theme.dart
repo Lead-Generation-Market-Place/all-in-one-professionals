@@ -5,6 +5,9 @@ final lightTheme = ThemeData(
   fontFamily: 'Inter',
   brightness: Brightness.light,
   scaffoldBackgroundColor: AppColors.background,
+  iconTheme: IconThemeData(
+      color: AppColors.primaryBlue
+  ),
   useMaterial3: true,
   colorScheme: ColorScheme.light(
     primary: AppColors.primaryBlue,
@@ -20,6 +23,21 @@ final lightTheme = ThemeData(
     onBackground: AppColors.textPrimary,
     onError: Colors.white,
   ),
+
+  // Card Theme
+  cardTheme: CardThemeData(
+    color: Colors.white,
+    elevation: 1,
+    margin: const EdgeInsets.all(8),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    surfaceTintColor: Colors.transparent,
+    shadowColor: Colors.black.withOpacity(0.1),
+  ),
+
+
+  // App Bar
   appBarTheme: AppBarTheme(
     backgroundColor: Colors.white,
     elevation: 0,
@@ -29,8 +47,10 @@ final lightTheme = ThemeData(
       color: AppColors.textPrimary,
       fontFamily: 'Inter',
     ),
-    iconTheme: IconThemeData(color: AppColors.textPrimary),
+    iconTheme: IconThemeData(color: AppColors.black),
   ),
+
+  // Text Theme
   textTheme: TextTheme(
     displayLarge: TextStyle(
       fontSize: 28,
@@ -63,6 +83,8 @@ final lightTheme = ThemeData(
       color: AppColors.textSecondary,
     ),
   ),
+
+  // Input Decoration
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
     fillColor: Colors.white,
@@ -93,6 +115,7 @@ final lightTheme = ThemeData(
     ),
   ),
 
+  // Buttons
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: AppColors.primaryBlue,
@@ -106,6 +129,7 @@ final lightTheme = ThemeData(
       ),
     ),
   ),
+
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       foregroundColor: AppColors.primaryBlue,
@@ -119,11 +143,14 @@ final lightTheme = ThemeData(
       ),
     ),
   ),
+
+  // Other Components
   dividerTheme: DividerThemeData(
     color: AppColors.neutral200,
     thickness: 1,
     space: 1,
   ),
+
   floatingActionButtonTheme: FloatingActionButtonThemeData(
     backgroundColor: AppColors.primaryBlue,
     foregroundColor: Colors.white,
