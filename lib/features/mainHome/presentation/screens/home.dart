@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:yelpax_pro/config/routes/router.dart';
-import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/features/mainHome/presentation/controllers/business_context_controller.dart';
-import 'package:yelpax_pro/shared/widgets/bottom_navbar.dart';
-import 'package:yelpax_pro/shared/services/bottom_navbar_notifier.dart';
-
 import 'package:yelpax_pro/features/mainHome/presentation/widgets/grocery_screen.dart';
-import 'package:yelpax_pro/features/mainHome/presentation/widgets/market_place.dart';
-import 'package:yelpax_pro/features/mainHome/presentation/widgets/resturant_screen.dart';
 
-import '../../../../config/themes/theme_mode_type.dart';
-import '../../../../config/themes/theme_provider.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/jobs_screen.dart';
+import 'package:yelpax_pro/shared/services/bottom_navbar_notifier.dart';
+import 'package:yelpax_pro/shared/widgets/bottom_navbar.dart';
+
+import '../widgets/resturant_screen.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -21,96 +17,95 @@ class Home extends StatelessWidget {
     final contextProvider = Provider.of<BusinessContextProvider>(context);
     final navProvider = Provider.of<BottomNavProvider>(context);
 
-    final currentContext = contextProvider.currentContext;
-    final selectedIndex = navProvider.selectedIndex;
-
-    Widget _getScreen(BusinessType type, int tabIndex) {
-      switch (type) {
-        case BusinessType.restaurant:
-          return _getRestaurantTab(tabIndex);
-        case BusinessType.grocery:
-          return _getGroceryTab(tabIndex);
-        case BusinessType.marketplace:
-          return _getMarketplaceTab(tabIndex);
-      }
-    }
-
     return Scaffold(
-      appBar: AppBar(
 
-        title: Text(currentContext.name),
-        actions: [
-
-            IconButton(onPressed: (){
-              Navigator.pushNamedAndRemoveUntil(context, AppRouter.login, (route) => false,);
-            }, icon: Icon(Icons.logout)),
-          // 🌐 Context Switcher Dropdown
-          DropdownButton<String>(
-
-            value: currentContext.name,
-            onChanged: (val) {
-              final newCtx = contextProvider.availableContexts.firstWhere(
-                    (ctx) => ctx.name == val,
-              );
-              contextProvider.switchContext(newCtx);
-              navProvider.resetIndex(); // Reset tab index when context changes
-            },
-            items: contextProvider.availableContexts
-                .map(
-                  (ctx) => DropdownMenuItem<String>(
-                value: ctx.name,
-                child: Text(ctx.name),
-              ),
-            )
-                .toList(),
-          ),
-
-          const SizedBox(width: 12),
-
-          // 🎨 Theme Switcher Dropdown
-          Consumer<ThemeProvider>(
-            builder: (context, themeProvider, _) {
-              return DropdownButton<ThemeModeType>(
-                value: themeProvider.currentTheme,
-                onChanged: (newTheme) {
-                  if (newTheme != null) {
-                    themeProvider.setTheme(newTheme);
-                  }
-                },
-                dropdownColor: AppColors.black,
-                icon: const Icon(Icons.color_lens, color: Colors.black),
-                items: ThemeModeType.values.map((theme) {
-                  return DropdownMenuItem(
-                    value: theme,
-                    child: Text(
-                      theme.name.toUpperCase(),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  );
-                }).toList(),
-              );
-            },
-          ),
-          const SizedBox(width: 8),
-        ],
+      body: _getCurrentScreen(
+        contextProvider.currentContext.type,
+        navProvider.selectedIndex,
       ),
-
       bottomNavigationBar: const BottomNavbar(),
-      body: _getScreen(currentContext.type, selectedIndex),
     );
   }
 
-  // Add screen builders for each tab for each business type
+  // Widget _buildBusinessTypeDropdown(
+  //     BuildContext context, BusinessContextProvider provider) {
+  //   return DropdownButton<BusinessContext>(
+  //     value: provider.currentContext,
+  //     items: provider.availableContexts.map((context) {
+  //       return DropdownMenuItem<BusinessContext>(
+  //         value: context,
+  //         child: Text(context.name),
+  //       );
+  //     }).toList(),
+  //     onChanged: (newContext) {
+  //       if (newContext != null) {
+  //         provider.switchContext(newContext);
+  //         Provider.of<BottomNavProvider>(context, listen: false).changeIndex(0);
+  //       }
+  //     },
+  //   );
+  // }
+
+  Widget _getCurrentScreen(BusinessType type, int index) {
+    switch (type) {
+      case BusinessType.restaurant:
+        return _getRestaurantTab(index);
+      case BusinessType.grocery:
+        return _getGroceryTab(index);
+      case BusinessType.marketplace:
+        return _getMarketplaceTab(index);
+    }
+  }
+
+  String _getAppBarTitle(BusinessType type, int index) {
+    switch (type) {
+      case BusinessType.restaurant:
+        switch (index) {
+          case 0:
+            return 'Restaurant Menu';
+          case 1:
+            return 'Reviews';
+          case 2:
+            return 'Settings';
+          default:
+            return 'Restaurant';
+        }
+      case BusinessType.grocery:
+        switch (index) {
+          case 0:
+            return 'Grocery Store';
+          case 1:
+            return 'Shopping Cart';
+          case 2:
+            return 'Settings';
+          default:
+            return 'Grocery';
+        }
+      case BusinessType.marketplace:
+        switch (index) {
+          case 0:
+            return 'Jobs';
+          case 1:
+            return 'Search';
+          case 2:
+            return 'Services';
+          case 3:
+            return 'Notifications';
+          case 4:
+            return 'Profile';
+          default:
+            return 'Marketplace';
+        }
+    }
+  }
+
   Widget _getRestaurantTab(int index) {
     switch (index) {
       case 0:
-        return const Center(child: Text("Restaurant Menu"));
+        return const RestaurantScreen();
       case 1:
         return const Center(child: Text("Restaurant Reviews"));
       case 2:
-        return const Center(child: Text("Restaurant Settings"));
-
-      case 3:
         return const Center(child: Text("Restaurant Settings"));
       default:
         return const RestaurantScreen();
@@ -120,7 +115,7 @@ class Home extends StatelessWidget {
   Widget _getGroceryTab(int index) {
     switch (index) {
       case 0:
-        return const Center(child: Text("Grocery Store"));
+        return const GroceryScreen();
       case 1:
         return const Center(child: Text("Grocery Cart"));
       case 2:
@@ -133,13 +128,17 @@ class Home extends StatelessWidget {
   Widget _getMarketplaceTab(int index) {
     switch (index) {
       case 0:
-        return const Center(child: Text("Marketplace"));
+        return  JobsScreen();
       case 1:
-        return const Center(child: Text("Wishlist"));
+        return const Center(child: Text("Search"));
       case 2:
-        return const Center(child: Text("Marketplace Settings"));
+        return const Center(child: Text("Services"));
+      case 3:
+        return const Center(child: Text("Notifications"));
+      case 4:
+        return const Center(child: Text("Profile"));
       default:
-        return const MarketplaceScreen();
+        return const JobsScreen();
     }
   }
 }

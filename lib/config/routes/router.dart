@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:yelpax_pro/core/error/widgets/unknown_route_screen.dart';
 import 'package:yelpax_pro/features/authentication/presentation/screens/login_screen.dart';
 import 'package:yelpax_pro/features/authentication/presentation/screens/signup_as_professional.dart';
+import 'package:yelpax_pro/features/mainHome/presentation/screens/business_category_selection_screen.dart';
 import 'package:yelpax_pro/features/mainHome/presentation/screens/home.dart';
 
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/jobs_screen.dart';
@@ -22,8 +23,11 @@ import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/pr
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/your_introduction.dart';
 import 'package:yelpax_pro/features/marketPlace/search/presentation/screens/search_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_screen.dart';
+import 'package:yelpax_pro/features/marketPlace/settings/presentation/widgets/theme_selection.dart';
 
 import 'package:yelpax_pro/shared/onboarding_screen/onboarding_screen.dart';
+
+import '../../features/marketPlace/settings/presentation/screens/settings_screen.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -63,6 +67,15 @@ class AppRouter {
       '/marketplace/professionalAvailability';
   static const String professionalServiceQuestionForm =
       '/marketplace/professionalServiceQuestionForm';
+
+  static const String businessCategorySelectionScreen =
+      '/marketplace/businessCategorySelectionScreen';
+
+  static const String settingsScreen =
+      '/marketplace/settingsScreen';
+
+  static const String themeSelection =
+      '/marketplace/themeSelection';
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
@@ -111,6 +124,12 @@ class AppRouter {
 
       case professionalServiceQuestionForm:
         return MaterialPageRoute(builder: (_) => ServiceQuestionForm());
+      case businessCategorySelectionScreen:
+        return MaterialPageRoute(builder: (_) => BusinessCategorySelectionScreen());
+      case settingsScreen:
+        return MaterialPageRoute(builder: (_) => SettingsScreen());
+      case themeSelection:
+        return MaterialPageRoute(builder: (_) => ThemeSelection());
       case unknownRouteScreen:
         return MaterialPageRoute(
           builder: (_) =>

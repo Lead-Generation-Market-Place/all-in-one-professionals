@@ -12,167 +12,108 @@ class BottomNavbar extends StatelessWidget {
   Widget build(BuildContext context) {
     final navProvider = Provider.of<BottomNavProvider>(context);
     final contextProvider = Provider.of<BusinessContextProvider>(context);
+    final theme = Theme.of(context);
 
-    final businessType = contextProvider.currentContext.type;
-
-    List<BottomNavigationBarItem> _buildItems(BusinessType businessType) {
-      switch (businessType) {
-        case BusinessType.restaurant:
-          return [
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.restaurant_menu),
-              label: 'Menu',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.reviews),
-              label: 'Reviews',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Settings',
-            ),
-          ];
-        case BusinessType.grocery:
-          return [
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.local_grocery_store),
-              label: 'Store',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart),
-              label: 'Cart',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Settings',
-            ),
-          ];
-        case BusinessType.marketplace:
-          return [
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.work_outline), // Jobs
-              label: 'Jobs',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.search), // Search
-              label: 'Search',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.design_services), // Services
-              label: 'Services',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.notifications_none), // Notifications
-              label: 'Notifications',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline), // Profile
-              label: 'Profile',
-            ),
-          ];
-      }
-    }
-
-    void _handleTabNavigation(BusinessType type, int index) {
-      final navigator = Navigator.of(context);
-
-      switch (type) {
-        case BusinessType.restaurant:
-          switch (index) {
-            case 0:
-              navigator.pushReplacementNamed('/restaurant/menu');
-              break;
-            case 1:
-              navigator.pushReplacementNamed('/restaurant/reviews');
-              break;
-            case 2:
-              navigator.pushReplacementNamed('/restaurant/settings');
-              break;
-          }
-          break;
-        case BusinessType.grocery:
-          switch (index) {
-            case 0:
-              navigator.pushReplacementNamed('/grocery/store');
-              break;
-            case 1:
-              navigator.pushReplacementNamed('/grocery/cart');
-              break;
-            case 2:
-              navigator.pushReplacementNamed('/grocery/settings');
-              break;
-          }
-          break;
-        case BusinessType.marketplace:
-          switch (index) {
-            case 0:
-              navigator.pushNamed(AppRouter.marketplaceJobs);
-              break;
-            case 1:
-              navigator.pushNamed(AppRouter.marketplaceSearch);
-              break;
-            case 2:
-              navigator.pushNamed(AppRouter.marketplaceServices);
-              break;
-            case 3:
-              navigator.pushNamed(AppRouter.marketplaceNotifications);
-              break;
-            case 4:
-              navigator.pushNamed(AppRouter.marketplaceProfile);
-              break;
-          }
-          break;
-      }
-    }
-
-    return Consumer<BusinessContextProvider>(
-      builder: (context, contextProvider, _) {
-        final businessType = contextProvider.currentContext.type;
-        final theme = Theme.of(context);
-
-        return Padding(
-          padding: const EdgeInsets.all(10),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: theme.colorScheme.shadow.withOpacity(0.1),
-                    blurRadius: 10,
-                    spreadRadius: 2,
-                  ),
-                ],
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.shadow.withOpacity(0.1),
+                blurRadius: 10,
+                spreadRadius: 2,
               ),
-              child: SafeArea(
-                child: BottomNavigationBar(
-                  backgroundColor: theme.colorScheme.surface,
-                  currentIndex: navProvider.selectedIndex,
-                  onTap: (index) {
-                    navProvider.changeIndex(index);
-                    _handleTabNavigation(businessType, index);
-                  },
-                  type: BottomNavigationBarType.fixed,
-                  selectedItemColor: theme.colorScheme.primary,
-                  unselectedItemColor: theme.colorScheme.onSurface.withOpacity(0.6),
-                  selectedLabelStyle: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  unselectedLabelStyle: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  showSelectedLabels: true,
-                  showUnselectedLabels: true,
-                  elevation: 0,
-                  items: _buildItems(businessType),
-                ),
+            ],
+          ),
+          child: SafeArea(
+            child: BottomNavigationBar(
+              backgroundColor: theme.colorScheme.surface,
+              currentIndex: navProvider.selectedIndex,
+              onTap: (index) {
+                navProvider.changeIndex(index);
+              },
+              type: BottomNavigationBarType.fixed,
+              selectedItemColor: theme.colorScheme.primary,
+              unselectedItemColor: theme.colorScheme.onSurface.withOpacity(0.6),
+              selectedLabelStyle: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
               ),
+              unselectedLabelStyle: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+              showSelectedLabels: true,
+              showUnselectedLabels: true,
+              elevation: 0,
+              items: _buildItems(contextProvider.currentContext.type),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
+
+  List<BottomNavigationBarItem> _buildItems(BusinessType businessType) {
+    switch (businessType) {
+      case BusinessType.restaurant:
+        return [
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.restaurant_menu),
+            label: 'Menu',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.reviews),
+            label: 'Reviews',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ];
+      case BusinessType.grocery:
+        return [
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.local_grocery_store),
+            label: 'Store',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Cart',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ];
+      case BusinessType.marketplace:
+        return [
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.work_outline),
+            label: 'Jobs',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.design_services),
+            label: 'Services',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.notifications_none),
+            label: 'Notifications',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Profile',
+          ),
+        ];
+    }
+  }
 }
+
+    

@@ -155,12 +155,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                     setState(() => _isLoading = true);
                                     // Simulated login logic
                                     await Future.delayed(
-                                      const Duration(seconds: 5),
+                                      const Duration(seconds: 1),
                                     );
                                     setState(() => _isLoading = false);
                                     Navigator.of(
                                       context,
-                                    ).pushReplacementNamed(AppRouter.home);
+                                    ).pushReplacementNamed(AppRouter.businessCategorySelectionScreen);
                                   }
                                 }
                               : null,

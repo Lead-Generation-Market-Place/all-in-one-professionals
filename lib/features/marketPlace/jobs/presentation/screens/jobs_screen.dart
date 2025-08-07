@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
-import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/m_services_categories.dart';
 import 'package:yelpax_pro/shared/widgets/bottom_navbar.dart';
-import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 
 class JobsScreen extends StatefulWidget {
   const JobsScreen({super.key});
@@ -44,7 +42,6 @@ class _JobsScreenState extends State<JobsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
 
-      bottomNavigationBar: const BottomNavbar(),
       body: Column(
         children: [
           if (!isSetupFinished)
@@ -56,23 +53,39 @@ class _JobsScreenState extends State<JobsScreen> {
             ),
 
           // Manually add AppBar here below the banner
-          PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
-            child: AppBar(
-              title: const Text('Jobs' ,),
+          Material(
+            elevation: 4,
+            color: Theme.of(context).appBarTheme.backgroundColor,
+            child: SizedBox(
+              height: kToolbarHeight,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Title
+                    const Text(
+                      'Jobs',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
 
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    AppRouter.home,
-                    (route) => false,
-                  );
-                },
+                    // Settings Icon
+                    IconButton(
+                      icon: const Icon(Icons.settings),
+                      onPressed: () {
+                        Navigator.pushNamed(context, AppRouter.settingsScreen);
+                        debugPrint("Settings tapped");
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
+
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(10.0),

@@ -13,6 +13,8 @@ class AppTheme {
         return darkTheme;
       case ThemeModeType.light:
         return lightTheme;
+      case ThemeModeType.system:
+        return lightTheme;
     }
   }
 }
