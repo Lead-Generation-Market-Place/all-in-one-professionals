@@ -16,7 +16,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: const BottomNavbar(),
+
       body: Column(
         children: [
           if (!isSetupFinished)

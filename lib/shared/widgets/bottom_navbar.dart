@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:yelpax_pro/config/routes/router.dart';
-import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/features/mainHome/presentation/controllers/business_context_controller.dart';
 import 'package:yelpax_pro/shared/services/bottom_navbar_notifier.dart';
 
@@ -34,6 +34,7 @@ class BottomNavbar extends StatelessWidget {
               currentIndex: navProvider.selectedIndex,
               onTap: (index) {
                 navProvider.changeIndex(index);
+                _navigateTo(context, contextProvider.currentContext.type, index);
               },
               type: BottomNavigationBarType.fixed,
               selectedItemColor: theme.colorScheme.primary,
@@ -61,59 +62,35 @@ class BottomNavbar extends StatelessWidget {
     switch (businessType) {
       case BusinessType.restaurant:
         return [
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.restaurant_menu),
-            label: 'Menu',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.reviews),
-            label: 'Reviews',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
+          const BottomNavigationBarItem(icon: Icon(Icons.restaurant_menu), label: 'Menu'),
+          const BottomNavigationBarItem(icon: Icon(Icons.reviews), label: 'Reviews'),
+          const BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ];
       case BusinessType.grocery:
         return [
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.local_grocery_store),
-            label: 'Store',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Cart',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
+          const BottomNavigationBarItem(icon: Icon(Icons.local_grocery_store), label: 'Store'),
+          const BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Cart'),
+          const BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ];
       case BusinessType.marketplace:
         return [
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.work_outline),
-            label: 'Jobs',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.design_services),
-            label: 'Services',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.notifications_none),
-            label: 'Notifications',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
-          ),
+          const BottomNavigationBarItem(icon: Icon(Icons.work_outline), label: 'Jobs'),
+          const BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+          const BottomNavigationBarItem(icon: Icon(Icons.design_services), label: 'Services'),
+          const BottomNavigationBarItem(icon: Icon(Icons.notifications_none), label: 'Notifications'),
+          const BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
         ];
     }
   }
-}
 
-    
+// Update the _navigateTo method in BottomNavbar
+  void _navigateTo(BuildContext context, BusinessType type, int index) {
+    // Instead of pushing named routes, just update the selected index
+    // The Home widget will handle displaying the correct screen
+    final navProvider = Provider.of<BottomNavProvider>(context, listen: false);
+    navProvider.changeIndex(index);
+
+    // Optional: Close any open drawers or dialogs
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+}

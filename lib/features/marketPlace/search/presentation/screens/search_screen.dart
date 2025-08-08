@@ -16,7 +16,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: const BottomNavbar(),
+
       body: Column(
         children: [
           if (!isSetupFinished)

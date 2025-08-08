@@ -83,7 +83,13 @@ final lightTheme = ThemeData(
       color: AppColors.textSecondary,
     ),
   ),
-
+  bottomSheetTheme: BottomSheetThemeData(
+    backgroundColor: Colors.white, // or your preferred light color
+    modalBackgroundColor: Colors.white, // for modal bottom sheets
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+  ),
   // Input Decoration
   inputDecorationTheme: InputDecorationTheme(
     filled: true,

@@ -14,12 +14,11 @@ class AccountBottomSheet extends StatelessWidget {
     final contextProvider = Provider.of<BusinessContextProvider>(context);
     final navProvider = Provider.of<BottomNavProvider>(context);
     final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        color: theme.bottomSheetTheme.backgroundColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -55,21 +54,23 @@ class AccountBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          // Dropdown container
+          // Dropdown container - Updated to use theme colors
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              border: Border.all(
-                color: theme.colorScheme.outline,
-              ),
+              border: Border.all(color: theme.colorScheme.outline),
               borderRadius: BorderRadius.circular(10),
-              color: theme.colorScheme.surfaceVariant,
+              color: theme.colorScheme.surfaceVariant, // Using theme color
             ),
             child: DropdownButton<BusinessContext>(
               value: contextProvider.currentContext,
               isExpanded: true,
-              icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.onSurface),
+              icon: Icon(
+                Icons.arrow_drop_down,
+                color: theme.colorScheme.onSurface,
+              ),
               dropdownColor: theme.colorScheme.surface,
+              // Using theme color
               underline: const SizedBox(),
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurface,
@@ -92,7 +93,7 @@ class AccountBottomSheet extends StatelessWidget {
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     AppRouter.home,
-                        (route) => false,
+                    (route) => false,
                   );
                 }
               },
@@ -105,7 +106,6 @@ class AccountBottomSheet extends StatelessWidget {
           CustomButton(
             text: 'Add New Account',
             enabled: true,
-
             onPressed: () {
               Navigator.pushNamed(context, AppRouter.signUpAsProfessional);
             },
@@ -114,4 +114,6 @@ class AccountBottomSheet extends StatelessWidget {
       ),
     );
   }
+
+  // In your DynamicBottomSheet class (or wherever you define it), ensure it uses theme:
 }

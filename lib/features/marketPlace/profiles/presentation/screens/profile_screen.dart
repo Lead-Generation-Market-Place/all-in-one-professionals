@@ -25,7 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       left: false,
       right: false,
       child: Scaffold(
-        bottomNavigationBar: const BottomNavbar(),
+
         body: SingleChildScrollView(
           child: Column(
             children: [

@@ -37,7 +37,13 @@ final darkTheme = ThemeData(
     shadowColor: Colors.black.withOpacity(0.1),
   ),
   cardColor: Colors.grey[800],
-
+  bottomSheetTheme: BottomSheetThemeData(
+    backgroundColor: Colors.grey[800]!, // or your preferred dark color
+    modalBackgroundColor: Colors.grey[800]!, // for modal bottom sheets
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+  ),
   // Darker cards
   textTheme: const TextTheme(
     titleSmall: TextStyle(

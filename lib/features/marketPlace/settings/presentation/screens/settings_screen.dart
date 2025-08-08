@@ -51,10 +51,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
             icon: Icons.account_circle_outlined,
             title: 'Accounts',
             subtitle: 'Login & security options',
+            // In your SettingsItem where you call the bottom sheet:
             onTap: () {
-              DynamicBottomSheet.show(
+              showModalBottomSheet(
                 context: context,
-                child: const AccountBottomSheet(),
+                backgroundColor: Theme.of(context).bottomSheetTheme.backgroundColor,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                isScrollControlled: true,
+                builder: (context) => const AccountBottomSheet(),
               );
             },
           ),
