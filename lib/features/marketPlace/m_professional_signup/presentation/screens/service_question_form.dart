@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 
 import '../../data/service_questions.dart';
@@ -93,6 +94,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
                         : () async {
                             final success = await controller.submitAnswers();
                             if (success && mounted) {
+                              Navigator.pushNamed(context, AppRouter.location);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Submitted successfully'),

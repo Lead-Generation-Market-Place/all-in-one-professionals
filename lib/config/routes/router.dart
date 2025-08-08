@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:yelpax_pro/core/error/widgets/unknown_route_screen.dart';
 import 'package:yelpax_pro/features/authentication/presentation/screens/login_screen.dart';
 import 'package:yelpax_pro/features/authentication/presentation/screens/signup_as_professional.dart';
@@ -8,6 +9,7 @@ import 'package:yelpax_pro/features/mainHome/presentation/screens/home.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/jobs_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/availability.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/business_name_logo.dart';
+import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/location.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/m_services_categories.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/rating.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/service_question_form.dart';
@@ -76,6 +78,8 @@ class AppRouter {
 
   static const String themeSelection =
       '/marketplace/themeSelection';
+  static const String location =
+      '/marketplace/location';
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
@@ -130,6 +134,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => SettingsScreen());
       case themeSelection:
         return MaterialPageRoute(builder: (_) => ThemeSelection());
+      case location:
+        return MaterialPageRoute(builder: (_) => LocationScreen());
       case unknownRouteScreen:
         return MaterialPageRoute(
           builder: (_) =>

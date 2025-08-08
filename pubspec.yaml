@@ -28,6 +28,9 @@ dependencies:
   permission_handler: ^12.0.1
   google_maps_flutter: ^2.12.3
   clipboard: ^2.0.2
+  location: ^8.0.1
+  flutter_typeahead: ^5.2.0
+  http: ^1.5.0
 
 dev_dependencies:
   flutter_test:

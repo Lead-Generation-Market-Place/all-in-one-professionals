@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
-import 'package:yelpax_pro/shared/widgets/bottom_navbar.dart';
 
 class ServiceScreen extends StatefulWidget {
   const ServiceScreen({super.key});
@@ -12,11 +12,13 @@ class ServiceScreen extends StatefulWidget {
 
 class _ServiceScreenState extends State<ServiceScreen> {
   bool isSetupFinished = false;
+  late GoogleMapController _mapController;
+
+  final LatLng _initialPosition = const LatLng(37.7749, -122.4194); // San Francisco
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Column(
         children: [
           if (!isSetupFinished)
@@ -27,23 +29,28 @@ class _ServiceScreenState extends State<ServiceScreen> {
               },
             ),
 
-          // Manually add AppBar here below the banner
+          // Custom AppBar
           PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: AppBar(
               title: const Text('Services'),
-
               automaticallyImplyLeading: false,
             ),
           ),
+
+          // Google Map
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
-                  // Your other content here
-                ],
+            child: GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: _initialPosition,
+                zoom: 12,
               ),
+              onMapCreated: (controller) {
+                _mapController = controller;
+              },
+              myLocationEnabled: true,
+              myLocationButtonEnabled: true,
+              zoomControlsEnabled: true,
             ),
           ),
         ],
