@@ -9,6 +9,7 @@ import 'package:yelpax_pro/features/mainHome/presentation/screens/home.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/jobs_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/availability.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/business_name_logo.dart';
+import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/card_details.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/location.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/m_services_categories.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/rating.dart';
@@ -36,50 +37,53 @@ class AppRouter {
   static const String login = '/login';
   static const String home = '/home';
   static const String unknownRouteScreen = '/unknownRouteScreen';
-  static const String marketplaceJobs = '/marketplace/jobs';
-  static const String marketplaceSearch = '/marketplace/search';
-  static const String marketplaceServices = '/marketplace/services';
-  static const String marketplaceNotifications = '/marketplace/notifications';
-  static const String marketplaceProfile = '/marketplace/profile';
-  static const String editProfilePicture = '/marketplace/editProfilePicture';
-  static const String editBusinessInfo = '/marketplace/editBusinessInfo';
-  static const String editBusinessFAQS = '/marketplace/editBusinessFAQS';
+  static const String homeServicesJobs = '/homeServices/jobs';
+  static const String homeServicesSearch = '/homeServices/search';
+  static const String homeServicesServices = '/homeServices/services';
+  static const String homeServicesNotifications = '/homeServices/notifications';
+  static const String homeServicesProfile = '/homeServices/profile';
+  static const String editProfilePicture = '/homeServices/editProfilePicture';
+  static const String editBusinessInfo = '/homeServices/editBusinessInfo';
+  static const String editBusinessFAQS = '/homeServices/editBusinessFAQS';
   static const String editYourIntroduction =
-      '/marketplace/editYourIntroduction';
-  static const String addBusinessLicense = '/marketplace/addBusinessLicense';
-  static const String addPhotosAndVideoes = '/marketplace/addPhotosAndVideoes';
-  static const String addFeatureProject = '/marketplace/addFeatureProject';
+      '/homeServices/editYourIntroduction';
+  static const String addBusinessLicense = '/homeServices/addBusinessLicense';
+  static const String addPhotosAndVideoes = '/homeServices/addPhotosAndVideoes';
+  static const String addFeatureProject = '/homeServices/addFeatureProject';
 
   static const String signUpAsProfessional =
-      '/marketplace/signUpAsProfessional';
+      '/homeServices/signUpAsProfessional';
 
   static const String mServicesAndCategories =
-      '/marketplace/mServicesAndCategories';
+      '/homeServices/mServicesAndCategories';
 
-  static const String signUpProcessScreen = '/marketplace/signUpProcessScreen';
+  static const String signUpProcessScreen = '/homeServices/signUpProcessScreen';
 
   static const String signUpProcessBusinessNameLogo =
-      '/marketplace/signUpProcessBusinessNameLogo';
+      '/homeServices/signUpProcessBusinessNameLogo';
 
   static const String professionalRating =
-      '/marketplace/professionalRating';
+      '/homeServices/professionalRating';
 
 
   static const String professionalAvailability =
-      '/marketplace/professionalAvailability';
+      '/homeServices/professionalAvailability';
   static const String professionalServiceQuestionForm =
-      '/marketplace/professionalServiceQuestionForm';
+      '/homeServices/professionalServiceQuestionForm';
 
   static const String businessCategorySelectionScreen =
-      '/marketplace/businessCategorySelectionScreen';
+      '/homeServices/businessCategorySelectionScreen';
 
   static const String settingsScreen =
-      '/marketplace/settingsScreen';
+      '/homeServices/settingsScreen';
 
   static const String themeSelection =
-      '/marketplace/themeSelection';
+      '/homeServices/themeSelection';
   static const String location =
-      '/marketplace/location';
+      '/homeServices/location';
+
+  static const String cardDetails =
+      '/homeServices/cardDetails';
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
@@ -88,15 +92,15 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case home:
         return MaterialPageRoute(builder: (_) => const Home());
-      case marketplaceJobs:
+      case homeServicesJobs:
         return MaterialPageRoute(builder: (_) => const JobsScreen());
-      case marketplaceSearch:
+      case homeServicesSearch:
         return MaterialPageRoute(builder: (_) => const SearchScreen());
-      case marketplaceServices:
+      case homeServicesServices:
         return MaterialPageRoute(builder: (_) => const ServiceScreen());
-      case marketplaceNotifications:
+      case homeServicesNotifications:
         return MaterialPageRoute(builder: (_) => const NotificationsScreen());
-      case marketplaceProfile:
+      case homeServicesProfile:
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
       case editProfilePicture:
         return MaterialPageRoute(builder: (_) => ProfilePictureEdit());
@@ -136,6 +140,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => ThemeSelection());
       case location:
         return MaterialPageRoute(builder: (_) => LocationScreen());
+      case cardDetails:
+        return MaterialPageRoute(builder: (_) => CardDetails());
       case unknownRouteScreen:
         return MaterialPageRoute(
           builder: (_) =>

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
-import 'package:yelpax_pro/shared/widgets/bottom_navbar.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -17,7 +15,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Column(
         children: [
           if (!isSetupFinished)
@@ -27,15 +24,55 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
               },
             ),
+          Material(
+            elevation: 4,
+            color: Theme.of(context).appBarTheme.backgroundColor,
+            child: SizedBox(
+              height: kToolbarHeight,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Title
+                    const Text(
+                      'Notifications',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
 
-          // Manually add AppBar here below the banner
-          PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
-            child: AppBar(
-              title: const Text('Notifications'),
-              automaticallyImplyLeading: false,
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.notifications),
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRouter.homeServicesNotifications,
+                            );
+                            debugPrint("Settings tapped");
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.settings),
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRouter.settingsScreen,
+                            );
+                            debugPrint("Settings tapped");
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
+
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(10.0),

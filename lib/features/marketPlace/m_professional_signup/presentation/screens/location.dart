@@ -6,6 +6,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:yelpax_pro/config/routes/router.dart';
+
 class LocationScreen extends StatefulWidget {
   const LocationScreen({super.key});
 
@@ -248,10 +250,12 @@ class _LocationScreenState extends State<LocationScreen> {
                 );
                 return;
               }
-              Navigator.pop(context, {
-                'location': _selectedLocation,
-                'radius': _radiusMiles,
-              });
+              // Navigator.pop(context, {
+              //   'location': _selectedLocation,
+              //   'radius': _radiusMiles,
+              // });
+
+              Navigator.pushNamed(context, AppRouter.cardDetails);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF0077B6),

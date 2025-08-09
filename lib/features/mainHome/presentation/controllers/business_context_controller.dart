@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 
 class BusinessContextProvider extends ChangeNotifier {
   BusinessContext _currentContext = BusinessContext(
-    name: "Marketplace",
-    type: BusinessType.marketplace,
+    name: "Home Services",
+    type: BusinessType.homeServices,
   );
 
   final List<BusinessContext> _availableContexts = [
     BusinessContext(name: "Restaurant", type: BusinessType.restaurant),
     BusinessContext(name: "Grocery", type: BusinessType.grocery),
-    BusinessContext(name: "Marketplace", type: BusinessType.marketplace),
+    BusinessContext(name: "Home Services", type: BusinessType.homeServices),
   ];
 
   BusinessContext get currentContext => _currentContext;
@@ -32,7 +32,7 @@ class BusinessContextProvider extends ChangeNotifier {
     switchContext(context);
   }
 }
-enum BusinessType { restaurant, grocery, marketplace }
+enum BusinessType { restaurant, grocery, homeServices }
 
 class BusinessContext {
   final String name;

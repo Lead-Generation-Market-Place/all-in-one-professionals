@@ -6,7 +6,7 @@ final lightTheme = ThemeData(
   brightness: Brightness.light,
   scaffoldBackgroundColor: AppColors.background,
   iconTheme: IconThemeData(
-      color: AppColors.primaryBlue
+      color: AppColors.black
   ),
   useMaterial3: true,
   colorScheme: ColorScheme.light(
@@ -39,7 +39,7 @@ final lightTheme = ThemeData(
 
   // App Bar
   appBarTheme: AppBarTheme(
-    backgroundColor: Colors.white,
+    backgroundColor: AppColors.primaryBlue,
     elevation: 0,
     titleTextStyle: TextStyle(
       fontSize: 20,

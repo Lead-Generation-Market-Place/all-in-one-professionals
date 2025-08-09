@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 
-import '../../../../../shared/widgets/bottom_sheet.dart';
 import '../widgets/account_bottom_sheet.dart';
 import '../widgets/setting_item.dart';
 
@@ -28,12 +27,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(20.0),
         children: [
-
           SettingsItem(
             icon: Icons.palette_outlined,
             title: 'Theme',
             subtitle: 'Dark mode, light mode, system',
-            onTap: () => navigateTo('/marketplace/themeSelection'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRouter.themeSelection);
+            },
           ),
           Divider(),
           SettingsItem(
@@ -41,9 +41,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: 'Language',
             subtitle: 'Select your preferred language',
             onTap: () {
-              Navigator.pushNamed(context, AppRouter.themeSelection);
-            }
-
+              // Navigator.pushNamed(context, AppRouter.themeSelection);
+            },
           ),
           Divider(),
 
@@ -55,7 +54,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onTap: () {
               showModalBottomSheet(
                 context: context,
-                backgroundColor: Theme.of(context).bottomSheetTheme.backgroundColor,
+                backgroundColor: Theme.of(
+                  context,
+                ).bottomSheetTheme.backgroundColor,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                 ),
@@ -66,17 +67,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
 
           Divider(),
+
+          SettingsItem(
+            icon: Icons.logout_rounded,
+            title: 'Logout',
+            subtitle: 'Logout from your account',
+            // In your SettingsItem where you call the bottom sheet:
+            onTap: () {
+
+
+              showLogoutDialog();
+
+            },
+          ),
           const Divider(),
           SettingsItem(
             icon: Icons.info_outline,
             title: 'Version',
             subtitle: 'App version 1.0.0',
             onTap: () {
-              showAboutDialog(
-                context: context,
-                applicationName: 'Your App Name',
-                applicationVersion: '1.0.0',
-              );
+              // showAboutDialog(
+              //   context: context,
+              //   applicationName: 'Your App Name',
+              //   applicationVersion: '1.0.0',
+              // );
             },
           ),
         ],
@@ -84,8 +98,49 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-
+  void showLogoutDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        final theme = Theme.of(context);
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          backgroundColor: theme.scaffoldBackgroundColor,
+          title: const Text(
+            'Logout',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: const Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context), // Close dialog
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: theme.colorScheme.primary),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.error,
+                foregroundColor: theme.colorScheme.onError,
+              ),
+              onPressed: () {
+                Navigator.pop(context); // Close dialog
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRouter.login,
+                      (route) => false,
+                );
+              },
+              child: const Text('Logout'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
 }
-
-

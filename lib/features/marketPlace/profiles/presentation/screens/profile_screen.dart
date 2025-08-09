@@ -38,14 +38,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                 ),
 
-              // Manually add AppBar here below the banner
-              // PreferredSize(
-              //   preferredSize: const Size.fromHeight(kToolbarHeight),
-              //   child: AppBar(
-              //     title: const Text('Search'),
-              //     automaticallyImplyLeading: false,
-              //   ),
-              // ),
+              Material(
+                elevation: 4,
+                color: Theme.of(context).appBarTheme.backgroundColor,
+                child: SizedBox(
+                  height: kToolbarHeight,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Title
+                        const Text(
+                          'Profile',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+
+                      Row(
+                        children: [
+
+                          IconButton(
+                            icon: const Icon(Icons.notifications),
+                            onPressed: () {
+                              Navigator.pushNamed(context, AppRouter.homeServicesNotifications);
+                              debugPrint("Settings tapped");
+                            },
+                          ),
+                        IconButton(
+                          icon: const Icon(Icons.settings),
+                          onPressed: () {
+                            Navigator.pushNamed(context, AppRouter.settingsScreen);
+                            debugPrint("Settings tapped");
+                          },
+                        ),
+
+
+
+                        ],
+                      ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               // Profile Header
               _buildProfileHeader(),
 

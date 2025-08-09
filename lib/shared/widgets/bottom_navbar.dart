@@ -17,7 +17,7 @@ class BottomNavbar extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(40),
         child: Container(
           decoration: BoxDecoration(
             boxShadow: [
@@ -72,12 +72,11 @@ class BottomNavbar extends StatelessWidget {
           const BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Cart'),
           const BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ];
-      case BusinessType.marketplace:
+      case BusinessType.homeServices:
         return [
           const BottomNavigationBarItem(icon: Icon(Icons.work_outline), label: 'Jobs'),
           const BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
           const BottomNavigationBarItem(icon: Icon(Icons.design_services), label: 'Services'),
-          const BottomNavigationBarItem(icon: Icon(Icons.notifications_none), label: 'Notifications'),
           const BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
         ];
     }
@@ -90,7 +89,5 @@ class BottomNavbar extends StatelessWidget {
     final navProvider = Provider.of<BottomNavProvider>(context, listen: false);
     navProvider.changeIndex(index);
 
-    // Optional: Close any open drawers or dialogs
-    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 }

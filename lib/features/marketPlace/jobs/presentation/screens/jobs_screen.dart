@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/m_services_categories.dart';
-import 'package:yelpax_pro/shared/widgets/bottom_navbar.dart';
 
 class JobsScreen extends StatefulWidget {
   const JobsScreen({super.key});
@@ -41,7 +40,6 @@ class _JobsScreenState extends State<JobsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Column(
         children: [
           if (!isSetupFinished)
@@ -72,13 +70,29 @@ class _JobsScreenState extends State<JobsScreen> {
                       ),
                     ),
 
-                    // Settings Icon
-                    IconButton(
-                      icon: const Icon(Icons.settings),
-                      onPressed: () {
-                        Navigator.pushNamed(context, AppRouter.settingsScreen);
-                        debugPrint("Settings tapped");
-                      },
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.notifications),
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRouter.homeServicesNotifications,
+                            );
+                            debugPrint("Settings tapped");
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.settings),
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRouter.settingsScreen,
+                            );
+                            debugPrint("Settings tapped");
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),

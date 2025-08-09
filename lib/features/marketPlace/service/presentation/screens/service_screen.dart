@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
 
@@ -12,9 +11,6 @@ class ServiceScreen extends StatefulWidget {
 
 class _ServiceScreenState extends State<ServiceScreen> {
   bool isSetupFinished = false;
-  late GoogleMapController _mapController;
-
-  final LatLng _initialPosition = const LatLng(37.7749, -122.4194); // San Francisco
 
   @override
   Widget build(BuildContext context) {
@@ -30,29 +26,56 @@ class _ServiceScreenState extends State<ServiceScreen> {
             ),
 
           // Custom AppBar
-          PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
-            child: AppBar(
-              title: const Text('Services'),
-              automaticallyImplyLeading: false,
+          Material(
+            elevation: 4,
+            color: Theme.of(context).appBarTheme.backgroundColor,
+            child: SizedBox(
+              height: kToolbarHeight,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Title
+                    const Text(
+                      'Services',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.notifications),
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRouter.settingsScreen,
+                            );
+                            debugPrint("Settings tapped");
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.settings),
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRouter.settingsScreen,
+                            );
+                            debugPrint("Settings tapped");
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
 
           // Google Map
-          Expanded(
-            child: GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: _initialPosition,
-                zoom: 12,
-              ),
-              onMapCreated: (controller) {
-                _mapController = controller;
-              },
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              zoomControlsEnabled: true,
-            ),
-          ),
         ],
       ),
     );
