@@ -5,8 +5,14 @@ import 'package:yelpax_pro/features/authentication/presentation/screens/login_sc
 import 'package:yelpax_pro/features/authentication/presentation/screens/signup_as_professional.dart';
 import 'package:yelpax_pro/features/mainHome/presentation/screens/business_category_selection_screen.dart';
 import 'package:yelpax_pro/features/mainHome/presentation/screens/home.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/filter_screen.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/google_map_leads.dart';
 
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/jobs_screen.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/lead_setting.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/leads_details_page.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/response_credits.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/responses.dart' hide GoogleMapLeads;
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/availability.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/business_name_logo.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/card_details.dart';
@@ -25,6 +31,7 @@ import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/pr
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/profile_picture_edit.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/your_introduction.dart';
 import 'package:yelpax_pro/features/marketPlace/search/presentation/screens/search_screen.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/business_availability.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/settings/presentation/widgets/theme_selection.dart';
 
@@ -84,6 +91,23 @@ class AppRouter {
 
   static const String cardDetails =
       '/homeServices/cardDetails';
+
+  static const String businessAvailability =
+      '/homeServices/businessAvailability';
+
+  static const String filterScreen =
+      '/homeServices/filterScreen';
+
+  static const String leadDetailsPage =
+      '/homeServices/leadDetailsPage';
+  static const String response_credits =
+      '/homeServices/response_credits';
+  static const String google_map_leads =
+      '/homeServices/google_map_leads';
+  static const String responses =
+      '/homeServices/responses';
+  static const String leadSetting =
+      '/homeServices/leadSetting';
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
@@ -142,6 +166,21 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => LocationScreen());
       case cardDetails:
         return MaterialPageRoute(builder: (_) => CardDetails());
+      case businessAvailability:
+        return MaterialPageRoute(builder: (_) => BusinessAvailability());
+      case filterScreen:
+        return MaterialPageRoute(builder: (_) => FilterScreen());
+      case leadDetailsPage:
+        return MaterialPageRoute(builder: (_) => LeadsDetailsPage());
+      case response_credits:
+        return MaterialPageRoute(builder: (_) => ResponseCredits());
+      case google_map_leads:
+        return MaterialPageRoute(builder: (_) => GoogleMapLeads());
+      case leadSetting:
+        return MaterialPageRoute(builder: (_) => LeadSetting());
+
+      case responses:
+        return MaterialPageRoute(builder: (_) => Responses());
       case unknownRouteScreen:
         return MaterialPageRoute(
           builder: (_) =>

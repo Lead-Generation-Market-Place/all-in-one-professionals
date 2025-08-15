@@ -31,7 +31,7 @@ class _LocationScreenState extends State<LocationScreen> {
   GoogleMapController? _mapController;
   final loc.Location _locationService = loc.Location();
   final TextEditingController _searchController = TextEditingController();
-  final String _mapsApiKey = 'AIzaSyAt4uYXRmuxOopP1eGh70qY_sNt5Fpt8AM'; // Replace with your API key
+  final String _mapsApiKey = ''; // Replace with your API key
 
   @override
   void initState() {

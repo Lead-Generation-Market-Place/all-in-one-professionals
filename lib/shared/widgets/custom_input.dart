@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:yelpax_pro/core/constants/app_colors.dart';
 
 class CustomInputField extends StatefulWidget {
-  final String label;
+  final String? label; // now this is used as labelText for floating label
   final String hintText;
   final IconData? prefixIcon;
   final IconData? suffixIcon;
@@ -12,10 +11,18 @@ class CustomInputField extends StatefulWidget {
   final String? Function(String?)? validator;
   final TextEditingController? controller;
   final void Function(String)? onChanged;
+  final void Function()? onTap;
+  final bool autofocus;
+  final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
+  final Color? fillColor;
+  final EdgeInsetsGeometry? contentPadding;
+  final int? maxLines;
+  final int? minLines;
 
   const CustomInputField({
     super.key,
-    required this.label,
+    this.label,
     required this.hintText,
     this.prefixIcon,
     this.suffixIcon,
@@ -25,6 +32,14 @@ class CustomInputField extends StatefulWidget {
     this.validator,
     this.controller,
     this.onChanged,
+    this.onTap,
+    this.autofocus = false,
+    this.focusNode,
+    this.textInputAction,
+    this.fillColor,
+    this.contentPadding,
+    this.maxLines = 1,
+    this.minLines,
   });
 
   @override
@@ -33,6 +48,7 @@ class CustomInputField extends StatefulWidget {
 
 class _CustomInputFieldState extends State<CustomInputField> {
   late bool _obscureText;
+  bool _isFocused = false;
 
   @override
   void initState() {
@@ -43,52 +59,105 @@ class _CustomInputFieldState extends State<CustomInputField> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDarkMode = theme.brightness == Brightness.dark;
 
-    return TextFormField(
-      enabled: widget.isEnabled,
-      keyboardType: widget.inputType,
-      obscureText: _obscureText,
-      controller: widget.controller,
-      validator: widget.validator,
-      onChanged: widget.onChanged,
-      style: theme.textTheme.bodyMedium?.copyWith(
-        color: theme.colorScheme.onSurface,
-      ),
-      decoration: InputDecoration(
-        labelText: widget.label,
-        labelStyle: theme.inputDecorationTheme.labelStyle,
-        hintText: widget.hintText,
-        hintStyle: theme.inputDecorationTheme.hintStyle,
-        prefixIcon: widget.prefixIcon != null
-            ? Icon(widget.prefixIcon, color: theme.inputDecorationTheme.iconColor)
-            : null,
-        suffixIcon: widget.isPassword
-            ? IconButton(
-          icon: Icon(
-            _obscureText ? Icons.visibility : Icons.visibility_off,
-            color: theme.inputDecorationTheme.iconColor,
-          ),
-          onPressed: () {
-            setState(() {
-              _obscureText = !_obscureText;
-            });
-          },
-        )
-            : (widget.suffixIcon != null
-            ? Icon(widget.suffixIcon, color: theme.inputDecorationTheme.iconColor)
-            : null),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
+    return Focus(
+      onFocusChange: (hasFocus) => setState(() => _isFocused = hasFocus),
+      child: Container(
+        decoration: BoxDecoration(
+          color:
+          widget.fillColor ??
+              (isDarkMode
+                  ? colorScheme.surfaceContainerHighest.withOpacity(0.2)
+                  : Colors.grey.shade200),
+          borderRadius: BorderRadius.circular(30), // rounded background
         ),
-        border: theme.inputDecorationTheme.border,
-        enabledBorder: theme.inputDecorationTheme.enabledBorder,
-        focusedBorder: theme.inputDecorationTheme.focusedBorder,
-        errorBorder: theme.inputDecorationTheme.errorBorder,
-        filled: theme.inputDecorationTheme.filled,
-        fillColor: theme.inputDecorationTheme.fillColor,
-        errorStyle: theme.inputDecorationTheme.errorStyle,
+        child: TextFormField(
+          enabled: widget.isEnabled,
+          keyboardType: widget.inputType,
+          obscureText: _obscureText,
+          controller: widget.controller,
+          validator: widget.validator,
+          onChanged: widget.onChanged,
+          onTap: widget.onTap,
+          autofocus: widget.autofocus,
+          focusNode: widget.focusNode,
+          textInputAction: widget.textInputAction,
+          maxLines: widget.maxLines,
+          minLines: widget.minLines,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: widget.isEnabled
+                ? colorScheme.onSurface
+                : colorScheme.onSurface.withOpacity(0.5),
+          ),
+          decoration: InputDecoration(
+            labelText: widget.label, // <-- floating label
+            labelStyle: TextStyle(
+              color: _isFocused
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant.withOpacity(0.7),
+              fontWeight: FontWeight.w600,
+            ),
+            floatingLabelBehavior: FloatingLabelBehavior.auto,
+            hintText: widget.hintText,
+            hintStyle: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant.withOpacity(0.5),
+            ),
+            prefixIcon: widget.prefixIcon != null
+                ? Padding(
+              padding: const EdgeInsets.only(left: 16, right: 12),
+              child: Icon(
+                widget.prefixIcon,
+                color: _isFocused
+                    ? colorScheme.primary
+                    : colorScheme.onSurfaceVariant,
+                size: 22,
+              ),
+            )
+                : null,
+            suffixIcon: _buildSuffixIcon(colorScheme),
+            contentPadding:
+            widget.contentPadding ??
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            border: InputBorder.none, // no border line, container handles bg
+            errorStyle: theme.textTheme.bodySmall?.copyWith(
+              color: colorScheme.error,
+              height: 1.2,
+            ),
+          ),
+        ),
       ),
     );
+  }
+
+  Widget? _buildSuffixIcon(ColorScheme colorScheme) {
+    if (widget.isPassword) {
+      return Padding(
+        padding: const EdgeInsets.only(right: 12),
+        child: IconButton(
+          icon: Icon(
+            _obscureText
+                ? Icons.visibility_outlined
+                : Icons.visibility_off_outlined,
+            color: colorScheme.onSurfaceVariant,
+            size: 22,
+          ),
+          onPressed: () => setState(() => _obscureText = !_obscureText),
+        ),
+      );
+    } else if (widget.suffixIcon != null) {
+      return Padding(
+        padding: const EdgeInsets.only(right: 16),
+        child: Icon(
+          widget.suffixIcon,
+          color: _isFocused
+              ? colorScheme.primary
+              : colorScheme.onSurfaceVariant,
+          size: 22,
+        ),
+      );
+    }
+    return null;
   }
 }

@@ -52,7 +52,7 @@ class CustomButton extends StatelessWidget {
               color: _getBackgroundColor(context, isDisabled),
               borderRadius: BorderRadius.circular(12),
               border: _getBorder(context, isDisabled),
-              boxShadow: _getBoxShadow(context, isDisabled),
+             // / boxShadow: _getBoxShadow(context, isDisabled),
             ),
             child: Center(
               child: Padding(
@@ -152,18 +152,18 @@ class CustomButton extends StatelessWidget {
         : null;
   }
 
-  List<BoxShadow>? _getBoxShadow(BuildContext context, bool isDisabled) {
-    final theme = Theme.of(context);
-    if (type == CustomButtonType.text || isDisabled) return null;
-
-    return [
-      BoxShadow(
-        color: theme.shadowColor.withOpacity(0.2),
-        blurRadius: 8,
-        offset: const Offset(0, 4),
-      ),
-    ];
-  }
+  // List<BoxShadow>? _getBoxShadow(BuildContext context, bool isDisabled) {
+  //   final theme = Theme.of(context);
+  //   if (type == CustomButtonType.text || isDisabled) return null;
+  //
+  //   return [
+  //     BoxShadow(
+  //
+  //       blurRadius: 8,
+  //       offset: const Offset(0, 4),
+  //     ),
+  //   ];
+  // }
 
   Set<MaterialState> _states(bool isDisabled) {
     return isDisabled ? {MaterialState.disabled} : {};

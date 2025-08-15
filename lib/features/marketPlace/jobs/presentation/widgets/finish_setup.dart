@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
-import 'package:yelpax_pro/core/constants/app_colors.dart';
-import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 
 class ProfileCompletionBanner extends StatelessWidget {
   final int stepNumber;
@@ -18,35 +16,50 @@ class ProfileCompletionBanner extends StatelessWidget {
     return SafeArea(
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.secondaryBlue,
-          borderRadius: BorderRadius.circular(12), // Rounded corners
+          color: Colors.black87,
         ),
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-        margin: const EdgeInsets.all(12), // Optional spacing around banner
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Flexible(
-              child: Text(
-                'Only $stepNumber setup tasks left before you can start getting leads.',
-                style: const TextStyle(
-                  color: AppColors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+            Expanded(
+              child: RichText(
+                text: TextSpan(
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  children: [
+                    const TextSpan(text: 'Finish ',style: TextStyle(fontSize: 14,color: Colors.white)),
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: Container(
+                        width: 24,
+                        height: 24,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.red,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          '$stepNumber',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const TextSpan(text: ' setup tasks and start getting leads.',style: TextStyle(fontSize: 14)),
+                  ],
                 ),
-                softWrap: true,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
             ),
             const SizedBox(width: 12),
-            CustomButton(
-              text: 'Finish Setup',
-              enabled: true,
-              onPressed: () {
-                Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
-              },
-            ),
+            // Finish Setup Button
+            FilledButton.icon( onPressed: () {
+              Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
+            }, label: Text('Finish Setup',style: TextStyle(fontSize: 16),), ),
           ],
         ),
       ),

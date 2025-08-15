@@ -186,7 +186,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                             child: Text(
                               'Forgot password?',
+                              style: TextStyle(color: Colors.black),
                             ),
+
                           ),
                           TextButton(
                             onPressed: () {
@@ -197,7 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                             child: Text(
                               'Sign Up as Professional',
-
+                              style: TextStyle(color: Colors.black),
                             ),
                           ),
                         ],
@@ -223,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       'Want to Shop on Groupon?',
-
+                      style: TextStyle(color: Colors.black),
                     ),
                   ),
                   TextButton(
@@ -235,7 +237,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       'Get the Groupon app.',
-
+                      style: TextStyle(color: Colors.black),
                     ),
                   ),
                 ],

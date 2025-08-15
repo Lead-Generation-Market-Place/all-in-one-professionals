@@ -15,75 +15,79 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          if (!isSetupFinished)
-            ProfileCompletionBanner(
-              stepNumber: 3,
-              onFinishSetupPressed: () {
-                Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
-              },
-            ),
-          Material(
-            elevation: 4,
-            color: Theme.of(context).appBarTheme.backgroundColor,
-            child: SizedBox(
-              height: kToolbarHeight,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Title
-                    const Text(
-                      'Notifications',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
 
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.notifications),
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              AppRouter.homeServicesNotifications,
-                            );
-                            debugPrint("Settings tapped");
-                          },
+            if (!isSetupFinished)
+              ProfileCompletionBanner(
+                stepNumber: 3,
+                onFinishSetupPressed: () {
+                  Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
+                },
+              ),
+            Material(
+              elevation: 4,
+              color: Theme.of(context).appBarTheme.backgroundColor,
+              child: SizedBox(
+                height: kToolbarHeight,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Title
+                      const Text(
+                        'Notifications',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.settings),
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              AppRouter.settingsScreen,
-                            );
-                            debugPrint("Settings tapped");
-                          },
-                        ),
-                      ],
-                    ),
+                      ),
+
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.notifications),
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRouter.homeServicesNotifications,
+                              );
+                              debugPrint("Settings tapped");
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.settings),
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRouter.settingsScreen,
+                              );
+                              debugPrint("Settings tapped");
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  children: [
+                    // Your other content here
                   ],
                 ),
               ),
             ),
-          ),
-
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
-                  // Your other content here
-                ],
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

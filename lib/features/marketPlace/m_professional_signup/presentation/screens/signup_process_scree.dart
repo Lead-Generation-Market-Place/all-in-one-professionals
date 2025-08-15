@@ -69,7 +69,7 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
 
               _buildStep(
                 completed: availabilityInfoCompleted,
-                enabled: businessInfoCompleted,
+                enabled: true,
                 icon: Icons.calendar_today_outlined,
                 title: "Availability Information",
                 description: "Tell us about your availability",
@@ -89,7 +89,7 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
 
               _buildStep(
                 completed: verificationCompleted,
-                enabled: availabilityInfoCompleted,
+                enabled: true,
                 icon: Icons.help_outline_rounded,
                 title: "Questions",
                 description: "Respond to the questions",
@@ -109,7 +109,7 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
 
               _buildStep(
                 completed: verificationCompleted,
-                enabled: verificationCompleted,
+                enabled: true,
                 icon: Icons.location_on_outlined,
                 title: "Location",
                 description: "Set your location",
@@ -123,7 +123,7 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
 
               _buildStep(
                 completed: verificationCompleted,
-                enabled: verificationCompleted,
+                enabled: true,
                 icon: Icons.payment_outlined,
                 title: "Payment",
                 description: "Set your details",
@@ -137,7 +137,7 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
 
               _buildStep(
                 completed: verificationCompleted,
-                enabled: verificationCompleted,
+                enabled: true,
                 icon: Icons.verified_outlined,
                 title: "Verification",
                 description: "Verify your identity",
@@ -149,7 +149,7 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
 
               _buildStep(
                 completed: false,
-                enabled: verificationCompleted,
+                enabled: true,
                 icon: Icons.star_outline_rounded,
                 title: "Professional Rating",
                 description: "Get ratings from your customers",
