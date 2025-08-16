@@ -5,14 +5,15 @@ import 'package:yelpax_pro/features/authentication/presentation/screens/login_sc
 import 'package:yelpax_pro/features/authentication/presentation/screens/signup_as_professional.dart';
 import 'package:yelpax_pro/features/mainHome/presentation/screens/business_category_selection_screen.dart';
 import 'package:yelpax_pro/features/mainHome/presentation/screens/home.dart';
-import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/filter_screen.dart';
-import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/google_map_leads.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/subs/filter/presentation/screens/filter_screen.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/subs/google_map_leads/presentation/screens/google_map_leads.dart';
 
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/jobs_screen.dart';
-import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/lead_setting.dart';
-import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/leads_details_page.dart';
-import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/response_credits.dart';
-import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/responses.dart' hide GoogleMapLeads;
+import 'package:yelpax_pro/features/marketPlace/jobs/subs/leads_setting/presentation/screens/lead_setting.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/subs/leads_setting/presentation/screens/leads_details_page.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/subs/reponses/presentation/screens/response_credits.dart';
+
+import 'package:yelpax_pro/features/marketPlace/jobs/subs/reponses/presentation/screens/responses.dart' hide GoogleMapLeads;
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/availability.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/business_name_logo.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/card_details.dart';
@@ -23,13 +24,13 @@ import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentati
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/signup_process_scree.dart';
 import 'package:yelpax_pro/features/marketPlace/notifications/presentation/screens/notifications_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/profile_screen.dart';
-import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/business_faqs.dart';
-import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/business_info.dart';
-import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/featured_projects.dart';
-import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/photos_videos.dart';
-import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/professional_license.dart';
-import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/profile_picture_edit.dart';
-import 'package:yelpax_pro/features/marketPlace/profiles/presentation/widgets/your_introduction.dart';
+import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/business_faqs.dart';
+import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/business_info.dart';
+import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/featured_projects.dart';
+import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/photos_videos.dart';
+import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/professional_license.dart';
+import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/profile_picture_edit.dart';
+import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/your_introduction.dart';
 import 'package:yelpax_pro/features/marketPlace/search/presentation/screens/search_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/business_availability.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_screen.dart';

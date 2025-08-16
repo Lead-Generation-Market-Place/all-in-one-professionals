@@ -436,4 +436,13 @@ class ProfileProvider extends ChangeNotifier {
     isCitySearching = val;
     notifyListeners();
   }
+
+
+  File? _profileImage;
+  File? get profileImage => _profileImage;
+
+  void setProfileImage(File file) {
+    _profileImage = file;
+    notifyListeners();
+  }
 }

@@ -123,8 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 16),
 
-                      /// Country Dropdown
-                      /// Country Dropdown
+
                       CustomDropdown<String>(
                         decoration: CustomDropdownDecoration(
                           closedFillColor: Theme.of(context).highlightColor,
@@ -224,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       );
                     },
                     child: Text(
-                      'Want to Shop on Groupon?',
+                      'Want to Shop on Yelpax?',
                       style: TextStyle(color: Colors.black),
                     ),
                   ),
@@ -236,7 +235,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       );
                     },
                     child: Text(
-                      'Get the Groupon app.',
+                      'Get the Yelpax app.',
                       style: TextStyle(color: Colors.black),
                     ),
                   ),

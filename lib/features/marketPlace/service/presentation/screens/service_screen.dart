@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 
+import '../../../../../shared/widgets/custom_appbar.dart';
 import '../../../jobs/presentation/widgets/finish_setup.dart';
 import '../../data/service_model.dart';
 
@@ -88,53 +89,25 @@ class _ServiceDashboardState extends State<ServiceScreen> {
               ),
 
             // App Bar
-            Material(
-              elevation: 4,
-              color: Theme.of(context).appBarTheme.backgroundColor,
-              child: SizedBox(
-                height: kToolbarHeight,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Title
-                      const Text(
-                        'Notifications',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.notifications),
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                AppRouter.homeServicesNotifications,
-                              );
-                              debugPrint("Settings tapped");
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.settings),
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                AppRouter.settingsScreen,
-                              );
-                              debugPrint("Settings tapped");
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+            CustomAppBar(
+              title: 'Services',
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.notifications),
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      AppRouter.homeServicesNotifications,
+                    );
+                  },
                 ),
-              ),
+                IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRouter.settingsScreen);
+                  },
+                ),
+              ],
             ),
 
             // Stats Cards

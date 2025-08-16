@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
+import 'package:yelpax_pro/shared/widgets/custom_appbar.dart';
 
 import '../../../../../shared/widgets/custom_search_input.dart';
 
@@ -30,9 +31,9 @@ class _JobsScreenState extends State<JobsScreen>
       'isFrequentUser': true,
       'serviceType': 'Cleaning',
       'serviceDetails':
-      'Apartment / 1 bedroom / 1 bathroom / one time clean service',
+          'Apartment / 1 bedroom / 1 bathroom / one time clean service',
       'notes':
-      'Need the cleaning to be done tomorrow for a one bedroom flat that is currently empty. Keys to the property would need to be picked...',
+          'Need the cleaning to be done tomorrow for a one bedroom flat that is currently empty. Keys to the property would need to be picked...',
       'credits': 7,
       'responseStatus': '1st to respond',
     },
@@ -47,7 +48,7 @@ class _JobsScreenState extends State<JobsScreen>
       'isFrequentUser': true,
       'serviceType': 'House Cleaning',
       'serviceDetails':
-      'House / 4 bedrooms / 2 bathrooms + 1 additional toilet / Every other week service',
+          'House / 4 bedrooms / 2 bathrooms + 1 additional toilet / Every other week service',
       'notes': 'Husband and wife with friendly dogs',
       'credits': 7,
       'responseStatus': '1/5',
@@ -73,6 +74,7 @@ class _JobsScreenState extends State<JobsScreen>
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Column(
         children: [
@@ -83,61 +85,27 @@ class _JobsScreenState extends State<JobsScreen>
                 Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
               },
             ),
-
-          // AppBar
-          Material(
-            elevation: 4,
-            color: Theme
-                .of(context)
-                .appBarTheme
-                .backgroundColor,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: kToolbarHeight,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Jobs',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.notifications),
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  AppRouter.homeServicesNotifications,
-                                );
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.settings),
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  AppRouter.settingsScreen,
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Tab Bar
-              ],
-            ),
+          CustomAppBar(
+            title: 'Jobs',
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.notifications,),
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    AppRouter.homeServicesNotifications,
+                  );
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.settings),
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRouter.settingsScreen);
+                },
+              ),
+            ],
           ),
+          // AppBar
 
           // Header section matching the image exactly
           Padding(
@@ -205,17 +173,8 @@ class _JobsScreenState extends State<JobsScreen>
           ),
 
           const Divider(height: 24, thickness: 1),
-
           // Tab Content
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                // List Tab
-                _buildLeadsList(),
-              ],
-            ),
-          ),
+          Expanded(child: _buildLeadsList()),
         ],
       ),
     );
@@ -266,8 +225,6 @@ class _JobsScreenState extends State<JobsScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // ... (rest of your existing card content)
-                        // Name and Location
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -349,7 +306,8 @@ class _JobsScreenState extends State<JobsScreen>
                             color: Colors.purple,
                           ),
 
-                        const SizedBox(height: 16), const Divider(height: 1),
+                        const SizedBox(height: 16),
+                        const Divider(height: 1),
 
                         const SizedBox(height: 16),
 
@@ -388,7 +346,8 @@ class _JobsScreenState extends State<JobsScreen>
                             ],
                           ),
 
-                        const SizedBox(height: 16), const Divider(height: 1),
+                        const SizedBox(height: 16),
+                        const Divider(height: 1),
 
                         const SizedBox(height: 16),
 
@@ -455,6 +414,4 @@ class _JobsScreenState extends State<JobsScreen>
       ),
     );
   }
-
-
 }

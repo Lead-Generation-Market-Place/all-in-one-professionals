@@ -2,7 +2,7 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 
-import '../widgets/bottom_navbar_leads.dart';
+import '../../../../presentation/widgets/bottom_navbar_leads.dart';
 
 class Status {
   final int id;

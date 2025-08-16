@@ -36,6 +36,9 @@ class _DynamicSearchInputState extends State<DynamicSearchInput> {
   void _onSearchChanged() {
     final query = _controller.text.trim().toLowerCase();
 
+    // Trigger rebuild to update clear icon
+    setState(() {});
+
     // Cancel previous debounce
     _debounce?.cancel();
 
@@ -65,6 +68,7 @@ class _DynamicSearchInputState extends State<DynamicSearchInput> {
       }
     });
   }
+
 
   @override
   void initState() {
@@ -123,11 +127,24 @@ class _DynamicSearchInputState extends State<DynamicSearchInput> {
           decoration: InputDecoration(
             hintText: widget.hintText,
             hintStyle: const TextStyle(
-              color: Colors.grey, // Change to whatever color you want
-              fontSize: 16,       // Optional: adjust size
+              color: Colors.grey,
+              fontSize: 16,
             ),
             prefixIcon: const Icon(Icons.search, color: Colors.grey),
-            contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+            suffixIcon: _controller.text.isNotEmpty
+                ? IconButton(
+              icon: const Icon(Icons.clear, color: Colors.grey),
+              onPressed: () {
+                _controller.clear();
+                if (widget.onItemSelected != null) {
+                  widget.onItemSelected!('');
+                }
+                setState(() => _filteredItems = widget.items ?? []);
+              },
+            )
+                : null,
+            contentPadding:
+            const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
               borderSide: BorderSide.none,
@@ -135,8 +152,7 @@ class _DynamicSearchInputState extends State<DynamicSearchInput> {
             filled: true,
             fillColor: widget.fillColor,
           ),
-        )
-,
+        ),
         const SizedBox(height: 8),
         if (widget.showDropdown && (_isLoading || _filteredItems.isNotEmpty))
           _isLoading
@@ -180,7 +196,8 @@ class _DynamicSearchInputState extends State<DynamicSearchInput> {
               FocusScope.of(context).unfocus();
             },
             hoverColor: Colors.blue.withOpacity(0.1),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           );
         },
       ),

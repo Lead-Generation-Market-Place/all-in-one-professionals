@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../../shared/widgets/custom_search_input.dart';
+
 class FilterScreen extends StatefulWidget {
   const FilterScreen({super.key});
 
@@ -40,7 +42,10 @@ class _FilterScreenState extends State<FilterScreen> {
               const SizedBox(height: 16),
 
               // Keyword search
-              _buildKeywordSearch(),
+              DynamicSearchInput(
+                hintText: 'Search ....',
+
+              ),
               const SizedBox(height: 16),
 
               // View section

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
-import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -10,84 +9,78 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
-  bool isSetupFinished = false;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
+      key: _scaffoldKey,
+
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
           children: [
-
-            if (!isSetupFinished)
-              ProfileCompletionBanner(
-                stepNumber: 3,
-                onFinishSetupPressed: () {
-                  Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
-                },
-              ),
-            Material(
-              elevation: 4,
-              color: Theme.of(context).appBarTheme.backgroundColor,
-              child: SizedBox(
-                height: kToolbarHeight,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Title
-                      const Text(
-                        'Notifications',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.notifications),
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                AppRouter.homeServicesNotifications,
-                              );
-                              debugPrint("Settings tapped");
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.settings),
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                AppRouter.settingsScreen,
-                              );
-                              debugPrint("Settings tapped");
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Text(
+                'Notification Settings',
+                style: TextStyle(color: Colors.white, fontSize: 20),
               ),
             ),
-
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  children: [
-                    // Your other content here
-                  ],
-                ),
-              ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Setting One'),
+              onTap: () {
+                Navigator.pushNamed(
+                    context, AppRouter.homeServicesNotifications);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Setting Two'),
+              onTap: () {
+                Navigator.pushNamed(context, AppRouter.settingsScreen);
+              },
             ),
           ],
         ),
+      ),
+
+      appBar: AppBar(
+        title: const Text('Notifications'),
+        centerTitle: true,
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back)),
+        
+
+      ),
+
+      body: Column(
+        children: [
+          // ✅ Drawer button below the AppBar
+          Container(
+            color: Colors.grey[200],
+            height: 50,
+            alignment: Alignment.centerRight, // 👈 right side
+            child: IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                _scaffoldKey.currentState?.openDrawer();
+              },
+            ),
+          ),
+
+          // ✅ Main content
+          Expanded(
+            child: Center(
+              child: const Text(
+                'Notifications',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

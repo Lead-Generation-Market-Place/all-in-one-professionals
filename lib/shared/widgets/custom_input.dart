@@ -60,71 +60,75 @@ class _CustomInputFieldState extends State<CustomInputField> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final isDarkMode = theme.brightness == Brightness.dark;
 
     return Focus(
       onFocusChange: (hasFocus) => setState(() => _isFocused = hasFocus),
-      child: Container(
-        decoration: BoxDecoration(
-          color:
-          widget.fillColor ??
-              (isDarkMode
-                  ? colorScheme.surfaceContainerHighest.withOpacity(0.2)
-                  : Colors.grey.shade200),
-          borderRadius: BorderRadius.circular(30), // rounded background
+      child: TextFormField(
+        enabled: widget.isEnabled,
+        keyboardType: widget.inputType,
+        obscureText: _obscureText,
+        controller: widget.controller,
+        validator: widget.validator,
+        onChanged: widget.onChanged,
+        onTap: widget.onTap,
+        autofocus: widget.autofocus,
+        focusNode: widget.focusNode,
+        textInputAction: widget.textInputAction,
+        maxLines: widget.maxLines,
+        minLines: widget.minLines,
+        style: theme.textTheme.bodyMedium?.copyWith(
+          color: widget.isEnabled
+              ? colorScheme.onSurface
+              : colorScheme.onSurface.withOpacity(0.5),
         ),
-        child: TextFormField(
-          enabled: widget.isEnabled,
-          keyboardType: widget.inputType,
-          obscureText: _obscureText,
-          controller: widget.controller,
-          validator: widget.validator,
-          onChanged: widget.onChanged,
-          onTap: widget.onTap,
-          autofocus: widget.autofocus,
-          focusNode: widget.focusNode,
-          textInputAction: widget.textInputAction,
-          maxLines: widget.maxLines,
-          minLines: widget.minLines,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: widget.isEnabled
-                ? colorScheme.onSurface
-                : colorScheme.onSurface.withOpacity(0.5),
+        decoration: InputDecoration(
+          labelText: widget.label,
+          labelStyle: theme.textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w600,
           ),
-          decoration: InputDecoration(
-            labelText: widget.label, // <-- floating label
-            labelStyle: TextStyle(
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
+          hintText: widget.hintText,
+          hintStyle: theme.textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant.withOpacity(0.6),
+          ),
+          prefixIcon: widget.prefixIcon != null
+              ? Padding(
+            padding: const EdgeInsets.only(left: 16, right: 12),
+            child: Icon(
+              widget.prefixIcon,
               color: _isFocused
                   ? colorScheme.primary
-                  : colorScheme.onSurfaceVariant.withOpacity(0.7),
-              fontWeight: FontWeight.w600,
+                  : colorScheme.onSurfaceVariant,
+              size: 22,
             ),
-            floatingLabelBehavior: FloatingLabelBehavior.auto,
-            hintText: widget.hintText,
-            hintStyle: theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant.withOpacity(0.5),
-            ),
-            prefixIcon: widget.prefixIcon != null
-                ? Padding(
-              padding: const EdgeInsets.only(left: 16, right: 12),
-              child: Icon(
-                widget.prefixIcon,
-                color: _isFocused
-                    ? colorScheme.primary
-                    : colorScheme.onSurfaceVariant,
-                size: 22,
-              ),
-            )
-                : null,
-            suffixIcon: _buildSuffixIcon(colorScheme),
-            contentPadding:
-            widget.contentPadding ??
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            border: InputBorder.none, // no border line, container handles bg
-            errorStyle: theme.textTheme.bodySmall?.copyWith(
-              color: colorScheme.error,
-              height: 1.2,
-            ),
+          )
+              : null,
+          suffixIcon: _buildSuffixIcon(colorScheme),
+          contentPadding: widget.contentPadding ??
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+
+          // Borders from theme
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide(color: colorScheme.outline, width: 1.2),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide(color: colorScheme.error, width: 1.2),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide(color: colorScheme.error, width: 1.5),
+          ),
+
+          errorStyle: theme.textTheme.bodySmall?.copyWith(
+            color: colorScheme.error,
+            height: 1.2,
           ),
         ),
       ),
