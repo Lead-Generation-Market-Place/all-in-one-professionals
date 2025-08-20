@@ -6,10 +6,7 @@ final darkTheme = ThemeData(
   // Changed to dark
   scaffoldBackgroundColor: Colors.grey[900],
   // Dark background
-  iconTheme: IconThemeData(
-    color: AppColors.white
-
-  ),
+  iconTheme: IconThemeData(color: AppColors.white),
   useMaterial3: true,
   colorScheme: ColorScheme.dark(
     primary: AppColors.primaryBlue,
@@ -17,12 +14,8 @@ final darkTheme = ThemeData(
     secondary: AppColors.primaryBlue,
     // Secondary color (FAB, accents)
     surface: Colors.grey[800]!,
-    // Card, sheet backgrounds
-    background: Colors.grey[900]!,
     // Scaffold background
     onPrimary: Colors.white,
-    // Text on primary color
-    onBackground: Colors.white,
     // Text on background
     onSurface: Colors.white, // Text on surfaces (cards)
   ),
@@ -30,9 +23,7 @@ final darkTheme = ThemeData(
     color: AppColors.black,
     elevation: 1,
     margin: const EdgeInsets.all(8),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
-    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     surfaceTintColor: Colors.transparent,
     shadowColor: Colors.black.withOpacity(0.1),
   ),
@@ -108,29 +99,25 @@ final darkTheme = ThemeData(
     ),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
-  style: ElevatedButton.styleFrom(
-    backgroundColor: AppColors.primaryBlue,
-    foregroundColor: Colors.white,
-    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8),
-    ),
-    textStyle: const TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w600,
-      fontFamily: 'Inter',
+    style: ElevatedButton.styleFrom(
+      backgroundColor: AppColors.primaryBlue,
+      foregroundColor: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      textStyle: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        fontFamily: 'Inter',
+      ),
     ),
   ),
-),
 
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       foregroundColor: AppColors.primaryBlue,
       side: BorderSide(color: AppColors.primaryBlue),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       textStyle: const TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w600,
@@ -151,9 +138,6 @@ final darkTheme = ThemeData(
       ),
     ),
   ),
-
-
-
 
   appBarTheme: const AppBarTheme(
     backgroundColor: AppColors.primaryBlue, // Dark app bar

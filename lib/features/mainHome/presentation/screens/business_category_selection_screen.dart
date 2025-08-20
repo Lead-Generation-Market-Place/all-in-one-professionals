@@ -32,7 +32,7 @@ class BusinessCategorySelectionScreen extends StatelessWidget {
                   "Select Your Business Category",
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: colorScheme.onBackground,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -90,8 +90,9 @@ class BusinessCategorySelectionScreen extends StatelessWidget {
                             vertical: 12,
                           ),
                           leading: CircleAvatar(
-                            backgroundColor:
-                            colorScheme.primary.withOpacity(0.15),
+                            backgroundColor: colorScheme.primary.withOpacity(
+                              0.15,
+                            ),
                             child: Text(
                               ctx.name[0].toUpperCase(),
                               style: TextStyle(

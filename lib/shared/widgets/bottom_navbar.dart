@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/features/mainHome/presentation/controllers/business_context_controller.dart';
 import 'package:yelpax_pro/shared/services/bottom_navbar_notifier.dart';
 
@@ -43,7 +42,11 @@ class BottomNavbar extends StatelessWidget {
               currentIndex: navProvider.selectedIndex,
               onTap: (index) {
                 navProvider.changeIndex(index);
-                _navigateTo(context, contextProvider.currentContext.type, index);
+                _navigateTo(
+                  context,
+                  contextProvider.currentContext.type,
+                  index,
+                );
               },
               type: BottomNavigationBarType.fixed,
               selectedItemColor: iconColor,
@@ -60,10 +63,11 @@ class BottomNavbar extends StatelessWidget {
               showUnselectedLabels: true,
               elevation: 0,
               items: _buildItems(
-                  contextProvider.currentContext.type,
-                  navProvider.selectedIndex,
-                  iconColor,
-                  selectedDotColor),
+                contextProvider.currentContext.type,
+                navProvider.selectedIndex,
+                iconColor,
+                selectedDotColor,
+              ),
             ),
           ),
         ),
@@ -71,7 +75,12 @@ class BottomNavbar extends StatelessWidget {
     );
   }
 
-  Widget _iconWithDot(IconData icon, bool isSelected, Color iconColor, Color dotColor) {
+  Widget _iconWithDot(
+    IconData icon,
+    bool isSelected,
+    Color iconColor,
+    Color dotColor,
+  ) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -94,67 +103,168 @@ class BottomNavbar extends StatelessWidget {
   }
 
   List<BottomNavigationBarItem> _buildItems(
-      BusinessType businessType,
-      int selectedIndex,
-      Color iconColor,
-      Color selectedDotColor) {
+    BusinessType businessType,
+    int selectedIndex,
+    Color iconColor,
+    Color selectedDotColor,
+  ) {
     switch (businessType) {
       case BusinessType.restaurant:
         return [
           BottomNavigationBarItem(
-            icon: _iconWithDot(Icons.restaurant_menu, selectedIndex == 0, iconColor, selectedDotColor),
-            activeIcon: _iconWithDot(Icons.restaurant_menu, selectedIndex == 0, iconColor, selectedDotColor),
+            icon: _iconWithDot(
+              Icons.restaurant_menu,
+              selectedIndex == 0,
+              iconColor,
+              selectedDotColor,
+            ),
+            activeIcon: _iconWithDot(
+              Icons.restaurant_menu,
+              selectedIndex == 0,
+              iconColor,
+              selectedDotColor,
+            ),
             label: 'Menu',
           ),
           BottomNavigationBarItem(
-            icon: _iconWithDot(Icons.reviews, selectedIndex == 1, iconColor, selectedDotColor),
-            activeIcon: _iconWithDot(Icons.reviews, selectedIndex == 1, iconColor, selectedDotColor),
+            icon: _iconWithDot(
+              Icons.reviews,
+              selectedIndex == 1,
+              iconColor,
+              selectedDotColor,
+            ),
+            activeIcon: _iconWithDot(
+              Icons.reviews,
+              selectedIndex == 1,
+              iconColor,
+              selectedDotColor,
+            ),
             label: 'Reviews',
           ),
           BottomNavigationBarItem(
-            icon: _iconWithDot(Icons.settings, selectedIndex == 2, iconColor, selectedDotColor),
-            activeIcon: _iconWithDot(Icons.settings, selectedIndex == 2, iconColor, selectedDotColor),
+            icon: _iconWithDot(
+              Icons.settings,
+              selectedIndex == 2,
+              iconColor,
+              selectedDotColor,
+            ),
+            activeIcon: _iconWithDot(
+              Icons.settings,
+              selectedIndex == 2,
+              iconColor,
+              selectedDotColor,
+            ),
             label: 'Settings',
           ),
         ];
       case BusinessType.grocery:
         return [
           BottomNavigationBarItem(
-            icon: _iconWithDot(Icons.local_grocery_store, selectedIndex == 0, iconColor, selectedDotColor),
-            activeIcon: _iconWithDot(Icons.local_grocery_store, selectedIndex == 0, iconColor, selectedDotColor),
+            icon: _iconWithDot(
+              Icons.local_grocery_store,
+              selectedIndex == 0,
+              iconColor,
+              selectedDotColor,
+            ),
+            activeIcon: _iconWithDot(
+              Icons.local_grocery_store,
+              selectedIndex == 0,
+              iconColor,
+              selectedDotColor,
+            ),
             label: 'Store',
           ),
           BottomNavigationBarItem(
-            icon: _iconWithDot(Icons.shopping_cart, selectedIndex == 1, iconColor, selectedDotColor),
-            activeIcon: _iconWithDot(Icons.shopping_cart, selectedIndex == 1, iconColor, selectedDotColor),
+            icon: _iconWithDot(
+              Icons.shopping_cart,
+              selectedIndex == 1,
+              iconColor,
+              selectedDotColor,
+            ),
+            activeIcon: _iconWithDot(
+              Icons.shopping_cart,
+              selectedIndex == 1,
+              iconColor,
+              selectedDotColor,
+            ),
             label: 'Cart',
           ),
           BottomNavigationBarItem(
-            icon: _iconWithDot(Icons.settings, selectedIndex == 2, iconColor, selectedDotColor),
-            activeIcon: _iconWithDot(Icons.settings, selectedIndex == 2, iconColor, selectedDotColor),
+            icon: _iconWithDot(
+              Icons.settings,
+              selectedIndex == 2,
+              iconColor,
+              selectedDotColor,
+            ),
+            activeIcon: _iconWithDot(
+              Icons.settings,
+              selectedIndex == 2,
+              iconColor,
+              selectedDotColor,
+            ),
             label: 'Settings',
           ),
         ];
       case BusinessType.homeServices:
         return [
           BottomNavigationBarItem(
-            icon: _iconWithDot(Icons.work_outline, selectedIndex == 0, iconColor, selectedDotColor),
-            activeIcon: _iconWithDot(Icons.work, selectedIndex == 0, iconColor, selectedDotColor),
+            icon: _iconWithDot(
+              Icons.work_outline,
+              selectedIndex == 0,
+              iconColor,
+              selectedDotColor,
+            ),
+            activeIcon: _iconWithDot(
+              Icons.work,
+              selectedIndex == 0,
+              iconColor,
+              selectedDotColor,
+            ),
             label: 'Jobs',
           ),
           BottomNavigationBarItem(
-            icon: _iconWithDot(Icons.search_outlined, selectedIndex == 1, iconColor, selectedDotColor),
-            activeIcon: _iconWithDot(Icons.search, selectedIndex == 1, iconColor, selectedDotColor),
+            icon: _iconWithDot(
+              Icons.search_outlined,
+              selectedIndex == 1,
+              iconColor,
+              selectedDotColor,
+            ),
+            activeIcon: _iconWithDot(
+              Icons.search,
+              selectedIndex == 1,
+              iconColor,
+              selectedDotColor,
+            ),
             label: 'Search',
           ),
           BottomNavigationBarItem(
-            icon: _iconWithDot(Icons.miscellaneous_services_outlined, selectedIndex == 2, iconColor, selectedDotColor),
-            activeIcon: _iconWithDot(Icons.miscellaneous_services, selectedIndex == 2, iconColor, selectedDotColor),
+            icon: _iconWithDot(
+              Icons.miscellaneous_services_outlined,
+              selectedIndex == 2,
+              iconColor,
+              selectedDotColor,
+            ),
+            activeIcon: _iconWithDot(
+              Icons.miscellaneous_services,
+              selectedIndex == 2,
+              iconColor,
+              selectedDotColor,
+            ),
             label: 'Services',
           ),
           BottomNavigationBarItem(
-            icon: _iconWithDot(Icons.person_outline, selectedIndex == 3, iconColor, selectedDotColor),
-            activeIcon: _iconWithDot(Icons.person, selectedIndex == 3, iconColor, selectedDotColor),
+            icon: _iconWithDot(
+              Icons.person_outline,
+              selectedIndex == 3,
+              iconColor,
+              selectedDotColor,
+            ),
+            activeIcon: _iconWithDot(
+              Icons.person,
+              selectedIndex == 3,
+              iconColor,
+              selectedDotColor,
+            ),
             label: 'Profile',
           ),
         ];

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 class DynamicSearchInput extends StatefulWidget {
   final List<String>? items; // Static list of items
-  final Future<List<String>> Function(String)? asyncSearch; // Async search function
+  final Future<List<String>> Function(String)?
+  asyncSearch; // Async search function
   final bool showDropdown; // Show suggestions in dropdown
   final bool highlightMatch; // Highlight matched text
   final void Function(String)? onItemSelected; // Callback when item is selected
@@ -62,13 +63,12 @@ class _DynamicSearchInputState extends State<DynamicSearchInput> {
           _filteredItems = query.isEmpty
               ? widget.items!
               : widget.items!
-              .where((item) => item.toLowerCase().contains(query))
-              .toList();
+                    .where((item) => item.toLowerCase().contains(query))
+                    .toList();
         });
       }
     });
   }
-
 
   @override
   void initState() {
@@ -126,25 +126,24 @@ class _DynamicSearchInputState extends State<DynamicSearchInput> {
           controller: _controller,
           decoration: InputDecoration(
             hintText: widget.hintText,
-            hintStyle: const TextStyle(
-              color: Colors.grey,
-              fontSize: 16,
-            ),
+            hintStyle: const TextStyle(color: Colors.grey, fontSize: 16),
             prefixIcon: const Icon(Icons.search, color: Colors.grey),
             suffixIcon: _controller.text.isNotEmpty
                 ? IconButton(
-              icon: const Icon(Icons.clear, color: Colors.grey),
-              onPressed: () {
-                _controller.clear();
-                if (widget.onItemSelected != null) {
-                  widget.onItemSelected!('');
-                }
-                setState(() => _filteredItems = widget.items ?? []);
-              },
-            )
+                    icon: const Icon(Icons.clear, color: Colors.grey),
+                    onPressed: () {
+                      _controller.clear();
+                      if (widget.onItemSelected != null) {
+                        widget.onItemSelected!('');
+                      }
+                      setState(() => _filteredItems = widget.items ?? []);
+                    },
+                  )
                 : null,
-            contentPadding:
-            const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 0,
+              horizontal: 16,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
               borderSide: BorderSide.none,
@@ -155,9 +154,7 @@ class _DynamicSearchInputState extends State<DynamicSearchInput> {
         ),
         const SizedBox(height: 8),
         if (widget.showDropdown && (_isLoading || _filteredItems.isNotEmpty))
-          _isLoading
-              ? _buildLoading()
-              : _buildDropdown(),
+          _isLoading ? _buildLoading() : _buildDropdown(),
       ],
     );
   }
@@ -196,8 +193,10 @@ class _DynamicSearchInputState extends State<DynamicSearchInput> {
               FocusScope.of(context).unfocus();
             },
             hoverColor: Colors.blue.withOpacity(0.1),
-            contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
           );
         },
       ),

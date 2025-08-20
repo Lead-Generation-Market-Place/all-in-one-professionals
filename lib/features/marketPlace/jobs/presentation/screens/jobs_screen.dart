@@ -74,7 +74,6 @@ class _JobsScreenState extends State<JobsScreen>
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Column(
         children: [
@@ -89,7 +88,7 @@ class _JobsScreenState extends State<JobsScreen>
             title: 'Jobs',
             actions: [
               IconButton(
-                icon: const Icon(Icons.notifications,),
+                icon: const Icon(Icons.notifications),
                 onPressed: () {
                   Navigator.pushNamed(
                     context,

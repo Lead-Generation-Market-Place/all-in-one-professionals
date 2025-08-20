@@ -13,7 +13,7 @@ import '../features/marketPlace/m_professional_signup/d_i_m_professional_sign_up
 
 List<SingleChildWidget> appProviders = [
   ChangeNotifierProvider(create: (_) => ThemeProvider()),
-  ChangeNotifierProvider(create: (_)=> createProfessionalSignUpProvider()),
+  ChangeNotifierProvider(create: (_) => createProfessionalSignUpProvider()),
   ChangeNotifierProvider(create: (_) => BusinessContextProvider()),
   ChangeNotifierProvider(create: (_) => createProfileProvider()),
   ChangeNotifierProvider(create: (_) => LocaleProvider()),

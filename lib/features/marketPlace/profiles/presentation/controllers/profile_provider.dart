@@ -7,8 +7,6 @@ import 'package:yelpax_pro/features/marketPlace/profiles/domain/entities/basic_i
 import 'package:yelpax_pro/features/marketPlace/profiles/domain/entities/business_information_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/domain/usecases/basic_info/get_basic_info_use_case.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/domain/usecases/basic_info/update_basic_info_use_case.dart';
-
-import 'package:yelpax_pro/features/marketPlace/profiles/domain/usecases/business_information/get_business_information_use_case.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/domain/usecases/business_information/update_business_information_use_case.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/domain/usecases/professional_license/get_business_information_use_case.dart';
 

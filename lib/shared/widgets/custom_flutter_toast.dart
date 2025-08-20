@@ -15,7 +15,6 @@ class CustomFlutterToast {
     _currentToast = null;
 
     final overlay = Overlay.of(context);
-    if (overlay == null) return;
 
     Color backgroundColor;
     Color textColor = Colors.white;

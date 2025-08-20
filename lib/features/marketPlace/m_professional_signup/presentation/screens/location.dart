@@ -114,7 +114,7 @@ class _LocationScreenState extends State<LocationScreen> {
     if (query.isEmpty) return [];
 
     final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$query&key=$_mapsApiKey&types=geocode'
+      'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$query&key=$_mapsApiKey&types=geocode',
     );
 
     final response = await http.get(url);
@@ -127,7 +127,7 @@ class _LocationScreenState extends State<LocationScreen> {
 
   Future<Map<String, dynamic>> _getPlaceDetails(String placeId) async {
     final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$_mapsApiKey&fields=geometry,name,formatted_address'
+      'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$_mapsApiKey&fields=geometry,name,formatted_address',
     );
 
     final response = await http.get(url);
@@ -147,7 +147,8 @@ class _LocationScreenState extends State<LocationScreen> {
       setState(() {
         _center = latLng;
         _selectedLocation = latLng;
-        _searchController.text = prediction['description'] ?? details['formatted_address'] ?? '';
+        _searchController.text =
+            prediction['description'] ?? details['formatted_address'] ?? '';
       });
 
       _animateToLocation(latLng);
@@ -171,74 +172,81 @@ class _LocationScreenState extends State<LocationScreen> {
           ? const Center(child: CircularProgressIndicator())
           : _mapError
           ? Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, size: 50, color: Colors.red),
-            const SizedBox(height: 20),
-            const Text('Failed to load map'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _initLocation,
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
-      )
-          : Column(
-        children: [
-          // Tabs
-          Container(
-            height: 48,
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: isDarkMode ? Colors.grey[700]! : Colors.grey[300]!,
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 50, color: Colors.red),
+                  const SizedBox(height: 20),
+                  const Text('Failed to load map'),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _initLocation,
+                    child: const Text('Retry'),
+                  ),
+                ],
               ),
-            ),
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _tabOptions.length,
-              itemBuilder: (context, index) {
-                final tab = _tabOptions[index];
-                return GestureDetector(
-                  onTap: () => _handleTabChange(tab['value']),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          width: 2,
-                          color: _activeTab == tab['value']
-                              ? const Color(0xFF0077B6)
-                              : Colors.transparent,
-                        ),
-                      ),
-                    ),
-                    child: Text(
-                      tab['label'],
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: _activeTab == tab['value']
-                            ? const Color(0xFF0077B6)
-                            : (isDarkMode ? Colors.grey[400] : Colors.grey[600]),
+            )
+          : Column(
+              children: [
+                // Tabs
+                Container(
+                  height: 48,
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: isDarkMode
+                            ? Colors.grey[700]!
+                            : Colors.grey[300]!,
                       ),
                     ),
                   ),
-                );
-              },
-            ),
-          ),
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _tabOptions.length,
+                    itemBuilder: (context, index) {
+                      final tab = _tabOptions[index];
+                      return GestureDetector(
+                        onTap: () => _handleTabChange(tab['value']),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                width: 2,
+                                color: _activeTab == tab['value']
+                                    ? const Color(0xFF0077B6)
+                                    : Colors.transparent,
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            tab['label'],
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: _activeTab == tab['value']
+                                  ? const Color(0xFF0077B6)
+                                  : (isDarkMode
+                                        ? Colors.grey[400]
+                                        : Colors.grey[600]),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
 
-          // Content based on active tab
-          Expanded(
-            child: _activeTab == 'distance'
-                ? _buildDistanceTab()
-                : _buildAdvancedTab(),
-          ),
-        ],
-      ),
+                // Content based on active tab
+                Expanded(
+                  child: _activeTab == 'distance'
+                      ? _buildDistanceTab()
+                      : _buildAdvancedTab(),
+                ),
+              ],
+            ),
       bottomNavigationBar: BottomAppBar(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -246,7 +254,9 @@ class _LocationScreenState extends State<LocationScreen> {
             onPressed: () {
               if (_selectedLocation == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please select a location first')),
+                  const SnackBar(
+                    content: Text('Please select a location first'),
+                  ),
                 );
                 return;
               }
@@ -373,15 +383,15 @@ class _LocationScreenState extends State<LocationScreen> {
                 myLocationButtonEnabled: false,
                 circles: _center != null
                     ? {
-                  Circle(
-                    circleId: const CircleId('radius'),
-                    center: _center!,
-                    radius: _milesToMeters(_radiusMiles),
-                    fillColor: const Color(0xFF0077B6).withOpacity(0.2),
-                    strokeColor: const Color(0xFF0077B6),
-                    strokeWidth: 2,
-                  ),
-                }
+                        Circle(
+                          circleId: const CircleId('radius'),
+                          center: _center!,
+                          radius: _milesToMeters(_radiusMiles),
+                          fillColor: const Color(0xFF0077B6).withOpacity(0.2),
+                          strokeColor: const Color(0xFF0077B6),
+                          strokeWidth: 2,
+                        ),
+                      }
                     : {},
                 onTap: (latLng) {
                   setState(() {
@@ -404,11 +414,7 @@ class _LocationScreenState extends State<LocationScreen> {
               ),
               if (_center != null)
                 const Center(
-                  child: Icon(
-                    Icons.location_pin,
-                    color: Colors.red,
-                    size: 40,
-                  ),
+                  child: Icon(Icons.location_pin, color: Colors.red, size: 40),
                 ),
             ],
           ),

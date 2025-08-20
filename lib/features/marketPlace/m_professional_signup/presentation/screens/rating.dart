@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 
-import '../../../../../core/constants/app_colors.dart';
 import '../../../../../shared/widgets/custom_button.dart';
 import '../../../../../shared/widgets/custom_input.dart';
 import '../controllers/m_professional_signup_controller.dart';
@@ -97,7 +96,6 @@ class _EmailInputSection extends StatelessWidget {
                     label: 'Email',
                     onChanged: (val) => provider.updateEmail(index, val),
                   ),
-
                 ),
                 const SizedBox(width: 8),
                 CustomButton(
@@ -145,8 +143,11 @@ class _EmailInputSection extends StatelessWidget {
         ),
         const SizedBox(height: 16),
 
-        CustomButton(text: 'Import from Google',onPressed: (){},enabled: true,)
-
+        CustomButton(
+          text: 'Import from Google',
+          onPressed: () {},
+          enabled: true,
+        ),
       ],
     );
   }
@@ -160,7 +161,7 @@ class _PreviewCard extends StatelessWidget {
     final provider = Provider.of<ProfessionalSignUpProvider>(context);
 
     return Card(
-        color: Theme.of(context).colorScheme.surface,
+      color: Theme.of(context).colorScheme.surface,
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
@@ -169,10 +170,9 @@ class _PreviewCard extends StatelessWidget {
           children: [
             Text(
               'EMAIL PREVIEW',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-
-                letterSpacing: 1,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.labelSmall?.copyWith(letterSpacing: 1),
             ),
             const SizedBox(height: 16),
             Text(
@@ -182,20 +182,14 @@ class _PreviewCard extends StatelessWidget {
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            const Text('Review Request',),
+            const Text('Review Request'),
             const SizedBox(height: 16),
-            provider.userImageUrl != null
-                ? CircleAvatar(
-                    radius: 40,
-                    backgroundImage: NetworkImage(
-                      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
-                    ),
-                  )
-                : const CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Colors.grey,
-                    child: Icon(Icons.person, size: 40, color: Colors.white),
-                  ),
+            CircleAvatar(
+              radius: 40,
+              backgroundImage: NetworkImage(
+                'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+              ),
+            ),
             const SizedBox(height: 16),
             const Text(
               'How was your experience with us?',
@@ -228,7 +222,7 @@ class _PreviewCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'Requested by: ${provider.username ?? 'Your Business'}',
-              style: const TextStyle(fontSize: 12,),
+              style: const TextStyle(fontSize: 12),
             ),
           ],
         ),
@@ -245,10 +239,7 @@ class _TrustCard extends StatelessWidget {
     return Card(
       color: Theme.of(context).colorScheme.surface,
       elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
@@ -263,13 +254,11 @@ class _TrustCard extends StatelessWidget {
                     'Build Trust with Reviews',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Positive reviews help attract more customers and grow your business',
-
                   ),
                 ],
               ),

@@ -1,5 +1,3 @@
-
-
 import 'package:yelpax_pro/features/marketPlace/profiles/data/model/business_faqs_model.dart';
 import 'package:yelpax_pro/shared/services/api_service.dart';
 

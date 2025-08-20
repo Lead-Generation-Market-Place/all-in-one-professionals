@@ -26,12 +26,13 @@ class BusinessContextProvider extends ChangeNotifier {
   // Helper method to switch by type
   void switchContextByType(BusinessType type) {
     final context = _availableContexts.firstWhere(
-          (ctx) => ctx.type == type,
+      (ctx) => ctx.type == type,
       orElse: () => _currentContext,
     );
     switchContext(context);
   }
 }
+
 enum BusinessType { restaurant, grocery, homeServices }
 
 class BusinessContext {

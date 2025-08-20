@@ -1,6 +1,4 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:yelpax_pro/shared/services/api_service.dart';
 
 class TokenRepository {
   final _storage = const FlutterSecureStorage();

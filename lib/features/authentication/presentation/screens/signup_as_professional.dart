@@ -88,11 +88,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
       appBar: AppBar(
         title: const Text(
           'Professional Signup',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-
-          ),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         leading: IconButton(
@@ -121,10 +117,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
                 // Page indicator
                 Text(
                   'Step ${_currentPage + 1} of 2',
-                  style: const TextStyle(
-
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
 
@@ -157,10 +150,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
                           ),
                           child: const Text(
                             'Back',
-                            style: TextStyle(
-
-                              fontSize: 16,
-                            ),
+                            style: TextStyle(fontSize: 16),
                           ),
                         )
                       else
@@ -192,11 +182,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
             padding: EdgeInsets.only(top: 20, bottom: 30),
             child: Text(
               'Business Information',
-              style: TextStyle(
-
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
           ),
 
@@ -220,11 +206,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
           // Country Dropdown
           const Text(
             'Country',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           CustomDropdown.search(
@@ -247,11 +229,11 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
               );
             },
             decoration: CustomDropdownDecoration(
-              searchFieldDecoration: SearchFieldDecoration(fillColor: Theme.of(context).colorScheme.surface),
+              searchFieldDecoration: SearchFieldDecoration(
+                fillColor: Theme.of(context).colorScheme.surface,
+              ),
               closedFillColor: Theme.of(context).highlightColor,
-              expandedFillColor: Theme.of(
-                context,
-              ).scaffoldBackgroundColor,
+              expandedFillColor: Theme.of(context).scaffoldBackgroundColor,
             ),
             validator: (value) {
               if (selectedCountryId == null) {
@@ -265,20 +247,16 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
           // Business Type Dropdown
           const Text(
             'Business Type',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           CustomDropdown.search(
             decoration: CustomDropdownDecoration(
-              searchFieldDecoration: SearchFieldDecoration(fillColor: Theme.of(context).colorScheme.surface),
+              searchFieldDecoration: SearchFieldDecoration(
+                fillColor: Theme.of(context).colorScheme.surface,
+              ),
               closedFillColor: Theme.of(context).highlightColor,
-              expandedFillColor: Theme.of(
-                context,
-              ).scaffoldBackgroundColor,
+              expandedFillColor: Theme.of(context).scaffoldBackgroundColor,
             ),
             hintText: 'Select your business type',
             items: categoryName,
@@ -392,11 +370,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
             padding: EdgeInsets.only(top: 20, bottom: 30),
             child: Text(
               'Personal Information',
-              style: TextStyle(
-
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
           ),
 
@@ -471,7 +445,6 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
               Checkbox(
                 value: true, // You should manage this state properly
                 onChanged: (value) {},
-
               ),
               const Expanded(
                 child: Text(

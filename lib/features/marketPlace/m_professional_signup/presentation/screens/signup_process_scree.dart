@@ -99,7 +99,8 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
                   if (result == true) {
                     setState(() => businessInfoCompleted = true);
                   }
-                },),
+                },
+              ),
               const SizedBox(height: 24),
 
               _buildStep(
@@ -116,7 +117,8 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
                   if (result == true) {
                     setState(() => businessInfoCompleted = true);
                   }
-                },),
+                },
+              ),
               const SizedBox(height: 24),
 
               _buildStep(
@@ -133,7 +135,8 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
                   if (result == true) {
                     setState(() => businessInfoCompleted = true);
                   }
-                },),
+                },
+              ),
               const SizedBox(height: 24),
 
               _buildStep(
@@ -150,8 +153,7 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
 
               _buildStep(
                 completed: false,
-                enabled: true
-                ,
+                enabled: true,
                 icon: Icons.star_outline_rounded,
                 title: "Professional Rating",
                 description: "Get ratings from your customers",
@@ -163,7 +165,8 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
                   if (result == true) {
                     setState(() => businessInfoCompleted = true);
                   }
-                },),
+                },
+              ),
               const SizedBox(height: 40),
 
               // Continue button

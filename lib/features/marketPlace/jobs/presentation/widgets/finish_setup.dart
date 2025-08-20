@@ -15,9 +15,7 @@ class ProfileCompletionBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        decoration: BoxDecoration(
-          color: Colors.black87,
-        ),
+        decoration: BoxDecoration(color: Colors.black87),
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         child: Row(
           children: [
@@ -30,7 +28,10 @@ class ProfileCompletionBanner extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                   children: [
-                    const TextSpan(text: 'Finish ',style: TextStyle(fontSize: 14,color: Colors.white)),
+                    const TextSpan(
+                      text: 'Finish ',
+                      style: TextStyle(fontSize: 14, color: Colors.white),
+                    ),
                     WidgetSpan(
                       alignment: PlaceholderAlignment.middle,
                       child: Container(
@@ -50,16 +51,22 @@ class ProfileCompletionBanner extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const TextSpan(text: ' setup tasks and start getting leads.',style: TextStyle(fontSize: 14)),
+                    const TextSpan(
+                      text: ' setup tasks and start getting leads.',
+                      style: TextStyle(fontSize: 14),
+                    ),
                   ],
                 ),
               ),
             ),
             const SizedBox(width: 12),
             // Finish Setup Button
-            FilledButton.icon( onPressed: () {
-              Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
-            }, label: Text('Finish Setup',style: TextStyle(fontSize: 16),), ),
+            FilledButton.icon(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
+              },
+              label: Text('Finish Setup', style: TextStyle(fontSize: 16)),
+            ),
           ],
         ),
       ),

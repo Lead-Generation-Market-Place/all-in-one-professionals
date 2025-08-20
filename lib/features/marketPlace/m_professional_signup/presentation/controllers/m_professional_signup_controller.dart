@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:logger/web.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/controllers/question_service.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/controllers/review_service.dart';
@@ -11,26 +10,27 @@ import 'm_professional_service.dart';
 enum AvailabilityType { businessHours, anyTime }
 
 class ProfessionalSignUpProvider extends ChangeNotifier {
-
-
   final ProfessionalService? professionalService;
   final ReviewService? reviewService;
 
   final ServiceQuestions? serviceQuestions;
 
-
-
-  ProfessionalSignUpProvider({ this.professionalService,this.serviceQuestions,this. reviewService}){
+  ProfessionalSignUpProvider({
+    this.professionalService,
+    this.serviceQuestions,
+    this.reviewService,
+  }) {
     _loadQuestions();
   }
 
   // Controllers
   final TextEditingController businessNameController = TextEditingController();
-  final TextEditingController employeesCountController = TextEditingController();
-  final TextEditingController businessDetailsInformation = TextEditingController();
+  final TextEditingController employeesCountController =
+      TextEditingController();
+  final TextEditingController businessDetailsInformation =
+      TextEditingController();
 
   // Service (business logic)
-
 
   // Image
   final ImagePicker _picker = ImagePicker();
@@ -169,15 +169,58 @@ class ProfessionalSignUpProvider extends ChangeNotifier {
 
   // Time options
   final List<String> startTimeOptions = [
-    '12 am', '1 am', '2 am', '3 am', '4 am', '5 am', '6 am', '7 am', '8 am',
-    '9 am', '10 am', '11 am', '12 pm', '1 pm', '2 pm', '3 pm', '4 pm', '5 pm',
-    '6 pm', '7 pm', '8 pm', '9 pm', '10 pm', '11 pm',
+    '12 am',
+    '1 am',
+    '2 am',
+    '3 am',
+    '4 am',
+    '5 am',
+    '6 am',
+    '7 am',
+    '8 am',
+    '9 am',
+    '10 am',
+    '11 am',
+    '12 pm',
+    '1 pm',
+    '2 pm',
+    '3 pm',
+    '4 pm',
+    '5 pm',
+    '6 pm',
+    '7 pm',
+    '8 pm',
+    '9 pm',
+    '10 pm',
+    '11 pm',
   ];
 
   final List<String> endTimeOptions = [
-    '12 am', '1 am', '2 am', '3 am', '4 am', '5 am', '6 am', '7 am', '8 am',
-    '9 am', '10 am', '11 am', '12 pm', '1 pm', '2 pm', '3 pm', '4 pm', '5 pm',
-    '6 pm', '7 pm', '8 pm', '9 pm', '10 pm', '11 pm', 'midnight',
+    '12 am',
+    '1 am',
+    '2 am',
+    '3 am',
+    '4 am',
+    '5 am',
+    '6 am',
+    '7 am',
+    '8 am',
+    '9 am',
+    '10 am',
+    '11 am',
+    '12 pm',
+    '1 pm',
+    '2 pm',
+    '3 pm',
+    '4 pm',
+    '5 pm',
+    '6 pm',
+    '7 pm',
+    '8 pm',
+    '9 pm',
+    '10 pm',
+    '11 pm',
+    'midnight',
   ];
 
   void toggleDayEditing(String day) {
@@ -194,7 +237,7 @@ class ProfessionalSignUpProvider extends ChangeNotifier {
 
   void updateDayTime(String day) {
     availability[day] =
-    '${tempTimes[day]!['start']} - ${tempTimes[day]!['end']}';
+        '${tempTimes[day]!['start']} - ${tempTimes[day]!['end']}';
     editingDays[day] = false;
     notifyListeners();
   }
@@ -204,7 +247,7 @@ class ProfessionalSignUpProvider extends ChangeNotifier {
       if (isSelected && day != fromDay) {
         tempTimes[day] = Map.from(tempTimes[fromDay]!);
         availability[day] =
-        '${tempTimes[fromDay]!['start']} - ${tempTimes[fromDay]!['end']}';
+            '${tempTimes[fromDay]!['start']} - ${tempTimes[fromDay]!['end']}';
       }
     });
     notifyListeners();
@@ -221,19 +264,7 @@ class ProfessionalSignUpProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void onBusinessNameChanged(String value) {
-
-  }
-
-
-
-
-
-
-
-
-
-
+  void onBusinessNameChanged(String value) {}
 
   List<String> emails = [''];
   int? sendingIndex;
@@ -243,64 +274,50 @@ class ProfessionalSignUpProvider extends ChangeNotifier {
   bool copied = false;
   String userImageUrl = '';
   void addEmailField() {
-  emails.add('');
-  notifyListeners();
+    emails.add('');
+    notifyListeners();
   }
 
   void updateEmail(int index, String value) {
-  emails[index] = value;
-  notifyListeners();
+    emails[index] = value;
+    notifyListeners();
   }
 
   Future<void> sendEmail(int index) async {
-  final email = emails[index];
-  if (!email.contains('@')) {
-  throw Exception('Invalid email address');
-  }
+    final email = emails[index];
+    if (!email.contains('@')) {
+      throw Exception('Invalid email address');
+    }
 
-  sendingIndex = index;
-  notifyListeners();
+    sendingIndex = index;
+    notifyListeners();
 
-  try {
-  final reviewLink =
-  'https://yourdomain.com/ask-reviews/services/$userId/reviews';
+    try {
+      final reviewLink =
+          'https://yourdomain.com/ask-reviews/services/$userId/reviews';
 
-  await reviewService?.sendReviewRequest(
-  recipientEmail: email,
-  userName: businessName,
-  reviewLink: reviewLink,
-  );
-  } finally {
-  sendingIndex = null;
-  notifyListeners();
-  }
+      await reviewService?.sendReviewRequest(
+        recipientEmail: email,
+        userName: businessName,
+        reviewLink: reviewLink,
+      );
+    } finally {
+      sendingIndex = null;
+      notifyListeners();
+    }
   }
 
   void copyLink() {
-  copied = true;
-  notifyListeners();
-  Future.delayed(const Duration(seconds: 2), () {
-  copied = false;
-  notifyListeners();
-  });
+    copied = true;
+    notifyListeners();
+    Future.delayed(const Duration(seconds: 2), () {
+      copied = false;
+      notifyListeners();
+    });
   }
 
   String get reviewLink =>
-  'https://yourdomain.com/home-services/services/step-6/$userId';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      'https://yourdomain.com/home-services/services/step-6/$userId';
 
   List<ServiceQuestion> _questions = [];
   Map<String, dynamic> _answers = {};
@@ -311,8 +328,6 @@ class ProfessionalSignUpProvider extends ChangeNotifier {
   Map<String, dynamic> get answers => _answers;
 
   bool get isSubmitting => _isSubmitting;
-
-
 
   Future<void> _loadQuestions() async {
     try {
@@ -332,9 +347,9 @@ class ProfessionalSignUpProvider extends ChangeNotifier {
           "options": [
             "Less than 2 hours (Simple tasks)",
             "2 -5 hours (A few different projects)",
-            "A full day (Complex or long-term projects)"
+            "A full day (Complex or long-term projects)",
           ],
-          "form_group": "help_duration"
+          "form_group": "help_duration",
         },
         {
           "form_id": 102,
@@ -343,9 +358,25 @@ class ProfessionalSignUpProvider extends ChangeNotifier {
           "form_type": "checkbox",
           "question": "What needs work?",
           "options": [
-            "Doors", "Windows", "Walls (inside)", "Walls (outside)", "Gutters", "Cabinets", "Shelving", "Molding or baseboards", "Flooring", "Tiling", "Appliances", "Plumbing", "Electrical", "Lighting", "Wall hangings", "Furniture", "Other"
+            "Doors",
+            "Windows",
+            "Walls (inside)",
+            "Walls (outside)",
+            "Gutters",
+            "Cabinets",
+            "Shelving",
+            "Molding or baseboards",
+            "Flooring",
+            "Tiling",
+            "Appliances",
+            "Plumbing",
+            "Electrical",
+            "Lighting",
+            "Wall hangings",
+            "Furniture",
+            "Other",
           ],
-          "form_group": "work_needs"
+          "form_group": "work_needs",
         },
         {
           "form_id": 103,
@@ -354,9 +385,18 @@ class ProfessionalSignUpProvider extends ChangeNotifier {
           "form_type": "checkbox",
           "question": "Which areas of the home need work?",
           "options": [
-            "Bathroom", "Kitchen", "Living room", "Bedroom", "Basement", "Attic", "Garage", "Deck or porch", "Closet", "Other"
+            "Bathroom",
+            "Kitchen",
+            "Living room",
+            "Bedroom",
+            "Basement",
+            "Attic",
+            "Garage",
+            "Deck or porch",
+            "Closet",
+            "Other",
           ],
-          "form_group": "home_areas"
+          "form_group": "home_areas",
         },
         {
           "form_id": 104,
@@ -365,7 +405,7 @@ class ProfessionalSignUpProvider extends ChangeNotifier {
           "form_type": "radio",
           "question": "Is this a home or a business?",
           "options": ["Home", "Business"],
-          "form_group": "property_type"
+          "form_group": "property_type",
         },
         {
           "form_id": 105,
@@ -376,9 +416,9 @@ class ProfessionalSignUpProvider extends ChangeNotifier {
           "options": [
             "Need a pro right away** (Within 48 hours)",
             "Ready to hire (not urgent)* (Within a week)",
-            "Researching options* (Flexible on timeline)"
+            "Researching options* (Flexible on timeline)",
           ],
-          "form_group": "timeline"
+          "form_group": "timeline",
         },
         {
           "form_id": 106,
@@ -387,10 +427,16 @@ class ProfessionalSignUpProvider extends ChangeNotifier {
           "form_type": "checkbox",
           "question": "What do you need help with?",
           "options": [
-            "Repairs", "Installation", "Maintenance", "Assembly", "Painting", "Cleaning", "Other"
+            "Repairs",
+            "Installation",
+            "Maintenance",
+            "Assembly",
+            "Painting",
+            "Cleaning",
+            "Other",
           ],
-          "form_group": "help_type"
-        }
+          "form_group": "help_type",
+        },
       ];
 
       _questions = jsonData.map((q) => ServiceQuestion.fromMap(q)).toList();
@@ -398,7 +444,11 @@ class ProfessionalSignUpProvider extends ChangeNotifier {
       // Initialize answers
       _answers = {};
       for (var question in _questions) {
-        _answers[question.formId.toString()] = question.formType == 'checkbox' ? [] : question.options.isNotEmpty ? question.options[0] : '';
+        _answers[question.formId.toString()] = question.formType == 'checkbox'
+            ? []
+            : question.options.isNotEmpty
+            ? question.options[0]
+            : '';
       }
 
       _isLoading = false;
@@ -424,11 +474,15 @@ class ProfessionalSignUpProvider extends ChangeNotifier {
       await Future.delayed(Duration(seconds: 1));
 
       // Prepare payload similar to React version
-      final payload = _questions.map((q) => {
-        'form_id': q.formId,
-        'service_id': q.serviceId,
-        'answer': _answers[q.formId.toString()],
-      }).toList();
+      final payload = _questions
+          .map(
+            (q) => {
+              'form_id': q.formId,
+              'service_id': q.serviceId,
+              'answer': _answers[q.formId.toString()],
+            },
+          )
+          .toList();
 
       print("Submitted Answers: $payload");
 
@@ -441,8 +495,4 @@ class ProfessionalSignUpProvider extends ChangeNotifier {
       return false;
     }
   }
-
-
-
-
 }

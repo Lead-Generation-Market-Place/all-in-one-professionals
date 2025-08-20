@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 enum CustomButtonType { primary, secondary, outline, text }
+
 enum CustomButtonSize { small, medium, large }
 
 class CustomButton extends StatelessWidget {
@@ -52,7 +53,7 @@ class CustomButton extends StatelessWidget {
               color: _getBackgroundColor(context, isDisabled),
               borderRadius: BorderRadius.circular(12),
               border: _getBorder(context, isDisabled),
-             // / boxShadow: _getBoxShadow(context, isDisabled),
+              // / boxShadow: _getBoxShadow(context, isDisabled),
             ),
             child: Center(
               child: Padding(
@@ -133,10 +134,10 @@ class CustomButton extends StatelessWidget {
     }
   }
 
-
   TextStyle _getTextStyle(BuildContext context, bool isDisabled) {
     final style = _resolveStyle(context);
-    final textStyle = style?.textStyle?.resolve(_states(isDisabled)) ??
+    final textStyle =
+        style?.textStyle?.resolve(_states(isDisabled)) ??
         Theme.of(context).textTheme.labelLarge;
 
     return textStyle?.copyWith(fontSize: _getFontSize()) ??
@@ -165,8 +166,8 @@ class CustomButton extends StatelessWidget {
   //   ];
   // }
 
-  Set<MaterialState> _states(bool isDisabled) {
-    return isDisabled ? {MaterialState.disabled} : {};
+  Set<WidgetState> _states(bool isDisabled) {
+    return isDisabled ? {WidgetState.disabled} : {};
   }
 
   double _getHeight() {

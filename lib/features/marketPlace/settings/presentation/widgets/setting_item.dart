@@ -26,15 +26,16 @@ class _SettingsItemState extends State<SettingsItem> {
     final hoverColor = Theme.of(context).hoverColor;
 
     return MouseRegion(
-
-        child: ListTile(
-          leading: Icon(widget.icon, color: Theme.of(context).colorScheme.primary),
-          title: Text(widget.title, style: const TextStyle(fontSize: 16)),
-          subtitle: widget.subtitle != null ? Text(widget.subtitle!) : null,
-          trailing: const Icon(Icons.chevron_right),
-          onTap: widget.onTap,
+      child: ListTile(
+        leading: Icon(
+          widget.icon,
+          color: Theme.of(context).colorScheme.primary,
         ),
-
+        title: Text(widget.title, style: const TextStyle(fontSize: 16)),
+        subtitle: widget.subtitle != null ? Text(widget.subtitle!) : null,
+        trailing: const Icon(Icons.chevron_right),
+        onTap: widget.onTap,
+      ),
     );
   }
 }

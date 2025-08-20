@@ -60,7 +60,9 @@ class AccountBottomSheet extends StatelessWidget {
             decoration: BoxDecoration(
               border: Border.all(color: theme.colorScheme.outline),
               borderRadius: BorderRadius.circular(10),
-              color: theme.colorScheme.surfaceVariant, // Using theme color
+              color: theme
+                  .colorScheme
+                  .surfaceContainerHighest, // Using theme color
             ),
             child: DropdownButton<BusinessContext>(
               value: contextProvider.currentContext,

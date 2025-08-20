@@ -60,10 +60,7 @@ class BusinessInfo extends StatelessWidget {
                         onPressed: () => Navigator.pop(context),
                       ),
                       const SizedBox(width: 8),
-                      Text(
-                        'Business Information',
-
-                      ),
+                      Text('Business Information'),
                     ],
                   ),
                   CustomButton(
@@ -189,7 +186,7 @@ class BusinessInfo extends StatelessWidget {
                         hintText: '22041',
                         inputType: TextInputType.number,
                         validator: (value) =>
-                        value!.isEmpty ? 'Zip code is required' : null,
+                            value!.isEmpty ? 'Zip code is required' : null,
                       ),
                       const SizedBox(height: 16),
 
@@ -213,8 +210,8 @@ class BusinessInfo extends StatelessWidget {
                         builder: (context, provider, child) {
                           return Column(
                             children: provider.availablePaymentMethods.map((
-                                method,
-                                ) {
+                              method,
+                            ) {
                               return CheckboxListTile(
                                 title: Text(
                                   method,

@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class ServiceDetailsScreen extends StatefulWidget {
   final String serviceName;
 
-  const ServiceDetailsScreen({
-    super.key,
-    required this.serviceName,
-  });
+  const ServiceDetailsScreen({super.key, required this.serviceName});
 
   @override
   State<ServiceDetailsScreen> createState() => _ServiceDetailsScreenState();
@@ -30,9 +27,7 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.serviceName),
-      ),
+      appBar: AppBar(title: Text(widget.serviceName)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -109,9 +104,7 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                     });
                   },
                 ),
-                const Expanded(
-                  child: Text('Within 20 miles of Windsor'),
-                ),
+                const Expanded(child: Text('Within 20 miles of Windsor')),
               ],
             ),
 
@@ -147,10 +140,7 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '$number. $question',
-              style: const TextStyle(fontSize: 16),
-            ),
+            Text('$number. $question', style: const TextStyle(fontSize: 16)),
             const SizedBox(height: 8),
             const Divider(height: 1),
           ],

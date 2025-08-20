@@ -5,9 +5,7 @@ final lightTheme = ThemeData(
   fontFamily: 'Inter',
   brightness: Brightness.light,
   scaffoldBackgroundColor: AppColors.background,
-  iconTheme: IconThemeData(
-      color: AppColors.black
-  ),
+  iconTheme: IconThemeData(color: AppColors.black),
   useMaterial3: true,
   colorScheme: ColorScheme.light(
     primary: AppColors.primaryBlue,
@@ -15,12 +13,10 @@ final lightTheme = ThemeData(
     secondary: AppColors.secondaryBlue,
     secondaryContainer: AppColors.secondaryBlue.withOpacity(0.2),
     surface: Colors.white,
-    background: AppColors.background,
     error: AppColors.error,
     onPrimary: Colors.white,
     onSecondary: Colors.white,
     onSurface: AppColors.textPrimary,
-    onBackground: AppColors.textPrimary,
     onError: Colors.white,
   ),
 
@@ -29,13 +25,10 @@ final lightTheme = ThemeData(
     color: Colors.white,
     elevation: 1,
     margin: const EdgeInsets.all(8),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
-    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     surfaceTintColor: Colors.transparent,
     shadowColor: Colors.black.withOpacity(0.1),
   ),
-
 
   // App Bar
   appBarTheme: AppBarTheme(

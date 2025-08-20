@@ -5,7 +5,8 @@ class Service {
   final bool completed;
   final String description;
   final ServiceMetrics metrics;
-  final SetupProgress? setupProgress; // Optional because not all services have it
+  final SetupProgress?
+  setupProgress; // Optional because not all services have it
 
   Service({
     required this.id,
@@ -64,11 +65,7 @@ class ServiceMetrics {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'spent': spent,
-      'leads': leads,
-      'views': views,
-    };
+    return {'spent': spent, 'leads': leads, 'views': views};
   }
 }
 

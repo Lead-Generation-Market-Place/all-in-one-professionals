@@ -74,10 +74,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: 'Logout from your account',
             // In your SettingsItem where you call the bottom sheet:
             onTap: () {
-
-
               showLogoutDialog();
-
             },
           ),
           const Divider(),
@@ -132,7 +129,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   AppRouter.login,
-                      (route) => false,
+                  (route) => false,
                 );
               },
               child: const Text('Logout'),
@@ -142,5 +139,4 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
     );
   }
-
 }

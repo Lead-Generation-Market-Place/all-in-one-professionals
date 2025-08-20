@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
-
 import 'theme_mode_type.dart';
 import 'schemes/light_theme.dart';
 import 'schemes/dark_theme.dart';
-import 'schemes/amoled_theme.dart';
 
 class AppTheme {
   static ThemeData getThemeByType(ThemeModeType type) {

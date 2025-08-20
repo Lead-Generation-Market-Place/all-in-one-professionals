@@ -7,6 +7,4 @@ class BasicInfoEntity {
     required this.businessName,
     required this.businessProfileUrl,
   });
-
-
 }

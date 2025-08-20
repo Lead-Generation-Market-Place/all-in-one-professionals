@@ -1,7 +1,6 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
-import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/features/authentication/presentation/widgets/forgot_password.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 import 'package:yelpax_pro/shared/widgets/custom_flutter_toast.dart';
@@ -63,12 +62,17 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            double horizontalPadding = constraints.maxWidth > 600 ? size.width * 0.2 : 24;
+            double horizontalPadding = constraints.maxWidth > 600
+                ? size.width * 0.2
+                : 24;
             double verticalSpacing = constraints.maxHeight * 0.02;
 
             return Center(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 24),
+                padding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding,
+                  vertical: 24,
+                ),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -130,7 +134,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       CustomDropdown<String>(
                         decoration: CustomDropdownDecoration(
                           closedFillColor: Theme.of(context).highlightColor,
-                          expandedFillColor: Theme.of(context).scaffoldBackgroundColor,
+                          expandedFillColor: Theme.of(
+                            context,
+                          ).scaffoldBackgroundColor,
                         ),
                         hintText: 'Select a Country',
                         items: _countries,
@@ -152,14 +158,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           text: 'Log In',
                           onPressed: _isButtonEnabled
                               ? () async {
-                            if (_formKey.currentState!.validate()) {
-                              setState(() => _isLoading = true);
-                              await Future.delayed(const Duration(seconds: 1));
-                              setState(() => _isLoading = false);
-                              Navigator.of(context).pushReplacementNamed(
-                                  AppRouter.businessCategorySelectionScreen);
-                            }
-                          }
+                                  if (_formKey.currentState!.validate()) {
+                                    setState(() => _isLoading = true);
+                                    await Future.delayed(
+                                      const Duration(seconds: 1),
+                                    );
+                                    setState(() => _isLoading = false);
+                                    Navigator.of(context).pushReplacementNamed(
+                                      AppRouter.businessCategorySelectionScreen,
+                                    );
+                                  }
+                                }
                               : null,
                           isLoading: _isLoading,
                         ),
@@ -177,7 +186,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 context: context,
                                 isScrollControlled: true,
                                 backgroundColor: Colors.transparent,
-                                builder: (context) => const ForgotPasswordBottomSheet(),
+                                builder: (context) =>
+                                    const ForgotPasswordBottomSheet(),
                               );
                             },
                             child: const Text(
@@ -187,7 +197,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, AppRouter.signUpAsProfessional);
+                              Navigator.pushNamed(
+                                context,
+                                AppRouter.signUpAsProfessional,
+                              );
                             },
                             child: const Text(
                               'Sign Up as Professional',
@@ -206,7 +219,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           TextButton(
                             onPressed: () {
-                              CustomFlutterToast.showInfoToast(context, 'Coming Soon..');
+                              CustomFlutterToast.showInfoToast(
+                                context,
+                                'Coming Soon..',
+                              );
                             },
                             child: const Text(
                               'Want to Shop on Yelpax?',
@@ -215,7 +231,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           TextButton(
                             onPressed: () {
-                              CustomFlutterToast.showInfoToast(context, 'Coming Soon..');
+                              CustomFlutterToast.showInfoToast(
+                                context,
+                                'Coming Soon..',
+                              );
                             },
                             child: const Text(
                               'Get the Yelpax app.',

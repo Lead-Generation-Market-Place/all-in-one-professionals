@@ -47,11 +47,7 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-
-
-        ),
+        Text(title),
         const SizedBox(height: 8),
         CustomInputField(
           controller: controllerText,
@@ -91,10 +87,7 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Business FAQs',
-
-        ),
+        title: Text('Business FAQs'),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
@@ -106,31 +99,22 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                     context: context,
                     builder: (context) => AlertDialog(
                       backgroundColor: theme.cardTheme.color,
-                      title: Text(
-                        'Confirm Save',
-
-                      ),
+                      title: Text('Confirm Save'),
                       content: Text(
                         'Are you sure you want to save your answers?',
-
                       ),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context),
-                          child: Text(
-                            'No',
-
-                          ),
+                          child: Text('No'),
                         ),
                         TextButton(
                           onPressed: () async {
                             Navigator.pop(context);
-                            await profileProvider.answeredBusinessFaqsQuestion();
+                            await profileProvider
+                                .answeredBusinessFaqsQuestion();
                           },
-                          child: Text(
-                            'Yes',
-
-                          ),
+                          child: Text('Yes'),
                         ),
                       ],
                     ),
@@ -156,7 +140,7 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                       return buildQuestion(
                         context: context,
                         title:
-                        'What should the customer know about your pricing (e.g., discounts, fees)?',
+                            'What should the customer know about your pricing (e.g., discounts, fees)?',
                         controllerText: profileProvider.firstBusinessQuestion,
                         hasTyped: hasTyped,
                         charCount: charCount,
@@ -174,7 +158,7 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                       return buildQuestion(
                         context: context,
                         title:
-                        'What is your typical process for working with a new customer?',
+                            'What is your typical process for working with a new customer?',
                         controllerText: profileProvider.secondBusinessQuestion,
                         hasTyped: hasTyped,
                         charCount: charCount,
@@ -192,7 +176,7 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                       return buildQuestion(
                         context: context,
                         title:
-                        'What education and/or training do you have that relates to your work?',
+                            'What education and/or training do you have that relates to your work?',
                         controllerText: profileProvider.thirdBusinessQuestion,
                         hasTyped: hasTyped,
                         charCount: charCount,
@@ -210,7 +194,7 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                       return buildQuestion(
                         context: context,
                         title:
-                        'How did you get started doing this type of work?',
+                            'How did you get started doing this type of work?',
                         controllerText: profileProvider.fourthBusinessQuestion,
                         hasTyped: hasTyped,
                         charCount: charCount,
@@ -245,7 +229,7 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                       return buildQuestion(
                         context: context,
                         title:
-                        'Describe a recent project you are fond of. How long did it take?',
+                            'Describe a recent project you are fond of. How long did it take?',
                         controllerText: profileProvider.sixthBusinessQuestion,
                         hasTyped: hasTyped,
                         charCount: charCount,
@@ -259,12 +243,12 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                 builder: (context, hasTyped, child) {
                   return Selector<ProfileProvider, int>(
                     selector: (_, provider) =>
-                    provider.seventhBusinessCharCount,
+                        provider.seventhBusinessCharCount,
                     builder: (context, charCount, child) {
                       return buildQuestion(
                         context: context,
                         title:
-                        'What advice you would give a customer looking to hire a provider in your area of work?',
+                            'What advice you would give a customer looking to hire a provider in your area of work?',
                         controllerText: profileProvider.seventhBusinessQuestion,
                         hasTyped: hasTyped,
                         charCount: charCount,
@@ -282,7 +266,7 @@ class _BusinessFaqsState extends State<BusinessFaqs> {
                       return buildQuestion(
                         context: context,
                         title:
-                        'What questions should customers think through before talking to professionals about their project?',
+                            'What questions should customers think through before talking to professionals about their project?',
                         controllerText: profileProvider.eighthBusinessQuestion,
                         hasTyped: hasTyped,
                         charCount: charCount,

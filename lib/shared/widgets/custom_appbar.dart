@@ -22,7 +22,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final bgColor =
-        backgroundColor ?? theme.appBarTheme.backgroundColor ?? theme.scaffoldBackgroundColor;
+        backgroundColor ??
+        theme.appBarTheme.backgroundColor ??
+        theme.scaffoldBackgroundColor;
 
     return Material(
       elevation: elevation,
@@ -45,18 +47,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         if (leading != null) const SizedBox(width: 8),
                         Text(
                           title!,
-                          style: theme.textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.w600),
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ],
                     ],
                   ),
 
                   // Actions
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: actions ?? [],
-                  ),
+                  Row(mainAxisSize: MainAxisSize.min, children: actions ?? []),
                 ],
               ),
             ),

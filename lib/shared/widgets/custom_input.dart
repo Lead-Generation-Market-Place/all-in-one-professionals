@@ -94,18 +94,19 @@ class _CustomInputFieldState extends State<CustomInputField> {
           ),
           prefixIcon: widget.prefixIcon != null
               ? Padding(
-            padding: const EdgeInsets.only(left: 16, right: 12),
-            child: Icon(
-              widget.prefixIcon,
-              color: _isFocused
-                  ? colorScheme.primary
-                  : colorScheme.onSurfaceVariant,
-              size: 22,
-            ),
-          )
+                  padding: const EdgeInsets.only(left: 16, right: 12),
+                  child: Icon(
+                    widget.prefixIcon,
+                    color: _isFocused
+                        ? colorScheme.primary
+                        : colorScheme.onSurfaceVariant,
+                    size: 22,
+                  ),
+                )
               : null,
           suffixIcon: _buildSuffixIcon(colorScheme),
-          contentPadding: widget.contentPadding ??
+          contentPadding:
+              widget.contentPadding ??
               const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
 
           // Borders from theme

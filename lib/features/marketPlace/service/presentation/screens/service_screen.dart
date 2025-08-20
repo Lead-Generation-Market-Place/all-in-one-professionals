@@ -77,7 +77,7 @@ class _ServiceDashboardState extends State<ServiceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.only(top:  30.0),
+        padding: const EdgeInsets.only(top: 30.0),
         child: Column(
           children: [
             if (!isSetupFinished)
@@ -464,8 +464,6 @@ class ServiceCard extends StatelessWidget {
     );
   }
 }
-
-
 
 class StatCard extends StatelessWidget {
   final String title;

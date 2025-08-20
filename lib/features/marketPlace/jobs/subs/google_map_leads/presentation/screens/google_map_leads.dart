@@ -27,7 +27,8 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
         'London, TW5',
       ],
       service: 'House Cleaning',
-      details: 'Flat or Apartment / 3 bedrooms / 1 bathroom / Once a month service',
+      details:
+          'Flat or Apartment / 3 bedrooms / 1 bathroom / Once a month service',
       isFrequentUser: true,
     ),
     Lead(
@@ -86,10 +87,7 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
         Marker(
           markerId: MarkerId(lead.name),
           position: _getCoordinatesForLocation(location),
-          infoWindow: InfoWindow(
-            title: lead.name,
-            snippet: location,
-          ),
+          infoWindow: InfoWindow(title: lead.name, snippet: location),
         ),
       );
 
@@ -108,7 +106,7 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
 
     switch (index) {
       case 0:
-      // Already on Leads screen
+        // Already on Leads screen
         break;
       case 1:
         Navigator.pushNamed(context, AppRouter.responses);
@@ -145,9 +143,16 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
       appBar: AppBar(
         title: const Text('Leads'),
         centerTitle: true,
-        leading:IconButton(onPressed: (){
-          Navigator.pushNamedAndRemoveUntil(context,AppRouter.homeServicesJobs, (route) => false,);
-        }, icon: Icon(Icons.arrow_back)),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              AppRouter.homeServicesJobs,
+              (route) => false,
+            );
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.white),
@@ -292,14 +297,8 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
         currentIndex: _currentNavIndex,
         onTap: (index) => _onNavItemTapped(index, context),
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Leads',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.email),
-            label: 'Responses',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Leads'),
+          BottomNavigationBarItem(icon: Icon(Icons.email), label: 'Responses'),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
             label: 'Reminders',

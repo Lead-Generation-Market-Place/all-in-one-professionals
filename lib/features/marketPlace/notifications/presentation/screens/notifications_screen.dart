@@ -32,7 +32,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               title: const Text('Setting One'),
               onTap: () {
                 Navigator.pushNamed(
-                    context, AppRouter.homeServicesNotifications);
+                  context,
+                  AppRouter.homeServicesNotifications,
+                );
               },
             ),
             ListTile(
@@ -49,11 +51,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       appBar: AppBar(
         title: const Text('Notifications'),
         centerTitle: true,
-        leading: IconButton(onPressed: (){
-          Navigator.pop(context);
-        }, icon: Icon(Icons.arrow_back)),
-        
-
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
       ),
 
       body: Column(

@@ -58,18 +58,11 @@ class _FeaturedProjectsState extends State<FeaturedProjects> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Featured Projects',
-          style: theme.textTheme.titleLarge,
-        ),
+        title: Text('Featured Projects', style: theme.textTheme.titleLarge),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: CustomButton(
-              text: 'Save',
-              enabled: true,
-              onPressed: () {},
-            ),
+            child: CustomButton(text: 'Save', enabled: true, onPressed: () {}),
           ),
         ],
       ),
@@ -82,19 +75,18 @@ class _FeaturedProjectsState extends State<FeaturedProjects> {
                 decoration: BoxDecoration(
                   color: theme.inputDecorationTheme.fillColor,
                   borderRadius: BorderRadius.circular(12),
-
                 ),
                 child: CustomDropdown.search(
                   hintText: 'Select service...',
                   items: serviceNames,
                   initialItem: selectedServiceId != null
                       ? _services
-                      .firstWhere((s) => s.id == selectedServiceId)
-                      .name
+                            .firstWhere((s) => s.id == selectedServiceId)
+                            .name
                       : null,
                   onChanged: (selectedName) {
                     final selectedService = _services.firstWhere(
-                          (service) => service.name == selectedName,
+                      (service) => service.name == selectedName,
                     );
                     setState(() {
                       selectedServiceId = selectedService.id;
@@ -103,7 +95,6 @@ class _FeaturedProjectsState extends State<FeaturedProjects> {
                       'Selected Service ID: ${selectedService.id}, Name: ${selectedService.name}',
                     );
                   },
-
                 ),
               ),
               const SizedBox(height: 20),
@@ -111,7 +102,6 @@ class _FeaturedProjectsState extends State<FeaturedProjects> {
                 decoration: BoxDecoration(
                   color: theme.inputDecorationTheme.fillColor,
                   borderRadius: BorderRadius.circular(12),
-
                 ),
                 child: CustomDropdown.search(
                   hintText: 'Select job...',
@@ -121,7 +111,7 @@ class _FeaturedProjectsState extends State<FeaturedProjects> {
                       : null,
                   onChanged: (selectedName) {
                     final selectedJob = _jobs.firstWhere(
-                          (job) => job.name == selectedName,
+                      (job) => job.name == selectedName,
                     );
                     setState(() {
                       selectedJobId = selectedJob.id;
@@ -130,7 +120,6 @@ class _FeaturedProjectsState extends State<FeaturedProjects> {
                       'Selected Job ID: ${selectedJob.id}, Name: ${selectedJob.name}',
                     );
                   },
-
                 ),
               ),
               const SizedBox(height: 20),
@@ -183,7 +172,7 @@ class _FeaturedProjectsState extends State<FeaturedProjects> {
                         imageUrls[index],
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) => Container(
-                          color: theme.colorScheme.surfaceVariant,
+                          color: theme.colorScheme.surfaceContainerHighest,
                           child: Icon(
                             Icons.broken_image,
                             color: theme.colorScheme.onSurface.withOpacity(0.5),

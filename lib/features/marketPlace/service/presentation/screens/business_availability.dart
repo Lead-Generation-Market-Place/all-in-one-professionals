@@ -10,19 +10,60 @@ class BusinessAvailability extends StatefulWidget {
 class _BusinessAvailabilityState extends State<BusinessAvailability> {
   bool _isAvailable = true;
   final List<Map<String, dynamic>> _workingHours = [
-    {'day': 'Monday', 'open': true, 'start': TimeOfDay(hour: 9, minute: 0), 'end': TimeOfDay(hour: 17, minute: 0)},
-    {'day': 'Tuesday', 'open': true, 'start': TimeOfDay(hour: 9, minute: 0), 'end': TimeOfDay(hour: 17, minute: 0)},
-    {'day': 'Wednesday', 'open': true, 'start': TimeOfDay(hour: 9, minute: 0), 'end': TimeOfDay(hour: 17, minute: 0)},
-    {'day': 'Thursday', 'open': true, 'start': TimeOfDay(hour: 9, minute: 0), 'end': TimeOfDay(hour: 17, minute: 0)},
-    {'day': 'Friday', 'open': true, 'start': TimeOfDay(hour: 9, minute: 0), 'end': TimeOfDay(hour: 17, minute: 0)},
-    {'day': 'Saturday', 'open': false, 'start': TimeOfDay(hour: 9, minute: 0), 'end': TimeOfDay(hour: 17, minute: 0)},
-    {'day': 'Sunday', 'open': false, 'start': TimeOfDay(hour: 9, minute: 0), 'end': TimeOfDay(hour: 17, minute: 0)},
+    {
+      'day': 'Monday',
+      'open': true,
+      'start': TimeOfDay(hour: 9, minute: 0),
+      'end': TimeOfDay(hour: 17, minute: 0),
+    },
+    {
+      'day': 'Tuesday',
+      'open': true,
+      'start': TimeOfDay(hour: 9, minute: 0),
+      'end': TimeOfDay(hour: 17, minute: 0),
+    },
+    {
+      'day': 'Wednesday',
+      'open': true,
+      'start': TimeOfDay(hour: 9, minute: 0),
+      'end': TimeOfDay(hour: 17, minute: 0),
+    },
+    {
+      'day': 'Thursday',
+      'open': true,
+      'start': TimeOfDay(hour: 9, minute: 0),
+      'end': TimeOfDay(hour: 17, minute: 0),
+    },
+    {
+      'day': 'Friday',
+      'open': true,
+      'start': TimeOfDay(hour: 9, minute: 0),
+      'end': TimeOfDay(hour: 17, minute: 0),
+    },
+    {
+      'day': 'Saturday',
+      'open': false,
+      'start': TimeOfDay(hour: 9, minute: 0),
+      'end': TimeOfDay(hour: 17, minute: 0),
+    },
+    {
+      'day': 'Sunday',
+      'open': false,
+      'start': TimeOfDay(hour: 9, minute: 0),
+      'end': TimeOfDay(hour: 17, minute: 0),
+    },
   ];
 
-  Future<void> _selectTime(BuildContext context, bool isStart, int index) async {
+  Future<void> _selectTime(
+    BuildContext context,
+    bool isStart,
+    int index,
+  ) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime: isStart ? _workingHours[index]['start'] : _workingHours[index]['end'],
+      initialTime: isStart
+          ? _workingHours[index]['start']
+          : _workingHours[index]['end'],
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
@@ -91,7 +132,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                           _isAvailable = value;
                         });
                       },
-                      activeColor: const Color(0xFF0077B6),
+                      activeThumbColor: const Color(0xFF0077B6),
                     ),
                   ],
                 ),
@@ -103,18 +144,12 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
             // Working Hours
             const Text(
               'Working Hours',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             const Text(
               'Set your weekly working hours',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
             const SizedBox(height: 16),
 
@@ -153,7 +188,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                                   _workingHours[index]['open'] = value;
                                 });
                               },
-                              activeColor: const Color(0xFF0077B6),
+                              activeThumbColor: const Color(0xFF0077B6),
                             ),
                           ],
                         ),
@@ -170,7 +205,9 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                                     vertical: 8,
                                   ),
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey.shade300),
+                                    border: Border.all(
+                                      color: Colors.grey.shade300,
+                                    ),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
@@ -179,7 +216,10 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                                   ),
                                 ),
                               ),
-                              const Text('to', style: TextStyle(color: Colors.grey)),
+                              const Text(
+                                'to',
+                                style: TextStyle(color: Colors.grey),
+                              ),
                               InkWell(
                                 onTap: () => _selectTime(context, false, index),
                                 child: Container(
@@ -188,7 +228,9 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                                     vertical: 8,
                                   ),
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey.shade300),
+                                    border: Border.all(
+                                      color: Colors.grey.shade300,
+                                    ),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
@@ -216,7 +258,9 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                 onPressed: () {
                   // Save logic here
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Availability saved successfully')),
+                    const SnackBar(
+                      content: Text('Availability saved successfully'),
+                    ),
                   );
                 },
                 style: ElevatedButton.styleFrom(

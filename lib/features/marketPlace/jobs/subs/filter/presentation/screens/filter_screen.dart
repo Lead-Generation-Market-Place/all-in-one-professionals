@@ -23,13 +23,15 @@ class _FilterScreenState extends State<FilterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Filter'),
-
-      ),
+      appBar: AppBar(title: const Text('Filter')),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.only(top: 16.0,left: 16.0,right: 16.0,bottom: 50),
+          padding: const EdgeInsets.only(
+            top: 16.0,
+            left: 16.0,
+            right: 16.0,
+            bottom: 50,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -42,10 +44,7 @@ class _FilterScreenState extends State<FilterScreen> {
               const SizedBox(height: 16),
 
               // Keyword search
-              DynamicSearchInput(
-                hintText: 'Search ....',
-
-              ),
+              DynamicSearchInput(hintText: 'Search ....'),
               const SizedBox(height: 16),
 
               // View section
@@ -118,10 +117,7 @@ class _FilterScreenState extends State<FilterScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Sort by',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        const Text('Sort by', style: TextStyle(fontWeight: FontWeight.bold)),
         RadioListTile<String>(
           title: const Text('Recommended'),
           value: 'Recommended',
@@ -159,10 +155,7 @@ class _FilterScreenState extends State<FilterScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'View',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        const Text('View', style: TextStyle(fontWeight: FontWeight.bold)),
         CheckboxListTile(
           title: const Text('Unread (729)'),
           value: showUnread,
@@ -270,10 +263,7 @@ class _FilterScreenState extends State<FilterScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Credits',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        const Text('Credits', style: TextStyle(fontWeight: FontWeight.bold)),
         _buildCreditCheckbox(2, 12),
         _buildCreditCheckbox(3, 52),
         _buildCreditCheckbox(4, 100),
@@ -393,16 +383,18 @@ class _FilterScreenState extends State<FilterScreen> {
           'When the lead was submitted',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        ...options.map((option) => RadioListTile(
-          title: Text(option),
-          value: option,
-          groupValue: leadSubmittedTime,
-          onChanged: (value) {
-            setState(() {
-              leadSubmittedTime = value!;
-            });
-          },
-        )),
+        ...options.map(
+          (option) => RadioListTile(
+            title: Text(option),
+            value: option,
+            groupValue: leadSubmittedTime,
+            onChanged: (value) {
+              setState(() {
+                leadSubmittedTime = value!;
+              });
+            },
+          ),
+        ),
       ],
     );
   }
@@ -417,23 +409,22 @@ class _FilterScreenState extends State<FilterScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Services',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        const Text('Services', style: TextStyle(fontWeight: FontWeight.bold)),
+        ...services.map(
+          (service) => CheckboxListTile(
+            title: Text('${service['name']} (${service['count']})'),
+            value: selectedServices.contains(service['name']),
+            onChanged: (value) {
+              setState(() {
+                if (value!) {
+                  // selectedServices.add(service['name']);
+                } else {
+                  selectedServices.remove(service['name']);
+                }
+              });
+            },
+          ),
         ),
-        ...services.map((service) => CheckboxListTile(
-          title: Text('${service['name']} (${service['count']})'),
-          value: selectedServices.contains(service['name']),
-          onChanged: (value) {
-            setState(() {
-              if (value!) {
-                // selectedServices.add(service['name']);
-              } else {
-                selectedServices.remove(service['name']);
-              }
-            });
-          },
-        )),
       ],
     );
   }
@@ -442,10 +433,7 @@ class _FilterScreenState extends State<FilterScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Locations',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        const Text('Locations', style: TextStyle(fontWeight: FontWeight.bold)),
         CheckboxListTile(
           title: const Text('All'),
           value: showAllLocations,

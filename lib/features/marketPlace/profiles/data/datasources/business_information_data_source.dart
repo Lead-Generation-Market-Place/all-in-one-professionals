@@ -1,16 +1,16 @@
-
-
 import '../../../../../shared/services/api_service.dart';
 import '../model/business_information_model.dart';
 
-abstract class BusinessInformationDataSource{
+abstract class BusinessInformationDataSource {
   Future<BusinessInformationModel> getBusinessInformation(int id);
 
-  Future<BusinessInformationModel> saveBusinessInformation(BusinessInformationModel model);
+  Future<BusinessInformationModel> saveBusinessInformation(
+    BusinessInformationModel model,
+  );
 }
 
-
-class BusinessInformationDataSourceImpl implements BusinessInformationDataSource{
+class BusinessInformationDataSourceImpl
+    implements BusinessInformationDataSource {
   final ApiService apiService;
 
   BusinessInformationDataSourceImpl(this.apiService);
@@ -25,8 +25,11 @@ class BusinessInformationDataSourceImpl implements BusinessInformationDataSource
       throw Exception("Failed to load basic info");
     }
   }
+
   @override
-  Future<BusinessInformationModel> saveBusinessInformation(BusinessInformationModel model) async {
+  Future<BusinessInformationModel> saveBusinessInformation(
+    BusinessInformationModel model,
+  ) async {
     final response = await apiService.put(
       '/basic-info/${model.id}',
       data: model.toJson(),

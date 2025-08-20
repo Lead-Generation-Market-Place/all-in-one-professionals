@@ -21,7 +21,9 @@ class RestaurantScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(child: Container(child: Column(children: [Text('Restaurant')]))),
+      body: Center(
+        child: Container(child: Column(children: [Text('Restaurant')])),
+      ),
     );
   }
 }

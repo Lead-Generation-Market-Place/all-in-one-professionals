@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../../config/themes/theme_mode_type.dart';
 import '../../../../../config/themes/theme_provider.dart';
-import '../../../../../core/constants/app_colors.dart';
 
 class ThemeSelection extends StatelessWidget {
   const ThemeSelection({super.key});

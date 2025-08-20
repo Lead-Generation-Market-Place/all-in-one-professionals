@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -118,11 +117,11 @@ class _MyAppState extends State<MyApp> {
           title: 'Yelpax Pro',
           theme: themeProvider.themeData,
           debugShowCheckedModeBanner: false,
-          home: _startScreen ??
-              const Scaffold(
-                body: Center(child: CircularProgressIndicator()),
-              ),
+          home:
+              _startScreen ??
+              const Scaffold(body: Center(child: CircularProgressIndicator())),
         );
       },
     );
-  }}
+  }
+}

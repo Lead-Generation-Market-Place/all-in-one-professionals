@@ -4,7 +4,6 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
-import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/controllers/m_professional_signup_controller.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 import 'package:yelpax_pro/shared/widgets/custom_input.dart';
@@ -57,12 +56,7 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: const Text(
-          'Business Information',
-
-        ),
-      ),
+      appBar: AppBar(title: const Text('Business Information')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -86,10 +80,7 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                             height: 180,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(
-
-                                width: 2,
-                              ),
+                              border: Border.all(width: 2),
                             ),
                             child: imageUrl.isNotEmpty
                                 ? ClipOval(
@@ -116,15 +107,10 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white, width: 2),
                           ),
-                          child: const Icon(
-                            Icons.edit,
-
-                            size: 16,
-                          ),
+                          child: const Icon(Icons.edit, size: 16),
                         ),
                       ),
                     ],

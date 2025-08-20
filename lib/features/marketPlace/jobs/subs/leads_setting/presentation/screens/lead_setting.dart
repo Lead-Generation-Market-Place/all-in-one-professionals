@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:yelpax_pro/config/routes/router.dart';
 
 class LeadSetting extends StatefulWidget {
   const LeadSetting({super.key});
@@ -14,16 +13,20 @@ class _LeadSettingState extends State<LeadSetting> {
   // Dynamic list of services
   final List<Service> _services = [
     Service(name: 'House Cleaning', description: 'All leads * 1 locations'),
-    Service(name: 'End of Tenancy Cleaning', description: 'All leads * 1 locations'),
-    Service(name: 'Deep Cleaning Services', description: 'All leads * 1 locations'),
+    Service(
+      name: 'End of Tenancy Cleaning',
+      description: 'All leads * 1 locations',
+    ),
+    Service(
+      name: 'Deep Cleaning Services',
+      description: 'All leads * 1 locations',
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Lead settings'),
-      ),
+      appBar: AppBar(title: const Text('Lead settings')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -48,15 +51,21 @@ class _LeadSettingState extends State<LeadSetting> {
             const SizedBox(height: 16),
 
             // Dynamic list of services
-            ..._services.map((service) =>
-                _buildServiceItem(service.name, service.description)
-            ).toList(),
+            ..._services
+                .map(
+                  (service) =>
+                      _buildServiceItem(service.name, service.description),
+                )
+                .toList(),
 
             const Divider(height: 32),
 
-            _buildAddButton('Add a service', onPressed: () {
-              // Handle add service logic
-            }),
+            _buildAddButton(
+              'Add a service',
+              onPressed: () {
+                // Handle add service logic
+              },
+            ),
             const SizedBox(height: 32),
 
             // Your Locations Section
@@ -99,9 +108,12 @@ class _LeadSettingState extends State<LeadSetting> {
 
             const Divider(height: 32),
 
-            _buildAddButton('Add a location', onPressed: () {
-              // Handle add location logic
-            }),
+            _buildAddButton(
+              'Add a location',
+              onPressed: () {
+                // Handle add location logic
+              },
+            ),
             const SizedBox(height: 32),
 
             // Online/Remote Leads Section
@@ -196,8 +208,5 @@ class Service {
   final String name;
   final String description;
 
-  Service({
-    required this.name,
-    required this.description,
-  });
+  Service({required this.name, required this.description});
 }

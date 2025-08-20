@@ -25,7 +25,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       left: false,
       right: false,
       child: Scaffold(
-
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -178,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onTap: () {
                   Navigator.pushNamed(context, AppRouter.editProfilePicture);
                 },
-                child:Container(
+                child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -398,9 +397,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 16),
 
-
-            CustomButton(text: 'Start a background check',enabled: true,onPressed: (){},),
-
+            CustomButton(
+              text: 'Start a background check',
+              enabled: true,
+              onPressed: () {},
+            ),
           ],
         ),
       ),
@@ -669,8 +670,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           context,
                           AppRouter.addFeatureProject,
                         );
-                      },text: 'Add Project',
-
+                      },
+                      text: 'Add Project',
                     ),
                   ],
                 ),
@@ -776,7 +777,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Expanded(
                           child: LinearProgressIndicator(
                             value: 0,
-                            backgroundColor: theme.colorScheme.surfaceVariant,
+                            backgroundColor:
+                                theme.colorScheme.surfaceContainerHighest,
                             color: theme.colorScheme.primary,
                           ),
                         ),
@@ -791,7 +793,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceVariant,
+                    color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: theme.dividerTheme.color ?? Colors.grey,

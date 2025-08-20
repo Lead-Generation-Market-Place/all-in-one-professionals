@@ -15,19 +15,19 @@ class BusinessInformationModel extends BusinessInformationEntity {
     required String twitter,
     required String instagram,
   }) : super(
-    id: id,
-    yearFounded: yearFounded,
-    numberOfEmployees: numberOfEmployees,
-    phoneNumber: phoneNumber,
-    address: address,
-    suit: suit,
-    zipCode: zipCode,
-    website: website,
-    paymentMethods: paymentMethods,
-    facebook: facebook,
-    twitter: twitter,
-    instagram: instagram,
-  );
+         id: id,
+         yearFounded: yearFounded,
+         numberOfEmployees: numberOfEmployees,
+         phoneNumber: phoneNumber,
+         address: address,
+         suit: suit,
+         zipCode: zipCode,
+         website: website,
+         paymentMethods: paymentMethods,
+         facebook: facebook,
+         twitter: twitter,
+         instagram: instagram,
+       );
 
   /// Create a Model from JSON
   factory BusinessInformationModel.fromJson(Map<String, dynamic> json) {
@@ -66,7 +66,9 @@ class BusinessInformationModel extends BusinessInformationEntity {
   }
 
   /// Create a Model from an Entity
-  factory BusinessInformationModel.fromEntity(BusinessInformationEntity entity) {
+  factory BusinessInformationModel.fromEntity(
+    BusinessInformationEntity entity,
+  ) {
     return BusinessInformationModel(
       id: entity.id,
       yearFounded: entity.yearFounded,

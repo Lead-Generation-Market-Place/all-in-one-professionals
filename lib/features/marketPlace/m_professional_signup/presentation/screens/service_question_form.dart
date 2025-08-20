@@ -24,10 +24,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: const Text("Service Questions"),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text("Service Questions"), elevation: 0),
       body: SafeArea(
         child: Column(
           children: [
@@ -102,16 +99,19 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
                       onPressed: controller.isSubmitting
                           ? null
                           : () async {
-                        final success = await controller.submitAnswers();
-                        if (success && mounted) {
-                          Navigator.pushNamed(context, AppRouter.location);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Submitted successfully'),
-                            ),
-                          );
-                        }
-                      },
+                              final success = await controller.submitAnswers();
+                              if (success && mounted) {
+                                Navigator.pushNamed(
+                                  context,
+                                  AppRouter.location,
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Submitted successfully'),
+                                  ),
+                                );
+                              }
+                            },
                     ),
                   ),
                 ],
@@ -125,9 +125,9 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
 
   /// --- Question Card ---
   Widget _buildQuestionCard(
-      ProfessionalSignUpProvider controller,
-      ServiceQuestion question,
-      ) {
+    ProfessionalSignUpProvider controller,
+    ServiceQuestion question,
+  ) {
     final formId = question.formId.toString();
 
     return Card(
@@ -179,10 +179,10 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
 
   /// --- Input Types ---
   Widget _buildQuestionInput(
-      ProfessionalSignUpProvider controller,
-      ServiceQuestion question,
-      String formId,
-      ) {
+    ProfessionalSignUpProvider controller,
+    ServiceQuestion question,
+    String formId,
+  ) {
     final currentAnswer = controller.answers[formId];
 
     switch (question.formType) {
@@ -227,7 +227,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
 
       case 'select':
         return DropdownButtonFormField<String>(
-          value: currentAnswer as String?,
+          initialValue: currentAnswer as String?,
           items: question.options.map((option) {
             return DropdownMenuItem(value: option, child: Text(option));
           }).toList(),
@@ -235,11 +235,11 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
             controller.updateAnswer(formId, value);
           },
           decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 14,
             ),
-            contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
           ),
         );
 
@@ -250,12 +250,12 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
             controller.updateAnswer(formId, value);
           },
           decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             hintText: "Enter your answer...",
-            contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 14,
+            ),
           ),
         );
     }

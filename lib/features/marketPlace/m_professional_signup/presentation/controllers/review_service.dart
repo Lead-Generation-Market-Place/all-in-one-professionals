@@ -13,7 +13,8 @@ class ReviewService {
     final res = await http.post(
       Uri.parse('$baseUrl/api/send-review-request'),
       headers: {'Content-Type': 'application/json'},
-      body: '''{
+      body:
+          '''{
         "recipientEmail": "$recipientEmail",
         "userName": "$userName",
         "reviewLink": "$reviewLink"

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
 import 'package:yelpax_pro/core/error/widgets/unknown_route_screen.dart';
 import 'package:yelpax_pro/features/authentication/presentation/screens/login_screen.dart';
 import 'package:yelpax_pro/features/authentication/presentation/screens/signup_as_professional.dart';
@@ -13,7 +12,8 @@ import 'package:yelpax_pro/features/marketPlace/jobs/subs/leads_setting/presenta
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/leads_setting/presentation/screens/leads_details_page.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/reponses/presentation/screens/response_credits.dart';
 
-import 'package:yelpax_pro/features/marketPlace/jobs/subs/reponses/presentation/screens/responses.dart' hide GoogleMapLeads;
+import 'package:yelpax_pro/features/marketPlace/jobs/subs/reponses/presentation/screens/responses.dart'
+    hide GoogleMapLeads;
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/availability.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/business_name_logo.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/card_details.dart';
@@ -70,9 +70,7 @@ class AppRouter {
   static const String signUpProcessBusinessNameLogo =
       '/homeServices/signUpProcessBusinessNameLogo';
 
-  static const String professionalRating =
-      '/homeServices/professionalRating';
-
+  static const String professionalRating = '/homeServices/professionalRating';
 
   static const String professionalAvailability =
       '/homeServices/professionalAvailability';
@@ -82,33 +80,23 @@ class AppRouter {
   static const String businessCategorySelectionScreen =
       '/homeServices/businessCategorySelectionScreen';
 
-  static const String settingsScreen =
-      '/homeServices/settingsScreen';
+  static const String settingsScreen = '/homeServices/settingsScreen';
 
-  static const String themeSelection =
-      '/homeServices/themeSelection';
-  static const String location =
-      '/homeServices/location';
+  static const String themeSelection = '/homeServices/themeSelection';
+  static const String location = '/homeServices/location';
 
-  static const String cardDetails =
-      '/homeServices/cardDetails';
+  static const String cardDetails = '/homeServices/cardDetails';
 
   static const String businessAvailability =
       '/homeServices/businessAvailability';
 
-  static const String filterScreen =
-      '/homeServices/filterScreen';
+  static const String filterScreen = '/homeServices/filterScreen';
 
-  static const String leadDetailsPage =
-      '/homeServices/leadDetailsPage';
-  static const String response_credits =
-      '/homeServices/response_credits';
-  static const String google_map_leads =
-      '/homeServices/google_map_leads';
-  static const String responses =
-      '/homeServices/responses';
-  static const String leadSetting =
-      '/homeServices/leadSetting';
+  static const String leadDetailsPage = '/homeServices/leadDetailsPage';
+  static const String response_credits = '/homeServices/response_credits';
+  static const String google_map_leads = '/homeServices/google_map_leads';
+  static const String responses = '/homeServices/responses';
+  static const String leadSetting = '/homeServices/leadSetting';
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
@@ -158,7 +146,9 @@ class AppRouter {
       case professionalServiceQuestionForm:
         return MaterialPageRoute(builder: (_) => ServiceQuestionForm());
       case businessCategorySelectionScreen:
-        return MaterialPageRoute(builder: (_) => BusinessCategorySelectionScreen());
+        return MaterialPageRoute(
+          builder: (_) => BusinessCategorySelectionScreen(),
+        );
       case settingsScreen:
         return MaterialPageRoute(builder: (_) => SettingsScreen());
       case themeSelection:

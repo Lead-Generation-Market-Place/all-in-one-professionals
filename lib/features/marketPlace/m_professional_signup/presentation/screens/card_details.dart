@@ -38,12 +38,8 @@ class _CardDetailsState extends State<CardDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: const Text('Payment'),
-
-
-      ),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(title: const Text('Payment')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
@@ -54,45 +50,54 @@ class _CardDetailsState extends State<CardDetails> {
               children: [
                 const Text(
                   "Payment",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-
-                  ),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 24),
                 // Full Name
-                CustomInputField(label: 'Full name', hintText: 'Full name*',validator: (value) =>
-                value!.isEmpty ? 'Full name is required' : null,),
+                CustomInputField(
+                  label: 'Full name',
+                  hintText: 'Full name*',
+                  validator: (value) =>
+                      value!.isEmpty ? 'Full name is required' : null,
+                ),
 
                 const SizedBox(height: 16),
                 // Card Number
-                CustomInputField(label: 'Card number*', hintText: 'xxxx-xxxx-xxxx-xxxx',validator: (value) =>
-                value!.isEmpty ? 'Card name is required' : null,),
+                CustomInputField(
+                  label: 'Card number*',
+                  hintText: 'xxxx-xxxx-xxxx-xxxx',
+                  validator: (value) =>
+                      value!.isEmpty ? 'Card name is required' : null,
+                ),
 
                 const SizedBox(height: 16),
                 Row(
                   children: [
                     // Expiration
                     Expanded(
-                      child: CustomInputField(label: 'Expiration*', hintText: 'Expiration*',validator: (value) =>
-                      value!.isEmpty ? 'Expiration name is required' : null,),),
-
+                      child: CustomInputField(
+                        label: 'Expiration*',
+                        hintText: 'Expiration*',
+                        validator: (value) => value!.isEmpty
+                            ? 'Expiration name is required'
+                            : null,
+                      ),
+                    ),
 
                     const SizedBox(width: 16),
                     // CVV
                     Expanded(
-                      child:
-                      CustomInputField(label: 'CVV*', hintText: 'CVV*',validator: (value) =>
-                      value!.isEmpty ? 'CVV name is required' : null,),),
-
-
+                      child: CustomInputField(
+                        label: 'CVV*',
+                        hintText: 'CVV*',
+                        validator: (value) =>
+                            value!.isEmpty ? 'CVV name is required' : null,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 24),
-                CustomButton(text: 'Pay Now',onPressed: (){
-
-                },),
+                CustomButton(text: 'Pay Now', onPressed: () {}),
                 const SizedBox(height: 30),
                 // Navigation Buttons
                 Row(
@@ -102,15 +107,15 @@ class _CardDetailsState extends State<CardDetails> {
                       onPressed: _goBack,
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 12),
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
                       ),
                       child: const Text("Back"),
                     ),
-                 CustomButton(text: 'Next',enabled: true,onPressed: (){
-
-                 },)
+                    CustomButton(text: 'Next', enabled: true, onPressed: () {}),
                   ],
-                )
+                ),
               ],
             ),
           ),

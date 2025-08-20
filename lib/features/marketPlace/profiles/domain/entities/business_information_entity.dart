@@ -27,7 +27,3 @@ class BusinessInformationEntity {
     required this.instagram,
   });
 }
-
-
-
-

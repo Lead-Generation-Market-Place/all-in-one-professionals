@@ -86,7 +86,10 @@ class _MServicesCategoriesState extends State<MServicesCategories> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
         automaticallyImplyLeading: false,
-        title: const Text('Select services you offer',style: TextStyle(color:  AppColors.primaryBlue),),
+        title: const Text(
+          'Select services you offer',
+          style: TextStyle(color: AppColors.primaryBlue),
+        ),
         actions: [
           if (selectedSubCategories.isNotEmpty && selectedServices.isNotEmpty)
             CustomButton(
@@ -106,7 +109,7 @@ class _MServicesCategoriesState extends State<MServicesCategories> {
             CustomDropdown.multiSelectSearch(
               decoration: CustomDropdownDecoration(
                 searchFieldDecoration: SearchFieldDecoration(
-                    fillColor:Theme.of(context).scaffoldBackgroundColor
+                  fillColor: Theme.of(context).scaffoldBackgroundColor,
                 ),
                 closedFillColor: Theme.of(context).colorScheme.surface,
                 expandedFillColor: Theme.of(context).colorScheme.surface,
@@ -124,7 +127,7 @@ class _MServicesCategoriesState extends State<MServicesCategories> {
               CustomDropdown.multiSelectSearch(
                 decoration: CustomDropdownDecoration(
                   searchFieldDecoration: SearchFieldDecoration(
-                    fillColor:Theme.of(context).scaffoldBackgroundColor
+                    fillColor: Theme.of(context).scaffoldBackgroundColor,
                   ),
                   closedFillColor: Theme.of(context).colorScheme.surface,
                   expandedFillColor: Theme.of(context).colorScheme.surface,

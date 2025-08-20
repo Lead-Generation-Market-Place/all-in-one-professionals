@@ -29,16 +29,9 @@ class AuthUserController extends ChangeNotifier {
       Logger().d('Controler is here');
       final user = await authUserUsecase.call(email, password);
 
-      if (user != null) {
-        await _storage.write(key: 'isAuthenticated', value: true.toString());
-        isAuthenticated.value = true;
-        onSuccess();
-      } else {
-        isAuthenticated.value = false;
-        await _storage.delete(key: 'isAuthenticated');
-        errorMessage = 'Login failed. Invalid credentials.';
-        onFailure();
-      }
+      await _storage.write(key: 'isAuthenticated', value: true.toString());
+      isAuthenticated.value = true;
+      onSuccess();
     } catch (e) {
       errorMessage = 'An error occurred. Please try again.';
       onFailure();

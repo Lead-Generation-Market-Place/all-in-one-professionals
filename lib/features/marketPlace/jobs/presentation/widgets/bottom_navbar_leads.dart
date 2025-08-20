@@ -17,14 +17,8 @@ class CustomBottomNavBar extends StatelessWidget {
       currentIndex: currentIndex,
       onTap: onTap,
       items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.list),
-          label: 'Leads',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.email),
-          label: 'Responses',
-        ),
+        BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Leads'),
+        BottomNavigationBarItem(icon: Icon(Icons.email), label: 'Responses'),
         BottomNavigationBarItem(
           icon: Icon(Icons.notifications),
           label: 'Reminders',

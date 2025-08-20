@@ -257,7 +257,7 @@ class _DayTimeEditor extends StatelessWidget {
           children: [
             Expanded(
               child: DropdownButtonFormField<String>(
-                value: tempTime['start'],
+                initialValue: tempTime['start'],
                 decoration: InputDecoration(
                   labelText: 'Start Time',
                   border: OutlineInputBorder(),
@@ -280,7 +280,7 @@ class _DayTimeEditor extends StatelessWidget {
             const SizedBox(width: 16),
             Expanded(
               child: DropdownButtonFormField<String>(
-                value: tempTime['end'],
+                initialValue: tempTime['end'],
                 decoration: InputDecoration(
                   labelText: 'End Time',
                   border: OutlineInputBorder(),
@@ -442,7 +442,7 @@ class _LeadTimeNoticeDropdown extends StatelessWidget {
 
     return Expanded(
       child: DropdownButtonFormField<String>(
-        value: provider.leadTimeNotice,
+        initialValue: provider.leadTimeNotice,
         decoration: InputDecoration(
           labelText: 'Notice needed',
           border: const OutlineInputBorder(),
@@ -469,7 +469,7 @@ class _LeadTimeAdvanceDropdown extends StatelessWidget {
 
     return Expanded(
       child: DropdownButtonFormField<String>(
-        value: provider.leadTimeAdvance,
+        initialValue: provider.leadTimeAdvance,
         decoration: InputDecoration(
           labelText: 'Book in advance',
           border: const OutlineInputBorder(),
@@ -495,7 +495,7 @@ class _TimeZoneDropdown extends StatelessWidget {
     final provider = Provider.of<ProfessionalSignUpProvider>(context);
 
     return DropdownButtonFormField<String>(
-      value: provider.timeZone,
+      initialValue: provider.timeZone,
       decoration: InputDecoration(
         labelText: 'Select time zone',
         border: const OutlineInputBorder(),
@@ -528,7 +528,7 @@ class _JobsPerSlotDropdown extends StatelessWidget {
     final provider = Provider.of<ProfessionalSignUpProvider>(context);
 
     return DropdownButtonFormField<String>(
-      value: provider.jobsPerSlot,
+      initialValue: provider.jobsPerSlot,
       decoration: InputDecoration(
         labelText: 'Jobs per slot',
         border: const OutlineInputBorder(),
@@ -555,7 +555,7 @@ class _TravelTimeDropdown extends StatelessWidget {
     final provider = Provider.of<ProfessionalSignUpProvider>(context);
 
     return DropdownButtonFormField<String>(
-      value: provider.travelTime,
+      initialValue: provider.travelTime,
       decoration: InputDecoration(
         labelText: 'Travel time needed',
         border: const OutlineInputBorder(),

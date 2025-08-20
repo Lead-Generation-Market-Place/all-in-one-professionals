@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
-import 'package:yelpax_pro/features/authentication/presentation/controllers/auth_user_controller.dart';
-import 'package:yelpax_pro/features/authentication/presentation/screens/login_screen.dart';
-import 'package:yelpax_pro/features/mainHome/presentation/screens/home.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
