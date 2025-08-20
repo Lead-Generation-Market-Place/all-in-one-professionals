@@ -4,8 +4,7 @@ import 'package:yelpax_pro/features/authentication/di_auth_user.dart';
 
 import 'package:yelpax_pro/features/inbox/di_controller.dart';
 import 'package:yelpax_pro/features/mainHome/presentation/controllers/business_context_controller.dart';
-import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/controllers/m_professional_signup_controller.dart';
-import 'package:yelpax_pro/features/marketPlace/profiles/presentation/controllers/profile_provider.dart';
+import 'package:yelpax_pro/features/marketPlace/profiles/d_i_m_profiles.dart';
 import 'package:yelpax_pro/shared/services/bottom_navbar_notifier.dart';
 
 import '../config/localization/locale_provider.dart';
@@ -16,7 +15,7 @@ List<SingleChildWidget> appProviders = [
   ChangeNotifierProvider(create: (_) => ThemeProvider()),
   ChangeNotifierProvider(create: (_)=> createProfessionalSignUpProvider()),
   ChangeNotifierProvider(create: (_) => BusinessContextProvider()),
-  ChangeNotifierProvider(create: (_) => ProfileProvider()),
+  ChangeNotifierProvider(create: (_) => createProfileProvider()),
   ChangeNotifierProvider(create: (_) => LocaleProvider()),
   ChangeNotifierProvider(create: (_) => createController()),
   ChangeNotifierProvider(create: (_) => createAuthUserController()),

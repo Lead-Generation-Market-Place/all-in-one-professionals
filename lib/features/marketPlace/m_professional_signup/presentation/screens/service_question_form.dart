@@ -22,30 +22,42 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    return SafeArea(
-      top: false,
-      bottom: true,
-      left: false,
-      right: false,
-
-      child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: AppBar(title: const Text("Service Questions"), elevation: 0),
-        body: Column(
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: const Text("Service Questions"),
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child: Column(
           children: [
-            // Progress bar would go here (you'll need to implement this widget)
-            // const ProgressBar(currentStep: 5, totalSteps: 4),
+            /// --- Progress Bar ---
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: LinearProgressIndicator(
+                // value: controller.serviceQuestions, // add double value in controller (0–1)
+                backgroundColor: Colors.grey[300],
+                valueColor: const AlwaysStoppedAnimation(Color(0xFF0077B6)),
+                minHeight: 6,
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+
+            /// --- Questions ---
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       "Please review and confirm your selections",
-                      style: TextStyle(fontSize: 14,),
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[700],
+                      ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
                     if (controller.questions.isEmpty)
                       const Center(child: Text("No questions available."))
@@ -58,52 +70,49 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
               ),
             ),
 
-            // Bottom buttons
+            /// --- Bottom Sticky Buttons ---
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-
+                color: Theme.of(context).scaffoldBackgroundColor,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withOpacity(0.05),
                     blurRadius: 8,
-                    offset: const Offset(0, -4),
+                    offset: const Offset(0, -3),
                   ),
                 ],
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        side: BorderSide(color: Colors.grey[400]!),
                       ),
+                      child: const Text("Back"),
                     ),
-                    child: const Text("Back"),
                   ),
                   const SizedBox(width: 16),
-
-                  CustomButton(
-                    text: 'Next',
-                    onPressed: controller.isSubmitting
-                        ? null
-                        : () async {
-                            final success = await controller.submitAnswers();
-                            if (success && mounted) {
-                              Navigator.pushNamed(context, AppRouter.location);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Submitted successfully'),
-                                ),
-                              );
-                              // Navigate to next screen
-                              // Navigator.push(context, MaterialPageRoute(builder: (context) => NextScreen()));
-                            }
-                          },
+                  Expanded(
+                    child: CustomButton(
+                      text: 'Next',
+                      onPressed: controller.isSubmitting
+                          ? null
+                          : () async {
+                        final success = await controller.submitAnswers();
+                        if (success && mounted) {
+                          Navigator.pushNamed(context, AppRouter.location);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Submitted successfully'),
+                            ),
+                          );
+                        }
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -114,35 +123,29 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
     );
   }
 
+  /// --- Question Card ---
   Widget _buildQuestionCard(
-    ProfessionalSignUpProvider controller,
-    ServiceQuestion question,
-  ) {
+      ProfessionalSignUpProvider controller,
+      ServiceQuestion question,
+      ) {
     final formId = question.formId.toString();
 
-    return Container(
+    return Card(
       margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 24,
-                height: 24,
-                margin: const EdgeInsets.only(right: 12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF0077B6),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Center(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// Step Badge + Question Text
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  radius: 14,
+                  backgroundColor: const Color(0xFF0077B6),
                   child: Text(
                     question.step.toString(),
                     style: const TextStyle(
@@ -152,35 +155,34 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
                     ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      question.question,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    question.question,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
                     ),
-                    const SizedBox(height: 12),
-                    _buildQuestionInput(controller, question, formId),
-                  ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            /// Input Field
+            _buildQuestionInput(controller, question, formId),
+          ],
+        ),
       ),
     );
   }
 
+  /// --- Input Types ---
   Widget _buildQuestionInput(
-    ProfessionalSignUpProvider controller,
-    ServiceQuestion question,
-    String formId,
-  ) {
+      ProfessionalSignUpProvider controller,
+      ServiceQuestion question,
+      String formId,
+      ) {
     final currentAnswer = controller.answers[formId];
 
     switch (question.formType) {
@@ -191,6 +193,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
             return CheckboxListTile(
               contentPadding: EdgeInsets.zero,
               controlAffinity: ListTileControlAffinity.leading,
+              activeColor: const Color(0xFF0077B6),
               title: Text(option),
               value: isSelected,
               onChanged: (bool? value) {
@@ -211,6 +214,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
           children: question.options.map((option) {
             return RadioListTile<String>(
               contentPadding: EdgeInsets.zero,
+              activeColor: const Color(0xFF0077B6),
               title: Text(option),
               value: option,
               groupValue: currentAnswer as String?,
@@ -230,9 +234,12 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
           onChanged: (value) {
             controller.updateAnswer(formId, value);
           },
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
           ),
         );
 
@@ -242,7 +249,14 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
           onChanged: (value) {
             controller.updateAnswer(formId, value);
           },
-          decoration: const InputDecoration(border: OutlineInputBorder()),
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            hintText: "Enter your answer...",
+            contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          ),
         );
     }
   }

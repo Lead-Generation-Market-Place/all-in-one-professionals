@@ -73,17 +73,15 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
                 icon: Icons.calendar_today_outlined,
                 title: "Availability Information",
                 description: "Tell us about your availability",
-                onTap: businessInfoCompleted
-                    ? () async {
-                        final result = await Navigator.pushNamed(
-                          context,
-                          AppRouter.professionalAvailability,
-                        );
-                        if (result == true) {
-                          setState(() => availabilityInfoCompleted = true);
-                        }
-                      }
-                    : null,
+                onTap: () async {
+                  final result = await Navigator.pushNamed(
+                    context,
+                    AppRouter.businessAvailability,
+                  );
+                  if (result == true) {
+                    setState(() => businessInfoCompleted = true);
+                  }
+                },
               ),
               const SizedBox(height: 24),
 
@@ -93,18 +91,15 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
                 icon: Icons.help_outline_rounded,
                 title: "Questions",
                 description: "Respond to the questions",
-                onTap: availabilityInfoCompleted
-                    ? () async {
-                        final result = await Navigator.pushNamed(
-                          context,
-                          AppRouter.professionalServiceQuestionForm,
-                        );
-                        if (result == true) {
-                          setState(() => verificationCompleted = true);
-                        }
-                      }
-                    : null,
-              ),
+                onTap: () async {
+                  final result = await Navigator.pushNamed(
+                    context,
+                    AppRouter.professionalServiceQuestionForm,
+                  );
+                  if (result == true) {
+                    setState(() => businessInfoCompleted = true);
+                  }
+                },),
               const SizedBox(height: 24),
 
               _buildStep(
@@ -113,12 +108,15 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
                 icon: Icons.location_on_outlined,
                 title: "Location",
                 description: "Set your location",
-                onTap: verificationCompleted
-                    ? () {
-                        Navigator.pushNamed(context, AppRouter.location);
-                      }
-                    : null,
-              ),
+                onTap: () async {
+                  final result = await Navigator.pushNamed(
+                    context,
+                    AppRouter.location,
+                  );
+                  if (result == true) {
+                    setState(() => businessInfoCompleted = true);
+                  }
+                },),
               const SizedBox(height: 24),
 
               _buildStep(
@@ -127,12 +125,15 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
                 icon: Icons.payment_outlined,
                 title: "Payment",
                 description: "Set your details",
-                onTap: verificationCompleted
-                    ? () {
-                        Navigator.pushNamed(context, AppRouter.cardDetails);
-                      }
-                    : null,
-              ),
+                onTap: () async {
+                  final result = await Navigator.pushNamed(
+                    context,
+                    AppRouter.cardDetails,
+                  );
+                  if (result == true) {
+                    setState(() => businessInfoCompleted = true);
+                  }
+                },),
               const SizedBox(height: 24),
 
               _buildStep(
@@ -149,19 +150,20 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
 
               _buildStep(
                 completed: false,
-                enabled: true,
+                enabled: true
+                ,
                 icon: Icons.star_outline_rounded,
                 title: "Professional Rating",
                 description: "Get ratings from your customers",
-                onTap: verificationCompleted
-                    ? () {
-                        Navigator.pushNamed(
-                          context,
-                          AppRouter.professionalRating,
-                        );
-                      }
-                    : null,
-              ),
+                onTap: () async {
+                  final result = await Navigator.pushNamed(
+                    context,
+                    AppRouter.professionalRating,
+                  );
+                  if (result == true) {
+                    setState(() => businessInfoCompleted = true);
+                  }
+                },),
               const SizedBox(height: 40),
 
               // Continue button

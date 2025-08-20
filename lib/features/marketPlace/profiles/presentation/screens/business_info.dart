@@ -68,6 +68,7 @@ class BusinessInfo extends StatelessWidget {
                   ),
                   CustomButton(
                     text: 'Save',
+
                     onPressed: () {
                       if (_formKeyBusinessInfo.currentState!.validate()) {
                         showDialog(

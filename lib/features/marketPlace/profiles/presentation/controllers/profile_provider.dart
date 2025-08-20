@@ -1,74 +1,33 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:yelpax_pro/features/marketPlace/profiles/domain/entities/basic_info_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/profiles/domain/entities/business_information_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/profiles/domain/usecases/basic_info/get_basic_info_use_case.dart';
+import 'package:yelpax_pro/features/marketPlace/profiles/domain/usecases/basic_info/update_basic_info_use_case.dart';
+
+import 'package:yelpax_pro/features/marketPlace/profiles/domain/usecases/business_information/get_business_information_use_case.dart';
+import 'package:yelpax_pro/features/marketPlace/profiles/domain/usecases/business_information/update_business_information_use_case.dart';
+import 'package:yelpax_pro/features/marketPlace/profiles/domain/usecases/professional_license/get_business_information_use_case.dart';
 
 class ProfileProvider extends ChangeNotifier {
+  final GetBasicInfo getBasicInfo;
+  final UpdateBasicInfo updateBasicInfo;
+  final GetBusinessInfo getBusinessInfo;
+  final UpdateBusinessInformation updateBusinessInformation;
+  ProfileProvider(
+    this.getBasicInfo,
+    this.updateBasicInfo,
+    this.getBusinessInfo,
+    this.updateBusinessInformation,
+  );
+
   String businessImageUrl = '';
+
   final ImagePicker _picker = ImagePicker();
   final TextEditingController businessNameController = TextEditingController();
-  final TextEditingController yearFoundedController = TextEditingController();
-  final TextEditingController employeesController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController addressController = TextEditingController();
-  final TextEditingController suiteController = TextEditingController();
-  final TextEditingController zipCodeController = TextEditingController();
-  final TextEditingController websiteController = TextEditingController();
-  final TextEditingController facebookController = TextEditingController();
-  final TextEditingController twitterController = TextEditingController();
-  final TextEditingController instagramController = TextEditingController();
-
-  List<String> selectedPaymentMethods = [];
-  final List<String> availablePaymentMethods = [
-    'Credit card',
-    'Cash',
-    'Venmo',
-    'Paypal',
-    'Square cash app',
-    'Check',
-    'Apple Pay',
-    'Google Pay',
-    'Zelle',
-    'Samsung Pay',
-    'Stripe',
-  ];
-  String _name = 'John';
-  String _companyName = 'Brand Construction Company';
-
-  int _stepNumber = 1;
-
-  int get stepNumber => _stepNumber;
-  bool _isLoading = false;
-  bool get isLoading => _isLoading;
-  String get name => _name;
-
-  String get companyName => _companyName;
-
-  void updateStepNumber(int updatedStepNumber) {
-    _stepNumber = updatedStepNumber;
-  }
-
-  void updateLoader(bool updatedLoader) {
-    _isLoading = updatedLoader;
-  }
-
-  void updateCompanyName(String newCompanyName) {
-    _companyName = newCompanyName;
-    notifyListeners();
-  }
-
-  void updateName(String newName) {
-    _name = newName;
-    notifyListeners();
-  }
-
-  void togglePaymentMethod(String method) {
-    if (selectedPaymentMethods.contains(method)) {
-      selectedPaymentMethods.remove(method);
-    } else {
-      selectedPaymentMethods.add(method);
-    }
-  }
 
   Future<void> showImagePickerBottomSheet(BuildContext context) async {
     // Check and request permissions first
@@ -148,6 +107,130 @@ class ProfileProvider extends ChangeNotifier {
   }
 
   void onBusinessNameChanged(String value) {
+    businessNameController.text = value;
+    notifyListeners();
+  }
+
+  Future<void> loadProfile(int id) async {
+    final basicInfo = await getBasicInfo(id);
+
+    businessNameController.text = basicInfo.businessName;
+    businessImageUrl = basicInfo.businessProfileUrl;
+    notifyListeners();
+  }
+
+  Future<void> saveProfile(int id) async {
+    final basicInfo = BasicInfoEntity(
+      id: id,
+      businessName: businessNameController.text,
+      businessProfileUrl: businessImageUrl,
+    );
+    await updateBasicInfo(basicInfo);
+    notifyListeners();
+  }
+
+  final TextEditingController yearFoundedController = TextEditingController();
+  final TextEditingController employeesController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController suiteController = TextEditingController();
+  final TextEditingController zipCodeController = TextEditingController();
+  final TextEditingController websiteController = TextEditingController();
+  final TextEditingController facebookController = TextEditingController();
+  final TextEditingController twitterController = TextEditingController();
+  final TextEditingController instagramController = TextEditingController();
+
+  List<String> selectedPaymentMethods = [];
+  final List<String> availablePaymentMethods = [
+    'Credit card',
+    'Cash',
+    'Venmo',
+    'Paypal',
+    'Square cash app',
+    'Check',
+    'Apple Pay',
+    'Google Pay',
+    'Zelle',
+    'Samsung Pay',
+    'Stripe',
+  ];
+  String _name = 'John';
+  String _companyName = 'Brand Construction Company';
+
+  int _stepNumber = 1;
+
+  int get stepNumber => _stepNumber;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  String get name => _name;
+
+  String get companyName => _companyName;
+
+  void updateStepNumber(int updatedStepNumber) {
+    _stepNumber = updatedStepNumber;
+  }
+
+  void updateLoader(bool updatedLoader) {
+    _isLoading = updatedLoader;
+  }
+
+  void updateCompanyName(String newCompanyName) {
+    _companyName = newCompanyName;
+    notifyListeners();
+  }
+
+  void updateName(String newName) {
+    _name = newName;
+    notifyListeners();
+  }
+
+  void togglePaymentMethod(String method) {
+    if (selectedPaymentMethods.contains(method)) {
+      selectedPaymentMethods.remove(method);
+    } else {
+      selectedPaymentMethods.add(method);
+    }
+  }
+
+  Future<void> loadBusinessInformation(int id) async {
+    final businessInfo = await getBusinessInfo(id);
+
+    yearFoundedController.text = businessInfo.yearFounded.toString();
+    employeesController.text = businessInfo.numberOfEmployees?.toString() ?? '';
+    phoneController.text = businessInfo.phoneNumber;
+    addressController.text = businessInfo.address;
+    suiteController.text = businessInfo.suit;
+    zipCodeController.text = businessInfo.zipCode;
+    websiteController.text = businessInfo.website;
+
+    // ✅ Fix here
+    selectedPaymentMethods
+      ..clear()
+      ..addAll(businessInfo.paymentMethods);
+
+    facebookController.text = businessInfo.facebook;
+    twitterController.text = businessInfo.twitter;
+    instagramController.text = businessInfo.instagram;
+
+    notifyListeners();
+  }
+
+  Future<void> saveBusinessInformation(int id) async {
+    final businessInfo = BusinessInformationEntity(
+      id: id,
+      yearFounded: int.parse(yearFoundedController.text),
+      numberOfEmployees: int.parse(employeesController.text),
+      phoneNumber: phoneController.text,
+      address: addressController.text,
+      suit: suiteController.text,
+      zipCode: zipCodeController.text,
+      website: websiteController.text,
+      paymentMethods: selectedPaymentMethods,
+      facebook: facebookController.text,
+      twitter: twitterController.text,
+      instagram: instagramController.text,
+    );
+    await updateBusinessInformation(businessInfo);
     notifyListeners();
   }
 
@@ -412,12 +495,15 @@ class ProfileProvider extends ChangeNotifier {
   Future<void> fetchServices() async {
     /* your logic */
   }
+
   Future<void> fetchFeaturedProjects() async {
     /* your logic */
   }
+
   Future<void> searchCities(String query) async {
     /* your logic */
   }
+
   Future<void> saveFeaturedProjectAndFiles() async {
     /* your logic */
   }
@@ -436,7 +522,6 @@ class ProfileProvider extends ChangeNotifier {
     isCitySearching = val;
     notifyListeners();
   }
-
 
   File? _profileImage;
   File? get profileImage => _profileImage;

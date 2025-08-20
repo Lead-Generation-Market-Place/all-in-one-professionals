@@ -56,33 +56,36 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-
       body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: 60),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            double horizontalPadding = constraints.maxWidth > 600 ? size.width * 0.2 : 24;
+            double verticalSpacing = constraints.maxHeight * 0.02;
 
-            /// Logo
-            Center(
-              child: Image.asset(
-                'assets/images/y_logo.png',
-                width: 100,
-                height: 80,
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            /// Form
-            Expanded(
+            return Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 24),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     children: [
+                      SizedBox(height: size.height * 0.08),
+
+                      /// Logo
+                      Center(
+                        child: Image.asset(
+                          'assets/images/y_logo.png',
+                          width: constraints.maxWidth > 600 ? 140 : 100,
+                          height: constraints.maxWidth > 600 ? 120 : 80,
+                        ),
+                      ),
+
+                      SizedBox(height: verticalSpacing * 2),
+
                       /// Email
                       CustomInputField(
                         label: 'Email Address',
@@ -102,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: verticalSpacing),
 
                       /// Password
                       CustomInputField(
@@ -121,9 +124,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: verticalSpacing),
 
-
+                      /// Country Dropdown
                       CustomDropdown<String>(
                         decoration: CustomDropdownDecoration(
                           closedFillColor: Theme.of(context).highlightColor,
@@ -140,8 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
 
-
-                      const SizedBox(height: 24),
+                      SizedBox(height: verticalSpacing * 1.5),
 
                       /// Login Button
                       SizedBox(
@@ -150,24 +152,20 @@ class _LoginScreenState extends State<LoginScreen> {
                           text: 'Log In',
                           onPressed: _isButtonEnabled
                               ? () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    setState(() => _isLoading = true);
-                                    // Simulated login logic
-                                    await Future.delayed(
-                                      const Duration(seconds: 1),
-                                    );
-                                    setState(() => _isLoading = false);
-                                    Navigator.of(
-                                      context,
-                                    ).pushReplacementNamed(AppRouter.businessCategorySelectionScreen);
-                                  }
-                                }
+                            if (_formKey.currentState!.validate()) {
+                              setState(() => _isLoading = true);
+                              await Future.delayed(const Duration(seconds: 1));
+                              setState(() => _isLoading = false);
+                              Navigator.of(context).pushReplacementNamed(
+                                  AppRouter.businessCategorySelectionScreen);
+                            }
+                          }
                               : null,
                           isLoading: _isLoading,
                         ),
                       ),
 
-                      const SizedBox(height: 12),
+                      SizedBox(height: verticalSpacing),
 
                       /// Forgot / Need Help Row
                       Row(
@@ -179,25 +177,48 @@ class _LoginScreenState extends State<LoginScreen> {
                                 context: context,
                                 isScrollControlled: true,
                                 backgroundColor: Colors.transparent,
-                                builder: (context) =>
-                                    ForgotPasswordBottomSheet(),
+                                builder: (context) => const ForgotPasswordBottomSheet(),
                               );
                             },
-                            child: Text(
+                            child: const Text(
                               'Forgot password?',
                               style: TextStyle(color: Colors.black),
                             ),
-
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                AppRouter.signUpAsProfessional,
-                              );
+                              Navigator.pushNamed(context, AppRouter.signUpAsProfessional);
                             },
-                            child: Text(
+                            child: const Text(
                               'Sign Up as Professional',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(height: verticalSpacing * 12),
+
+                      /// Footer Links
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 8,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              CustomFlutterToast.showInfoToast(context, 'Coming Soon..');
+                            },
+                            child: const Text(
+                              'Want to Shop on Yelpax?',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              CustomFlutterToast.showInfoToast(context, 'Coming Soon..');
+                            },
+                            child: const Text(
+                              'Get the Yelpax app.',
                               style: TextStyle(color: Colors.black),
                             ),
                           ),
@@ -207,42 +228,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-            ),
-
-            /// Footer Links
-            Padding(
-              padding: const EdgeInsets.only(bottom: 24.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      CustomFlutterToast.showInfoToast(
-                        context,
-                        'Coming Soon..',
-                      );
-                    },
-                    child: Text(
-                      'Want to Shop on Yelpax?',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      CustomFlutterToast.showInfoToast(
-                        context,
-                        'Coming Soon..',
-                      );
-                    },
-                    child: Text(
-                      'Get the Yelpax app.',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
