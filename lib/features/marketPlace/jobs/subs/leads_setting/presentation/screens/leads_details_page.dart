@@ -16,49 +16,61 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(16.0),
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            top: 12,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Set a reminder',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.outlineVariant,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
+              Text(
+                'Set a reminder',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
               _buildReminderOption('In 30 minutes'),
               _buildReminderOption('In 1 hour'),
               _buildReminderOption('In 3 hours'),
               _buildReminderOption('Tomorrow at 09:00'),
               _buildReminderOption('Monday at 09:00'),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Reminder set for $_selectedReminder'),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    'Create reminder',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
-              ),
               const SizedBox(height: 16),
+              CustomButton(
+                text: 'Create reminder',
+                isFullWidth: true,
+                onPressed: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Reminder set for $_selectedReminder'),
+                      backgroundColor: colorScheme.surface,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         );
@@ -74,54 +86,44 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
+        final theme = Theme.of(context);
         return Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Drag Handle
               Container(
                 width: 40,
                 height: 5,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: theme.colorScheme.outlineVariant,
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Icon
               Icon(
                 Icons.info_outline,
                 size: 40,
-                color: Theme.of(context).primaryColor,
+                color: theme.colorScheme.primary,
               ),
-
               const SizedBox(height: 16),
-
-              // Title
               Text(
                 'Response Limit Notice',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
-
-              // Description
               Text(
                 'A maximum number of 5 professionals can respond to each request.\n\n'
                 'Being the first to reply will increase your chances of getting a response from the customer.',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
                 textAlign: TextAlign.center,
               ),
-
               const SizedBox(height: 20),
-
-              // Close Button
             ],
           ),
         );
@@ -152,10 +154,27 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lead Details'),
-        actions: [CustomButton(text: 'Pass', enabled: true, onPressed: () {})],
+        elevation: 0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Divider(height: 1, thickness: 1, color: theme.dividerColor),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: CustomButton(
+              text: 'Pass',
+              type: CustomButtonType.outline,
+              size: CustomButtonSize.small,
+              onPressed: () {},
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -165,30 +184,38 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
             // Header section
             Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 30,
-                  child: Icon(Icons.person, size: 30),
+                  backgroundColor: colorScheme.surfaceContainerHighest,
+                  child: Icon(
+                    Icons.person,
+                    size: 30,
+                    color: colorScheme.onSurface,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Muna',
-                      style: TextStyle(
-                        fontSize: 20,
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Staines-Upon-Thames, TW18',
-                      style: TextStyle(color: Colors.grey[600]),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'House Cleaning',
-                      style: TextStyle(color: Colors.grey[600]),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
@@ -198,33 +225,47 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
             const SizedBox(height: 16),
 
             // Be the first to respond banner
-            GestureDetector(
-              onTap: _showReminderBottomSheet,
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.blue[50],
-                  borderRadius: BorderRadius.circular(8),
+            Card(
+              elevation: 0,
+              color: theme.colorScheme.surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: theme.colorScheme.outlineVariant),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.timer, color: Colors.blue),
+                    Icon(Icons.timer, color: colorScheme.primary),
                     const SizedBox(width: 8),
-                    TextButton(
-                      onPressed: _showResponsesBottomSheet,
-                      child: const Text(
+                    Expanded(
+                      child: Text(
                         'Be the 1st to respond',
-                        style: TextStyle(color: Colors.blue),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-
-                    const Spacer(),
-                    TextButton(
-                      onPressed: _showReminderBottomSheet,
-                      child: const Text(
-                        'Set reminder',
-                        style: TextStyle(color: Colors.blue),
+                    OutlinedButton(
+                      onPressed: _showResponsesBottomSheet,
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(
+                          color: theme.colorScheme.outlineVariant,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
+                      child: const Text('Details'),
+                    ),
+                    const SizedBox(width: 8),
+                    FilledButton.tonal(
+                      onPressed: _showReminderBottomSheet,
+                      child: const Text('Set reminder'),
                     ),
                   ],
                 ),
@@ -234,31 +275,32 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
             const SizedBox(height: 24),
 
             // Highlights section
-            const Text(
+            Text(
               'Highlights',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children: [
-                _buildHighlightChip('Urgent', Colors.red),
-                const SizedBox(width: 8),
-                _buildHighlightChip('High hiring intent', Colors.green),
-                const SizedBox(width: 8),
-                _buildHighlightChip('Verified phone', Colors.blue),
+                _buildHighlightChip('Urgent', colorScheme.error),
+                _buildHighlightChip('High hiring intent', colorScheme.tertiary),
+                _buildHighlightChip('Verified phone', colorScheme.primary),
+                _buildHighlightChip('Frequent user', colorScheme.secondary),
               ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [_buildHighlightChip('Frequent user', Colors.orange)],
             ),
 
             const SizedBox(height: 24),
 
             // Contact details
-            const Text(
+            Text(
               'Contact Details',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
             _buildContactOption('079**************', false),
@@ -270,12 +312,12 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
             Container(
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               decoration: BoxDecoration(
-                color: Colors.grey[100],
+                color: theme.colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Row(
                 children: [
-                  Icon(Icons.credit_card, color: Colors.blue),
+                  Icon(Icons.credit_card),
                   SizedBox(width: 8),
                   Text(
                     '8 Credits',
@@ -288,9 +330,11 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
             const SizedBox(height: 24),
 
             // Details section
-            const Text(
+            Text(
               'Details',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 16),
             _buildDetailRow('What type of property needs cleaning?', 'House'),
@@ -325,7 +369,7 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.grey[100],
+                color: theme.colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Column(
@@ -344,47 +388,47 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
             const SizedBox(height: 24),
 
             // Location
-            const Text(
+            Text(
               'Location',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.location_on, color: Colors.red),
-                const SizedBox(width: 8),
-                const Text('Staines-Upon-Thames, TW18'),
-                const Spacer(),
-                TextButton(
+            Card(
+              elevation: 0,
+              color: theme.colorScheme.surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: theme.colorScheme.outlineVariant),
+              ),
+              child: ListTile(
+                leading: Icon(Icons.location_on, color: colorScheme.error),
+                title: const Text('Staines-Upon-Thames, TW18'),
+                trailing: OutlinedButton(
                   onPressed: () {
                     // Open Google Maps
                   },
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: theme.colorScheme.outlineVariant),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
                   child: const Text('Google'),
                 ),
-              ],
+              ),
             ),
 
             const SizedBox(height: 32),
 
             // Contact button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: Colors.green,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.pushNamed(context, AppRouter.response_credits);
-                },
-                child: const Text(
-                  'Contact Muna',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ),
+            CustomButton(
+              text: 'Contact Muna',
+              isFullWidth: true,
+              onPressed: () {
+                Navigator.pushNamed(context, AppRouter.response_credits);
+              },
             ),
           ],
         ),
@@ -393,45 +437,53 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
   }
 
   Widget _buildHighlightChip(String text, Color color) {
+    final theme = Theme.of(context);
     return Chip(
-      label: Text(text, style: const TextStyle(fontSize: 12)),
-      backgroundColor: color.withOpacity(0.1),
-      labelStyle: TextStyle(color: color),
-      side: BorderSide(color: color.withOpacity(0.3)),
+      label: Text(text, style: theme.textTheme.labelSmall),
+      backgroundColor: color.withOpacity(0.12),
+      labelStyle: theme.textTheme.labelSmall?.copyWith(color: color),
+      side: BorderSide(color: theme.colorScheme.outlineVariant),
     );
   }
 
   Widget _buildContactOption(String text, bool isSelected) {
+    final theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: theme.colorScheme.outline),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
-          Checkbox(
-            value: isSelected,
-            onChanged: (value) {
-              // Handle checkbox change
-            },
-          ),
-          Text(text),
+          Checkbox(value: isSelected, onChanged: (value) {}),
+          Text(text, style: theme.textTheme.bodyMedium),
         ],
       ),
     );
   }
 
   Widget _buildDetailRow(String question, String answer) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(question, style: TextStyle(color: Colors.grey[600])),
+          Text(
+            question,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
           const SizedBox(height: 4),
-          Text(answer, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            answer,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );

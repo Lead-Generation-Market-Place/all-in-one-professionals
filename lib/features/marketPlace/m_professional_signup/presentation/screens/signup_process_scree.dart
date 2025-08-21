@@ -218,8 +218,8 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
       children: [
         LinearProgressIndicator(
           value: completedSteps / totalSteps,
-          backgroundColor: Colors.grey.shade300,
-          valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryBlue),
+          backgroundColor: theme.colorScheme.surfaceContainerHighest,
+          valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
           minHeight: 10,
           semanticsLabel: 'Progress indicator',
           semanticsValue: '$completedSteps of $totalSteps steps completed',
@@ -227,7 +227,9 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
         const SizedBox(height: 8),
         Text(
           "$completedSteps of $totalSteps steps completed",
-          style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey[700]),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );
@@ -241,6 +243,28 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
     required String description,
     required VoidCallback? onTap,
   }) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    final Color borderColor = completed
+        ? scheme.tertiary
+        : enabled
+        ? scheme.primary.withOpacity(0.5)
+        : scheme.outlineVariant;
+    final Color cardColor = enabled
+        ? scheme.surface
+        : scheme.surfaceContainerHighest;
+    final Color iconBg = completed
+        ? scheme.tertiaryContainer
+        : enabled
+        ? scheme.primary.withOpacity(0.12)
+        : scheme.surfaceContainerHighest;
+    final Color iconColor = completed
+        ? scheme.tertiary
+        : enabled
+        ? scheme.primary
+        : scheme.onSurfaceVariant;
+
     return InkWell(
       onTap: enabled ? onTap : null,
       borderRadius: BorderRadius.circular(14),
@@ -248,18 +272,11 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          color: enabled ? Colors.white : Colors.grey.shade100,
-          border: Border.all(
-            color: completed
-                ? Colors.green.shade400
-                : enabled
-                ? AppColors.primaryBlue.withOpacity(0.5)
-                : Colors.grey.shade300,
-            width: 1.8,
-          ),
+          color: cardColor,
+          border: Border.all(color: borderColor, width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: theme.shadowColor.withOpacity(0.04),
               blurRadius: 8,
               offset: const Offset(0, 3),
             ),
@@ -275,21 +292,9 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
                 height: 48,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: completed
-                      ? Colors.green.shade50
-                      : enabled
-                      ? AppColors.primaryBlue.withOpacity(0.1)
-                      : Colors.grey.shade200,
+                  color: iconBg,
                 ),
-                child: Icon(
-                  icon,
-                  size: 26,
-                  color: completed
-                      ? Colors.green.shade700
-                      : enabled
-                      ? AppColors.primaryBlue
-                      : Colors.grey.shade500,
-                ),
+                child: Icon(icon, size: 26, color: iconColor),
               ),
               const SizedBox(width: 18),
 
@@ -300,20 +305,18 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: enabled ? Colors.black87 : Colors.grey.shade600,
+                        color: enabled
+                            ? scheme.onSurface
+                            : scheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       description,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: enabled
-                            ? Colors.grey.shade800
-                            : Colors.grey.shade500,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -325,19 +328,19 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
                 Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 20,
-                  color: AppColors.primaryBlue,
+                  color: scheme.primary,
                 ),
               if (!enabled && !completed)
                 Icon(
                   Icons.lock_outline_rounded,
                   size: 20,
-                  color: Colors.grey.shade400,
+                  color: scheme.onSurfaceVariant,
                 ),
               if (completed)
                 Icon(
                   Icons.check_circle_rounded,
                   size: 22,
-                  color: Colors.green.shade600,
+                  color: scheme.tertiary,
                 ),
             ],
           ),

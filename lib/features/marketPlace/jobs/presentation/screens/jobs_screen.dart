@@ -133,11 +133,16 @@ class _JobsScreenState extends State<JobsScreen>
                     const SizedBox(width: 8), // Map button
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(
-                        icon: const Icon(Icons.map_outlined),
+                        icon: Icon(
+                          Icons.map_outlined,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                         onPressed: () {
                           Navigator.pushNamed(
                             context,
@@ -150,11 +155,16 @@ class _JobsScreenState extends State<JobsScreen>
                     const SizedBox(width: 8), // Map button
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(
-                        icon: const Icon(Icons.settings),
+                        icon: Icon(
+                          Icons.settings,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                         onPressed: () {
                           Navigator.pushNamed(context, AppRouter.leadSetting);
                         },
@@ -171,7 +181,11 @@ class _JobsScreenState extends State<JobsScreen>
             ),
           ),
 
-          const Divider(height: 24, thickness: 1),
+          Divider(
+            height: 24,
+            thickness: 1,
+            color: Theme.of(context).dividerColor,
+          ),
           // Tab Content
           Expanded(child: _buildLeadsList()),
         ],
@@ -199,8 +213,8 @@ class _JobsScreenState extends State<JobsScreen>
                     SnackBar(content: Text('Passed on ${lead['name']}')),
                   );
                 },
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.error,
+                foregroundColor: Theme.of(context).colorScheme.onError,
                 icon: Icons.close,
                 label: 'Pass',
                 borderRadius: BorderRadius.circular(12),
@@ -232,24 +246,29 @@ class _JobsScreenState extends State<JobsScreen>
                               children: [
                                 Text(
                                   lead['name'],
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   lead['timeAgo'],
-                                  style: TextStyle(
-                                    color: Colors.grey[500],
-                                    fontSize: 12,
-                                  ),
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
+                                      ),
                                 ),
                               ],
                             ),
                             Text(
                               lead['location'],
-                              style: TextStyle(color: Colors.grey[600]),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
                             ),
                           ],
                         ),
@@ -264,13 +283,13 @@ class _JobsScreenState extends State<JobsScreen>
                             if (lead['isUrgent'])
                               _buildSimpleTag(
                                 label: 'Urgent',
-                                color: Colors.red,
+                                color: Theme.of(context).colorScheme.error,
                               ),
                             // High Hiring Intent Tag
                             if (lead['hasHighHiringIntent'])
                               _buildSimpleTag(
                                 label: 'High hiring intent',
-                                color: Colors.green,
+                                color: Theme.of(context).colorScheme.tertiary,
                               ),
                           ],
                         ),
@@ -285,13 +304,13 @@ class _JobsScreenState extends State<JobsScreen>
                             if (lead['isVerifiedPhone'])
                               _buildSimpleTag(
                                 label: 'Verified phone',
-                                color: Colors.blue,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             // Additional Details Tag
                             if (lead['hasAdditionalDetails'])
                               _buildSimpleTag(
                                 label: 'Additional details',
-                                color: Colors.blue,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                           ],
                         ),
@@ -302,7 +321,7 @@ class _JobsScreenState extends State<JobsScreen>
                         if (lead['isFrequentUser'])
                           _buildSimpleTag(
                             label: 'Frequent user',
-                            color: Colors.purple,
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
 
                         const SizedBox(height: 16),
@@ -313,10 +332,8 @@ class _JobsScreenState extends State<JobsScreen>
                         // Service Type
                         Text(
                           lead['serviceType'],
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
 
                         const SizedBox(height: 8),
@@ -324,7 +341,12 @@ class _JobsScreenState extends State<JobsScreen>
                         // Service Details
                         Text(
                           lead['serviceDetails'],
-                          style: TextStyle(color: Colors.grey[700]),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                         ),
 
                         const SizedBox(height: 12),
@@ -337,10 +359,13 @@ class _JobsScreenState extends State<JobsScreen>
                               const SizedBox(height: 8),
                               Text(
                                 lead['notes'],
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontStyle: FontStyle.italic,
-                                ),
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                      fontStyle: FontStyle.italic,
+                                    ),
                               ),
                             ],
                           ),
@@ -356,15 +381,13 @@ class _JobsScreenState extends State<JobsScreen>
                           children: [
                             Text(
                               '💬 ${lead['credits']} Credits',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             Text(
                               lead['responseStatus'],
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -381,34 +404,40 @@ class _JobsScreenState extends State<JobsScreen>
   }
 
   Widget _buildSimpleTag({required String label, required Color color}) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color.withOpacity(0.3), width: 1),
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: theme.colorScheme.outlineVariant, width: 1),
       ),
-      child: Text(label, style: TextStyle(color: color, fontSize: 14)),
+      child: Text(
+        label,
+        style: theme.textTheme.labelMedium?.copyWith(color: color),
+      ),
     );
   }
 
   Widget _buildFilterTab(String text, {bool isActive = false}) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isActive ? Colors.blue : Colors.transparent,
+            color: isActive ? scheme.primary : Colors.transparent,
             width: 2,
           ),
         ),
       ),
       child: Text(
         text,
-        style: TextStyle(
+        style: theme.textTheme.bodyMedium?.copyWith(
           fontSize: 16,
           fontWeight: FontWeight.w500,
-          color: isActive ? Colors.blue : Colors.grey[600],
+          color: isActive ? scheme.primary : scheme.onSurfaceVariant,
         ),
       ),
     );

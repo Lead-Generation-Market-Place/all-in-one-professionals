@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:yelpax_pro/features/mainHome/presentation/controllers/business_context_controller.dart';
@@ -23,50 +25,59 @@ class BottomNavbar extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(40),
-        child: Container(
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            boxShadow: [
-              BoxShadow(
-                color: isDark
-                    ? Colors.black.withOpacity(0.3)
-                    : Colors.grey.withOpacity(0.1),
-                blurRadius: 10,
-                spreadRadius: 2,
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            decoration: BoxDecoration(
+              color: backgroundColor.withOpacity(isDark ? 0.6 : 0.85),
+              border: Border.all(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
               ),
-            ],
-          ),
-          child: SafeArea(
-            child: BottomNavigationBar(
-              backgroundColor: backgroundColor,
-              currentIndex: navProvider.selectedIndex,
-              onTap: (index) {
-                navProvider.changeIndex(index);
-                _navigateTo(
-                  context,
+              boxShadow: [
+                BoxShadow(
+                  color: isDark
+                      ? Colors.black.withOpacity(0.35)
+                      : Colors.grey.withOpacity(0.12),
+                  blurRadius: 18,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: SafeArea(
+              child: BottomNavigationBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                type: BottomNavigationBarType.fixed,
+                currentIndex: navProvider.selectedIndex,
+                onTap: (index) {
+                  HapticFeedback.lightImpact();
+                  navProvider.changeIndex(index);
+                  _navigateTo(
+                    context,
+                    contextProvider.currentContext.type,
+                    index,
+                  );
+                },
+                selectedItemColor: iconColor,
+                unselectedItemColor: iconColor.withOpacity(0.6),
+                selectedIconTheme: const IconThemeData(size: 26),
+                unselectedIconTheme: const IconThemeData(size: 22),
+                selectedLabelStyle: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+                unselectedLabelStyle: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+                showSelectedLabels: true,
+                showUnselectedLabels: true,
+                items: _buildItems(
                   contextProvider.currentContext.type,
-                  index,
-                );
-              },
-              type: BottomNavigationBarType.fixed,
-              selectedItemColor: iconColor,
-              unselectedItemColor: iconColor.withOpacity(0.6),
-              selectedLabelStyle: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-              unselectedLabelStyle: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-              showSelectedLabels: true,
-              showUnselectedLabels: true,
-              elevation: 0,
-              items: _buildItems(
-                contextProvider.currentContext.type,
-                navProvider.selectedIndex,
-                iconColor,
-                selectedDotColor,
+                  navProvider.selectedIndex,
+                  iconColor,
+                  selectedDotColor,
+                ),
               ),
             ),
           ),
@@ -81,24 +92,50 @@ class BottomNavbar extends StatelessWidget {
     Color iconColor,
     Color dotColor,
   ) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Icon(icon, color: iconColor),
-        if (isSelected)
-          Positioned(
-            top: -2,
-            right: -2,
-            child: Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: dotColor,
-                shape: BoxShape.circle,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+      padding: EdgeInsets.symmetric(
+        horizontal: isSelected ? 12 : 0,
+        vertical: isSelected ? 8 : 0,
+      ),
+      decoration: isSelected
+          ? BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  dotColor.withOpacity(0.22),
+                  dotColor.withOpacity(0.08),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(16),
+            )
+          : null,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          AnimatedScale(
+            duration: const Duration(milliseconds: 200),
+            scale: isSelected ? 1.08 : 1.0,
+            curve: Curves.easeOut,
+            child: Icon(icon, color: iconColor),
+          ),
+          if (isSelected)
+            Positioned(
+              top: -2,
+              right: -2,
+              child: Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: dotColor,
+                  shape: BoxShape.circle,
+                ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 

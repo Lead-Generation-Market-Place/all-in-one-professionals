@@ -25,6 +25,7 @@ class BusinessNameLogo extends StatefulWidget {
 class _BusinessNameLogoState extends State<BusinessNameLogo> {
   final _formKey = GlobalKey<FormState>();
   bool isFormValid = false;
+  bool isSubmitting = false;
 
   List<BusinessType> businessTypeList = [
     BusinessType(id: 1, businessTypeName: 'Company'),
@@ -33,6 +34,9 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
   ];
 
   String? selectedBusinessType;
+  final TextEditingController _yearFoundedController = TextEditingController();
+  final TextEditingController _businessDetailsController =
+      TextEditingController();
 
   bool get showEmployeeField =>
       selectedBusinessType == 'Company' ||
@@ -40,13 +44,99 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
 
   void validateForm() {
     final isValid = _formKey.currentState?.validate() ?? false;
+    final hasBusinessType =
+        selectedBusinessType != null && selectedBusinessType!.isNotEmpty;
+    final hasImage = Provider.of<ProfessionalSignUpProvider>(
+      context,
+      listen: false,
+    ).businessImageUrl.isNotEmpty;
+
     setState(() {
-      isFormValid = isValid;
+      isFormValid = isValid && hasBusinessType && hasImage;
     });
+  }
+
+  String? _validateYearFounded(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter year founded.';
+    }
+
+    final year = int.tryParse(value);
+    if (year == null) {
+      return 'Please enter a valid year.';
+    }
+
+    final currentYear = DateTime.now().year;
+    if (year < 1900 || year > currentYear) {
+      return 'Year must be between 1900 and $currentYear.';
+    }
+
+    return null;
+  }
+
+  String? _validateBusinessDetails(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please provide details about your business.';
+    }
+
+    if (value.trim().length < 20) {
+      return 'Please provide at least 20 characters.';
+    }
+
+    if (value.trim().length > 500) {
+      return 'Maximum 500 characters allowed.';
+    }
+
+    return null;
+  }
+
+  Future<void> _handleSubmit() async {
+    if (!isFormValid) return;
+
+    setState(() {
+      isSubmitting = true;
+    });
+
+    try {
+      // Simulate API call
+      await Future.delayed(const Duration(seconds: 1));
+
+      if (mounted) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRouter.professionalRating,
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isSubmitting = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _yearFoundedController.dispose();
+    _businessDetailsController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final professionalSignUpProvider = Provider.of<ProfessionalSignUpProvider>(
       context,
     );
@@ -55,178 +145,342 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
         .toList();
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(title: const Text('Business Information')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            onChanged: validateForm,
-            child: Column(
-              children: [
-                // --- Profile image with edit button ---
-                Container(
-                  width: 180,
-                  height: 180,
-                  child: Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      Selector<ProfessionalSignUpProvider, String>(
-                        selector: (_, provider) => provider.businessImageUrl,
-                        builder: (context, imageUrl, child) {
-                          return Container(
-                            width: 180,
-                            height: 180,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(width: 2),
-                            ),
-                            child: imageUrl.isNotEmpty
-                                ? ClipOval(
-                                    child: Image.file(
-                                      File(imageUrl),
-                                      width: 180,
-                                      height: 180,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
-                                              _buildPlaceholder(),
+      backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        title: const Text('Business Information'),
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+        elevation: 0,
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              onChanged: validateForm,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Text(
+                    'Tell us about your business',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'This information helps customers understand your business better',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+
+                  // Profile image with edit button
+                  Center(
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 120,
+                          child: Stack(
+                            alignment: Alignment.bottomRight,
+                            children: [
+                              Selector<ProfessionalSignUpProvider, String>(
+                                selector: (_, provider) =>
+                                    provider.businessImageUrl,
+                                builder: (context, imageUrl, child) {
+                                  return Container(
+                                    width: 120,
+                                    height: 120,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: colorScheme.outlineVariant,
+                                        width: 3,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: colorScheme.shadow.withOpacity(
+                                            0.1,
+                                          ),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
                                     ),
-                                  )
-                                : _buildPlaceholder(),
-                          );
-                        },
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          professionalSignUpProvider.showImagePickerBottomSheet(
-                            context,
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
+                                    child: imageUrl.isNotEmpty
+                                        ? ClipOval(
+                                            child: Image.file(
+                                              File(imageUrl),
+                                              width: 120,
+                                              height: 120,
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (
+                                                    context,
+                                                    error,
+                                                    stackTrace,
+                                                  ) => _buildPlaceholder(),
+                                            ),
+                                          )
+                                        : _buildPlaceholder(),
+                                  );
+                                },
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  professionalSignUpProvider
+                                      .showImagePickerBottomSheet(context);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.primary,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: colorScheme.surface,
+                                      width: 2,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: colorScheme.shadow.withOpacity(
+                                          0.2,
+                                        ),
+                                        blurRadius: 4,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Icon(
+                                    Icons.camera_alt,
+                                    size: 16,
+                                    color: colorScheme.onPrimary,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          child: const Icon(Icons.edit, size: 16),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 8),
+                        Text(
+                          'Business Logo',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
+                  const SizedBox(height: 32),
 
-                // --- Business Name ---
-                CustomInputField(
-                  label: 'Business Name',
-                  hintText: 'Enter your business name',
-                  controller: professionalSignUpProvider.businessNameController,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter your business name.';
-                    } else if (value.length > 50) {
-                      return 'Maximum 50 characters allowed.';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    professionalSignUpProvider.onBusinessNameChanged(value);
-                  },
-                ),
-                const SizedBox(height: 24),
-
-                // --- Year Founded ---
-                CustomInputField(
-                  label: 'Year Founded',
-                  hintText: 'Enter your business founded year',
-                  inputType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter year founded.';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 24),
-
-                // --- Business Type Dropdown ---
-                CustomDropdown<String>(
-                  decoration: CustomDropdownDecoration(
-                    closedFillColor: Theme.of(context).highlightColor,
-                    expandedFillColor: Theme.of(
-                      context,
-                    ).scaffoldBackgroundColor,
-                  ),
-                  hintText: 'Select Business Type',
-                  items: businessList,
-                  initialItem: selectedBusinessType,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedBusinessType = value;
-                    });
-                    professionalSignUpProvider.setBusinessType(value!);
-                    validateForm();
-                  },
-                ),
-
-                if (showEmployeeField) ...[
-                  const SizedBox(height: 24),
+                  // Business Name
                   CustomInputField(
-                    label: 'Employees Count',
-                    hintText: 'Enter number of employees',
-                    inputType: TextInputType.number,
+                    label: 'Business Name',
+                    hintText: 'Enter your business name',
                     controller:
-                        professionalSignUpProvider.employeesCountController,
+                        professionalSignUpProvider.businessNameController,
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter employee count.';
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter your business name.';
+                      } else if (value.length > 50) {
+                        return 'Maximum 50 characters allowed.';
                       }
                       return null;
                     },
+                    onChanged: (value) {
+                      professionalSignUpProvider.onBusinessNameChanged(value);
+                      validateForm();
+                    },
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Year Founded
+                  CustomInputField(
+                    label: 'Year Founded',
+                    hintText: 'e.g., 2020',
+                    controller: _yearFoundedController,
+                    inputType: TextInputType.number,
+                    validator: _validateYearFounded,
+                    onChanged: (value) => validateForm(),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Business Type Dropdown
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Business Type',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      CustomDropdown<String>(
+                        decoration: CustomDropdownDecoration(
+                          closedFillColor: colorScheme.surfaceContainerHighest,
+                          expandedFillColor: colorScheme.surface,
+                          headerStyle: theme.textTheme.bodyMedium?.copyWith(
+                            color: colorScheme.onSurface,
+                          ),
+                          listItemStyle: theme.textTheme.bodyMedium?.copyWith(
+                            color: colorScheme.onSurface,
+                          ),
+                          closedBorderRadius: BorderRadius.circular(12),
+                          expandedBorderRadius: BorderRadius.circular(12),
+                          closedBorder: Border.all(
+                            color: colorScheme.outlineVariant,
+                          ),
+                          expandedBorder: Border.all(
+                            color: colorScheme.primary,
+                          ),
+                        ),
+                        hintText: 'Select Business Type',
+                        items: businessList,
+                        initialItem: selectedBusinessType,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedBusinessType = value;
+                          });
+                          professionalSignUpProvider.setBusinessType(value!);
+                          validateForm();
+                        },
+                      ),
+                      if (selectedBusinessType == null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(
+                            'Please select a business type',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.error,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+
+                  if (showEmployeeField) ...[
+                    const SizedBox(height: 24),
+                    CustomInputField(
+                      label: 'Number of Employees',
+                      hintText: 'e.g., 5',
+                      inputType: TextInputType.number,
+                      controller:
+                          professionalSignUpProvider.employeesCountController,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter employee count.';
+                        }
+                        final count = int.tryParse(value);
+                        if (count == null || count <= 0) {
+                          return 'Please enter a valid number.';
+                        }
+                        return null;
+                      },
+                      onChanged: (value) => validateForm(),
+                    ),
+                  ],
+
+                  const SizedBox(height: 24),
+
+                  // Business Details Multiline
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Business Description',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _businessDetailsController,
+                        minLines: 4,
+                        maxLines: 6,
+                        keyboardType: TextInputType.multiline,
+                        decoration: InputDecoration(
+                          hintText:
+                              'Describe your business, services, and what makes you unique...',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: colorScheme.outlineVariant,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: colorScheme.outlineVariant,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: colorScheme.primary,
+                              width: 2,
+                            ),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: colorScheme.error),
+                          ),
+                          filled: true,
+                          fillColor: colorScheme.surfaceContainerHighest,
+                          contentPadding: const EdgeInsets.all(16),
+                        ),
+                        validator: _validateBusinessDetails,
+                        onChanged: (value) => validateForm(),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '${_businessDetailsController.text.length}/500 characters',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          if (_businessDetailsController.text.isNotEmpty)
+                            Text(
+                              _businessDetailsController.text.length < 20
+                                  ? '${20 - _businessDetailsController.text.length} more needed'
+                                  : '✓ Good length',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color:
+                                    _businessDetailsController.text.length < 20
+                                    ? colorScheme.error
+                                    : colorScheme.primary,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // Save & Continue Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: CustomButton(
+                      text: isSubmitting ? 'Saving...' : 'Save & Continue',
+                      onPressed: isFormValid && !isSubmitting
+                          ? _handleSubmit
+                          : null,
+                      enabled: isFormValid && !isSubmitting,
+                    ),
                   ),
                 ],
-
-                const SizedBox(height: 24),
-
-                // --- Business Details Multiline ---
-                TextFormField(
-                  minLines: 5,
-                  maxLines: 5,
-                  keyboardType: TextInputType.multiline,
-                  decoration: const InputDecoration(
-                    labelText: 'Details about your business',
-                    hintText: 'Type your details...',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please provide details about your business.';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: 24),
-
-                // --- Save & Continue Button ---
-                CustomButton(
-                  text: 'Save & Continue',
-                  onPressed: isFormValid
-                      ? () {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              AppRouter.professionalRating,
-                              (route) => false,
-                            );
-                          }
-                        }
-                      : null,
-                  enabled: isFormValid,
-                ),
-              ],
+              ),
             ),
           ),
         ),

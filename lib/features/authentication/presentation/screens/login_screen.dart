@@ -56,6 +56,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -133,10 +135,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       /// Country Dropdown
                       CustomDropdown<String>(
                         decoration: CustomDropdownDecoration(
-                          closedFillColor: Theme.of(context).highlightColor,
-                          expandedFillColor: Theme.of(
-                            context,
-                          ).scaffoldBackgroundColor,
+                          closedFillColor: Colors.transparent,
+                          expandedFillColor: theme.colorScheme.surface,
+                          headerStyle: theme.textTheme.bodyMedium,
+                          hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          listItemDecoration: ListItemDecoration(
+                            selectedColor: theme.colorScheme.primary,
+                            highlightColor: theme.colorScheme.primary
+                                .withOpacity(0.08),
+                          ),
+                          closedBorderRadius: BorderRadius.circular(30),
+                          expandedBorderRadius: BorderRadius.circular(16),
+                          closedBorder: Border.fromBorderSide(BorderSide.none),
                         ),
                         hintText: 'Select a Country',
                         items: _countries,
@@ -174,74 +186,114 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
 
+                      // Forgot password (moved here for better flow)
+                      TextButton(
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) =>
+                                const ForgotPasswordBottomSheet(),
+                          );
+                        },
+                        child: Text(
+                          'Forgot password?',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: scheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+
                       SizedBox(height: verticalSpacing),
 
-                      /// Forgot / Need Help Row
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                backgroundColor: Colors.transparent,
-                                builder: (context) =>
-                                    const ForgotPasswordBottomSheet(),
-                              );
-                            },
-                            child: const Text(
-                              'Forgot password?',
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                AppRouter.signUpAsProfessional,
-                              );
-                            },
-                            child: const Text(
-                              'Sign Up as Professional',
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ),
-                        ],
+                      // Sign up as professional (secondary action)
+                      SizedBox(
+                        width: double.infinity,
+                        child: CustomButton(
+                          text: 'Sign Up as Professional',
+                          type: CustomButtonType.outline,
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRouter.signUpAsProfessional,
+                            );
+                          },
+                        ),
                       ),
 
                       SizedBox(height: verticalSpacing * 12),
 
-                      /// Footer Links
-                      Wrap(
-                        alignment: WrapAlignment.center,
-                        spacing: 8,
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              CustomFlutterToast.showInfoToast(
-                                context,
-                                'Coming Soon..',
-                              );
-                            },
-                            child: const Text(
-                              'Want to Shop on Yelpax?',
-                              style: TextStyle(color: Colors.black),
+                      /// Footer Links (responsive)
+                      Builder(
+                        builder: (context) {
+                          final double maxLinkWidth = constraints.maxWidth > 600
+                              ? 360
+                              : (constraints.maxWidth - horizontalPadding * 2);
+                          final ButtonStyle linkStyle = TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            minimumSize: Size(
+                              0,
+                              theme.textTheme.bodyMedium?.fontSize ?? 16,
                             ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              CustomFlutterToast.showInfoToast(
-                                context,
-                                'Coming Soon..',
-                              );
-                            },
-                            child: const Text(
-                              'Get the Yelpax app.',
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ),
-                        ],
+                          );
+                          return Wrap(
+                            alignment: WrapAlignment.center,
+                            runAlignment: WrapAlignment.center,
+                            spacing: 8,
+                            runSpacing: 6,
+                            children: [
+                              ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: maxLinkWidth,
+                                ),
+                                child: TextButton(
+                                  style: linkStyle,
+                                  onPressed: () {
+                                    CustomFlutterToast.showInfoToast(
+                                      context,
+                                      'Coming Soon..',
+                                    );
+                                  },
+                                  child: Text(
+                                    'Want to Shop on Yelpax?',
+                                    textAlign: TextAlign.center,
+                                    softWrap: true,
+                                    overflow: TextOverflow.visible,
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: scheme.primary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: maxLinkWidth,
+                                ),
+                                child: TextButton(
+                                  style: linkStyle,
+                                  onPressed: () {
+                                    CustomFlutterToast.showInfoToast(
+                                      context,
+                                      'Coming Soon..',
+                                    );
+                                  },
+                                  child: Text(
+                                    'Get the Yelpax app.',
+                                    textAlign: TextAlign.center,
+                                    softWrap: true,
+                                    overflow: TextOverflow.visible,
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: scheme.primary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     ],
                   ),

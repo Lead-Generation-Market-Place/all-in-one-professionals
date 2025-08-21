@@ -76,162 +76,166 @@ class _ServiceDashboardState extends State<ServiceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.only(top: 30.0),
-        child: Column(
-          children: [
-            if (!isSetupFinished)
-              ProfileCompletionBanner(
-                stepNumber: 3,
-                onFinishSetupPressed: () {
-                  Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
+      body: Column(
+        children: [
+          if (!isSetupFinished)
+            ProfileCompletionBanner(
+              stepNumber: 3,
+              onFinishSetupPressed: () {
+                Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
+              },
+            ),
+
+          // App Bar
+          CustomAppBar(
+            title: 'Services',
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.notifications),
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    AppRouter.homeServicesNotifications,
+                  );
                 },
               ),
+              IconButton(
+                icon: const Icon(Icons.settings),
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRouter.settingsScreen);
+                },
+              ),
+            ],
+          ),
 
-            // App Bar
-            CustomAppBar(
-              title: 'Services',
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.notifications),
-                  onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      AppRouter.homeServicesNotifications,
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.settings),
-                  onPressed: () {
-                    Navigator.pushNamed(context, AppRouter.settingsScreen);
-                  },
-                ),
+          // Stats Cards
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                StatCard(title: "Active Services", value: "4"),
+                StatCard(title: "Avg. Rating", value: "3.7"),
+                StatCard(title: "Total Reviews", value: "134"),
+                StatCard(title: "Incomplete Setups", value: "2"),
               ],
             ),
+          ),
 
-            // Stats Cards
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  StatCard(title: "Active Services", value: "4"),
-                  StatCard(title: "Avg. Rating", value: "3.7"),
-                  StatCard(title: "Total Reviews", value: "134"),
-                  StatCard(title: "Incomplete Setups", value: "2"),
-                ],
-              ),
-            ),
-
-            // Header with business info
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "BCC Brand",
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                      Row(
-                        children: [
-                          const Icon(Icons.location_on, size: 16),
-                          const SizedBox(width: 4),
-                          Text(
-                            "Falls Church",
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(
-                        context,
-                        AppRouter.businessAvailability,
-                      );
-                    },
-                    child: const Text("Business Availability"),
-                  ),
-                ],
-              ),
-            ),
-
-            // Main content
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
+          // Header with business info
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Services section
-                    Card(
-                      margin: const EdgeInsets.all(16),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Your Services",
-                              style: Theme.of(context).textTheme.titleLarge,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              "Set your job preferences, activate or deactivate services, and choose where you want to work.",
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            const SizedBox(height: 8),
-                            TextButton.icon(
-                              onPressed: () {},
-                              icon: const Icon(Icons.info_outline),
-                              label: const Text(
-                                "View our guide to job preferences",
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-
-                            // Service list
-                            ...services.map(
-                              (service) => ServiceCard(
-                                service: service,
-                                isExpanded: expandedServiceId == service.id,
-                                completion: calculateCompletion(service),
-                                onToggle: () => toggleService(service.id),
-                                onExpand: () => toggleExpand(service.id),
-                              ),
-                            ),
-
-                            const SizedBox(height: 16),
-                            ElevatedButton.icon(
-                              onPressed: () {},
-                              icon: const Icon(Icons.add),
-                              label: const Text("Add a Service"),
-                            ),
-                          ],
-                        ),
-                      ),
+                    Text(
+                      "BCC Brand",
+                      style: Theme.of(context).textTheme.headlineSmall,
                     ),
-
-                    // Sidebar cards
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Column(
-                        children: [
-                          const ActivityCard(),
-                          const SizedBox(height: 16),
-                          const SpendingCard(),
-                        ],
-                      ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          size: 16,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          "Falls Church",
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
                     ),
                   ],
                 ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      AppRouter.businessAvailability,
+                    );
+                  },
+                  child: const Text("Business Availability"),
+                ),
+              ],
+            ),
+          ),
+
+          // Main content
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Services section
+                  Card(
+                    margin: const EdgeInsets.all(16),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Your Services",
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "Set your job preferences, activate or deactivate services, and choose where you want to work.",
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          const SizedBox(height: 8),
+                          TextButton.icon(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.info_outline,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            label: const Text(
+                              "View our guide to job preferences",
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Service list
+                          ...services.map(
+                            (service) => ServiceCard(
+                              service: service,
+                              isExpanded: expandedServiceId == service.id,
+                              completion: calculateCompletion(service),
+                              onToggle: () => toggleService(service.id),
+                              onExpand: () => toggleExpand(service.id),
+                            ),
+                          ),
+
+                          const SizedBox(height: 16),
+                          ElevatedButton.icon(
+                            onPressed: () {},
+                            icon: const Icon(Icons.add),
+                            label: const Text("Add a Service"),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Sidebar cards
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      children: [
+                        const ActivityCard(),
+                        const SizedBox(height: 16),
+                        const SpendingCard(),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -258,14 +262,15 @@ class ServiceCard extends StatelessWidget {
     final bool hasSetupProgress = service.setupProgress != null;
     final bool isCompleted = service.completed;
 
+    final scheme = Theme.of(context).colorScheme;
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
         side: BorderSide(
           color: service.active
-              ? Theme.of(context).primaryColor.withOpacity(0.2)
-              : Colors.grey.shade300,
+              ? scheme.primary.withOpacity(0.24)
+              : scheme.outlineVariant,
         ),
       ),
       child: InkWell(
@@ -328,8 +333,8 @@ class ServiceCard extends StatelessWidget {
                         const SizedBox(height: 8),
                         LinearProgressIndicator(
                           value: completion / 100,
-                          backgroundColor: Colors.grey.shade200,
-                          color: Theme.of(context).primaryColor,
+                          backgroundColor: scheme.surfaceContainerHighest,
+                          color: scheme.primary,
                         ),
                       ],
                     ),
@@ -349,9 +354,9 @@ class ServiceCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.red.shade50,
+                          color: scheme.error.withOpacity(0.08),
                           border: Border(
-                            left: BorderSide(color: Colors.red, width: 4),
+                            left: BorderSide(color: scheme.error, width: 4),
                           ),
                         ),
                         child: Column(
@@ -359,12 +364,12 @@ class ServiceCard extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                const Icon(Icons.warning, color: Colors.red),
+                                Icon(Icons.warning, color: scheme.error),
                                 const SizedBox(width: 8),
                                 Text(
                                   "Setup incomplete",
                                   style: Theme.of(context).textTheme.titleSmall
-                                      ?.copyWith(color: Colors.red),
+                                      ?.copyWith(color: scheme.error),
                                 ),
                               ],
                             ),
@@ -378,7 +383,9 @@ class ServiceCard extends StatelessWidget {
                               (e) => ListTile(
                                 leading: Icon(
                                   e.value ? Icons.check : Icons.close,
-                                  color: e.value ? Colors.green : Colors.red,
+                                  color: e.value
+                                      ? scheme.tertiary
+                                      : scheme.error,
                                 ),
                                 title: Text(e.key),
                                 trailing: TextButton(
@@ -409,19 +416,19 @@ class ServiceCard extends StatelessWidget {
                           icon: Icons.attach_money,
                           title: "Spent",
                           value: service.metrics.spent,
-                          color: Colors.blue,
+                          color: scheme.primary,
                         ),
                         MetricCard(
                           icon: Icons.abc_outlined,
                           title: "Leads",
                           value: service.metrics.leads.toString(),
-                          color: Colors.green,
+                          color: scheme.tertiary,
                         ),
                         MetricCard(
                           icon: Icons.remove_red_eye,
                           title: "Views",
                           value: service.metrics.views.toString(),
-                          color: Colors.purple,
+                          color: scheme.secondary,
                         ),
                       ],
                     ),
@@ -444,14 +451,14 @@ class ServiceCard extends StatelessWidget {
                           title: "What you pay",
                           description: "Choose how much you pay per lead",
                           value: "\$15 - \$25 per lead",
-                          color: Colors.blue.shade50,
+                          color: scheme.primary.withOpacity(0.06),
                         ),
                         PricingCard(
                           icon: Icons.attach_money,
                           title: "customers pay",
                           description: "Your service pricing",
                           value: "\$2,500 - \$5,000",
-                          color: Colors.green.shade50,
+                          color: scheme.tertiary.withOpacity(0.06),
                         ),
                       ],
                     ),
@@ -473,29 +480,30 @@ class StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(8),
         margin: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: scheme.surface,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade200),
+          border: Border.all(color: scheme.outlineVariant),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title,
-              style: Theme.of(
-                context,
-              ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               value,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: const Color(0xFF0077B6),
+                color: scheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -638,7 +646,15 @@ class PricingCard extends StatelessWidget {
                   child: Icon(icon, size: 16),
                 ),
                 const SizedBox(width: 8),
-                Text(title, style: Theme.of(context).textTheme.titleSmall),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleSmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 8),
@@ -662,6 +678,7 @@ class ActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -669,13 +686,13 @@ class ActivityCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.trending_up, color: Colors.green),
+                Icon(Icons.trending_up, color: scheme.tertiary),
                 const SizedBox(width: 8),
                 Text(
                   "Activity this week",
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: const Color(0xFF005F91),
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(color: scheme.primary),
                 ),
               ],
             ),
@@ -687,9 +704,9 @@ class ActivityCard extends StatelessWidget {
                   children: [
                     Text(
                       "\$0",
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: const Color(0xFF0077B6),
-                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleLarge?.copyWith(color: scheme.primary),
                     ),
                     Text("spent", style: Theme.of(context).textTheme.bodySmall),
                   ],
@@ -698,9 +715,9 @@ class ActivityCard extends StatelessWidget {
                   children: [
                     Text(
                       "0",
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: const Color(0xFF0077B6),
-                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleLarge?.copyWith(color: scheme.primary),
                     ),
                     Text("leads", style: Theme.of(context).textTheme.bodySmall),
                   ],
@@ -709,9 +726,9 @@ class ActivityCard extends StatelessWidget {
                   children: [
                     Text(
                       "0",
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: const Color(0xFF0077B6),
-                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleLarge?.copyWith(color: scheme.primary),
                     ),
                     Text("views", style: Theme.of(context).textTheme.bodySmall),
                   ],
@@ -730,6 +747,7 @@ class SpendingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -737,13 +755,13 @@ class SpendingCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.wallet, color: Colors.purple),
+                Icon(Icons.wallet, color: scheme.secondary),
                 const SizedBox(width: 8),
                 Text(
                   "Spending this week",
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: const Color(0xFF005F91),
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(color: scheme.primary),
                 ),
               ],
             ),
@@ -756,9 +774,9 @@ class SpendingCard extends StatelessWidget {
                   children: [
                     Text(
                       "\$0",
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: const Color(0xFF0077B6),
-                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleLarge?.copyWith(color: scheme.primary),
                     ),
                     Text(
                       "\$85 budget spent",
@@ -771,9 +789,9 @@ class SpendingCard extends StatelessWidget {
                   children: [
                     Text(
                       "\$0",
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: const Color(0xFF0077B6),
-                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleLarge?.copyWith(color: scheme.primary),
                     ),
                     Text(
                       "additional spent",

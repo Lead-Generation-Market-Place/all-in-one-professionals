@@ -47,11 +47,12 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
     ),
   ];
 
-  late GoogleMapController mapController;
+  GoogleMapController? mapController;
   final PageController _pageController = PageController(viewportFraction: 0.8);
   Set<Marker> markers = {};
   int _currentPage = 0;
   int _currentNavIndex = 0;
+  bool _isMapReady = false;
 
   LatLng _getCoordinatesForLocation(String location) {
     final mockLocations = {
@@ -71,30 +72,47 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
   }
 
   void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
+    if (!mounted) return;
+    setState(() {
+      mapController = controller;
+      _isMapReady = true;
+    });
+    // Defer the initial update to next frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _isMapReady) {
+        _updateMapForLead(_currentPage);
+      }
+    });
   }
 
   void _updateMapForLead(int index) {
-    if (index >= leads.length) return;
+    if (index >= leads.length || !mounted) return;
 
     final lead = leads[index];
     final location = lead.locations.first;
 
     setState(() {
       _currentPage = index;
-      markers.clear();
-      markers.add(
+      markers = {
         Marker(
           markerId: MarkerId(lead.name),
           position: _getCoordinatesForLocation(location),
           infoWindow: InfoWindow(title: lead.name, snippet: location),
         ),
-      );
-
-      mapController.animateCamera(
-        CameraUpdate.newLatLngZoom(_getCoordinatesForLocation(location), 12),
-      );
+      };
     });
+
+    // Only animate camera if map is ready and controller exists
+    if (_isMapReady && mapController != null) {
+      try {
+        mapController!.animateCamera(
+          CameraUpdate.newLatLngZoom(_getCoordinatesForLocation(location), 12),
+        );
+      } catch (e) {
+        // Handle any animation errors gracefully
+        debugPrint('Map animation error: $e');
+      }
+    }
   }
 
   void _onNavItemTapped(int index, BuildContext context) {
@@ -120,14 +138,28 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
   @override
   void initState() {
     super.initState();
+
+    // Initialize first lead's marker
+    if (leads.isNotEmpty) {
+      final lead = leads[0];
+      final location = lead.locations.first;
+      markers = {
+        Marker(
+          markerId: MarkerId(lead.name),
+          position: _getCoordinatesForLocation(location),
+          infoWindow: InfoWindow(title: lead.name, snippet: location),
+        ),
+      };
+    }
+
     _pageController.addListener(() {
+      if (!mounted) return;
       final newPage = _pageController.page?.round();
-      if (newPage != null && newPage != _currentPage) {
+      if (newPage != null &&
+          newPage != _currentPage &&
+          newPage < leads.length) {
         _updateMapForLead(newPage);
       }
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _updateMapForLead(0);
     });
   }
 
@@ -139,10 +171,15 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Leads'),
         centerTitle: true,
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+        elevation: 0,
         leading: IconButton(
           onPressed: () {
             Navigator.pushNamedAndRemoveUntil(
@@ -151,13 +188,10 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
               (route) => false,
             );
           },
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.settings, color: Colors.white),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Icons.settings), onPressed: () {}),
         ],
       ),
       body: Stack(
@@ -170,6 +204,17 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
             ),
             markers: markers,
             myLocationEnabled: true,
+            mapType: MapType.normal,
+            zoomControlsEnabled: false,
+            myLocationButtonEnabled: false,
+            compassEnabled: false,
+            mapToolbarEnabled: false,
+            tiltGesturesEnabled: false,
+            rotateGesturesEnabled: false,
+            liteModeEnabled: false,
+            trafficEnabled: false,
+            indoorViewEnabled: false,
+            buildingsEnabled: false,
           ),
 
           Positioned(
@@ -177,38 +222,57 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
             left: 16,
             right: 16,
             child: Card(
-              elevation: 4,
+              elevation: 0,
+              color: colorScheme.surface,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: colorScheme.outlineVariant),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${leads.length} matching leads',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${leads.length} matching leads',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        Text(
-                          '${leads.map((e) => e.service).toSet().length} services ● ${leads.expand((e) => e.locations).toSet().length} locations',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
+                          Text(
+                            '${leads.map((e) => e.service).toSet().length} services ● ${leads.expand((e) => e.locations).toSet().length} locations',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                    const Icon(Icons.filter_list, color: Colors.blue),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.filter_list, color: colorScheme.primary),
+                    ),
                   ],
                 ),
               ),
+            ),
+          ),
+
+          // My Location Button
+          Positioned(
+            top: 100,
+            right: 16,
+            child: FloatingActionButton.small(
+              onPressed: () {
+                // Handle my location
+              },
+              backgroundColor: colorScheme.surface,
+              foregroundColor: colorScheme.onSurface,
+              child: const Icon(Icons.my_location),
             ),
           ),
 
@@ -226,9 +290,11 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Card(
-                      elevation: 4,
+                      elevation: 0,
+                      color: colorScheme.surface,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(color: colorScheme.outlineVariant),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
@@ -237,25 +303,37 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  lead.name,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+                                Expanded(
+                                  child: Text(
+                                    lead.name,
+                                    style: theme.textTheme.titleMedium
+                                        ?.copyWith(fontWeight: FontWeight.bold),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 if (lead.isFrequentUser)
-                                  const Chip(
-                                    label: Text('Frequent user'),
-                                    backgroundColor: Colors.greenAccent,
+                                  Chip(
+                                    label: Text(
+                                      'Frequent user',
+                                      style: theme.textTheme.labelSmall
+                                          ?.copyWith(
+                                            color: colorScheme.tertiary,
+                                          ),
+                                    ),
+                                    backgroundColor: colorScheme.tertiary
+                                        .withOpacity(0.12),
+                                    side: BorderSide(
+                                      color: colorScheme.outlineVariant,
+                                    ),
                                   ),
                               ],
                             ),
                             const SizedBox(height: 8),
                             Text(
                               lead.service,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.primary,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -263,6 +341,9 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
                               lead.details,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
                             ),
                             const SizedBox(height: 8),
                             SizedBox(
@@ -273,10 +354,18 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
                                   return Padding(
                                     padding: const EdgeInsets.only(right: 8.0),
                                     child: Chip(
-                                      label: Text(location),
+                                      label: Text(
+                                        location,
+                                        style: theme.textTheme.labelSmall,
+                                      ),
                                       backgroundColor: index == _currentPage
-                                          ? Colors.blue[100]
-                                          : Colors.grey[200],
+                                          ? colorScheme.primary.withOpacity(
+                                              0.12,
+                                            )
+                                          : colorScheme.surfaceContainerHighest,
+                                      side: BorderSide(
+                                        color: colorScheme.outlineVariant,
+                                      ),
                                     ),
                                   );
                                 }).toList(),
@@ -293,13 +382,13 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentNavIndex,
-        onTap: (index) => _onNavItemTapped(index, context),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Leads'),
-          BottomNavigationBarItem(icon: Icon(Icons.email), label: 'Responses'),
-          BottomNavigationBarItem(
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _currentNavIndex,
+        onDestinationSelected: (index) => _onNavItemTapped(index, context),
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.list), label: 'Leads'),
+          NavigationDestination(icon: Icon(Icons.email), label: 'Responses'),
+          NavigationDestination(
             icon: Icon(Icons.notifications),
             label: 'Reminders',
           ),

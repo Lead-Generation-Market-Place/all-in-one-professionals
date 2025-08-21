@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 
 enum CustomButtonType { primary, secondary, outline, text }
 
 enum CustomButtonSize { small, medium, large }
 
-class CustomButton extends StatelessWidget {
+enum CustomButtonIconPosition { leading, trailing }
+
+class CustomButton extends StatefulWidget {
   final String text;
   final VoidCallback? onPressed;
   final CustomButtonType type;
@@ -17,6 +20,13 @@ class CustomButton extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final double? width;
   final double? height;
+  final BorderRadius? borderRadius;
+  final Gradient? gradient; // takes precedence over background color
+  final Color? backgroundColor; // force background color
+  final Color? foregroundColor; // force text/icon color
+  final Duration animationDuration;
+  final bool enableHaptics;
+  final CustomButtonIconPosition iconPosition;
 
   const CustomButton({
     Key? key,
@@ -31,34 +41,77 @@ class CustomButton extends StatelessWidget {
     this.margin,
     this.width,
     this.height,
+    this.borderRadius,
+    this.gradient,
+    this.backgroundColor,
+    this.foregroundColor,
+    this.animationDuration = const Duration(milliseconds: 160),
+    this.enableHaptics = true,
+    this.iconPosition = CustomButtonIconPosition.leading,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final isDisabled = !enabled || isLoading || onPressed == null;
+  State<CustomButton> createState() => _CustomButtonState();
+}
 
-    return Container(
-      margin: margin,
-      width: isFullWidth ? double.infinity : width,
-      height: height ?? _getHeight(),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: isDisabled ? null : onPressed,
-          borderRadius: BorderRadius.circular(12),
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          child: Ink(
-            decoration: BoxDecoration(
-              color: _getBackgroundColor(context, isDisabled),
-              borderRadius: BorderRadius.circular(12),
-              border: _getBorder(context, isDisabled),
-              // / boxShadow: _getBoxShadow(context, isDisabled),
-            ),
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _buildContent(context, isDisabled),
+class _CustomButtonState extends State<CustomButton> {
+  bool _isHovered = false;
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDisabled =
+        !widget.enabled || widget.isLoading || widget.onPressed == null;
+
+    final bgColor =
+        widget.backgroundColor ?? _getBackgroundColor(context, isDisabled);
+    final fgColor =
+        widget.foregroundColor ?? _getForegroundColor(context, isDisabled);
+    final radius = widget.borderRadius ?? BorderRadius.circular(12);
+
+    final decoration = BoxDecoration(
+      color: widget.gradient == null ? bgColor : null,
+      gradient: widget.gradient,
+      borderRadius: radius,
+      border: _getBorder(context, isDisabled),
+      boxShadow: _getBoxShadow(context, isDisabled),
+    );
+
+    final scale = _isPressed ? 0.98 : (_isHovered ? 1.01 : 1.0);
+
+    return Semantics(
+      button: true,
+      enabled: !isDisabled,
+      label: widget.text,
+      child: AnimatedScale(
+        duration: widget.animationDuration,
+        scale: scale,
+        child: Container(
+          margin: widget.margin,
+          width: widget.isFullWidth ? double.infinity : widget.width,
+          height: widget.height ?? _getHeight(),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: isDisabled
+                  ? null
+                  : () {
+                      if (widget.enableHaptics) HapticFeedback.lightImpact();
+                      widget.onPressed?.call();
+                    },
+              onHighlightChanged: (v) => setState(() => _isPressed = v),
+              onHover: (v) => setState(() => _isHovered = v),
+              borderRadius: radius,
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              child: Ink(
+                decoration: decoration,
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: _buildContent(context, isDisabled, fgColor),
+                  ),
+                ),
               ),
             ),
           ),
@@ -67,8 +120,8 @@ class CustomButton extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context, bool isDisabled) {
-    if (isLoading) {
+  Widget _buildContent(BuildContext context, bool isDisabled, Color fgColor) {
+    if (widget.isLoading) {
       return SizedBox(
         height: _getLoaderSize(),
         width: _getLoaderSize(),
@@ -79,28 +132,43 @@ class CustomButton extends StatelessWidget {
       );
     }
 
-    final textStyle = _getTextStyle(context, isDisabled);
+    final textStyle = _getTextStyle(
+      context,
+      isDisabled,
+    ).copyWith(color: fgColor);
     final iconSize = _getIconSize();
 
-    if (icon != null) {
+    if (widget.icon != null) {
+      final iconWidget = Icon(
+        widget.icon!,
+        size: iconSize,
+        color: textStyle.color,
+      );
+      final textWidget = Text(widget.text, style: textStyle);
       return Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon!, size: iconSize, color: textStyle.color),
-          if (text.isNotEmpty) const SizedBox(width: 8),
-          Text(text, style: textStyle),
-        ],
+        children: widget.iconPosition == CustomButtonIconPosition.leading
+            ? [
+                iconWidget,
+                if (widget.text.isNotEmpty) const SizedBox(width: 8),
+                textWidget,
+              ]
+            : [
+                textWidget,
+                if (widget.text.isNotEmpty) const SizedBox(width: 8),
+                iconWidget,
+              ],
       );
     }
 
-    return Text(text, style: textStyle);
+    return Text(widget.text, style: textStyle);
   }
 
   // Resolve ButtonStyle from ThemeData
   ButtonStyle? _resolveStyle(BuildContext context) {
     final theme = Theme.of(context);
-    switch (type) {
+    switch (widget.type) {
       case CustomButtonType.primary:
       case CustomButtonType.secondary:
         return theme.elevatedButtonTheme.style;
@@ -115,22 +183,36 @@ class CustomButton extends StatelessWidget {
     final theme = Theme.of(context);
     final style = _resolveStyle(context);
     final resolvedColor = style?.backgroundColor?.resolve(_states(isDisabled));
-
     if (resolvedColor != null) return resolvedColor;
 
-    // Fallbacks based on type
     if (isDisabled) {
-      return theme.disabledColor;
+      return theme.colorScheme.surfaceContainerHighest;
     }
 
-    switch (type) {
+    switch (widget.type) {
       case CustomButtonType.primary:
         return theme.colorScheme.primary;
       case CustomButtonType.secondary:
-        return theme.colorScheme.secondary;
+        return theme.colorScheme.secondaryContainer;
       case CustomButtonType.outline:
+        return theme.colorScheme.surface;
       case CustomButtonType.text:
-        return theme.colorScheme.surface; // ← Instead of transparent
+        return Colors.transparent;
+    }
+  }
+
+  Color _getForegroundColor(BuildContext context, bool isDisabled) {
+    final theme = Theme.of(context);
+    if (isDisabled) return theme.colorScheme.onSurface.withOpacity(0.38);
+    switch (widget.type) {
+      case CustomButtonType.primary:
+        return theme.colorScheme.onPrimary;
+      case CustomButtonType.secondary:
+        return theme.colorScheme.onSecondaryContainer;
+      case CustomButtonType.outline:
+        return theme.colorScheme.primary;
+      case CustomButtonType.text:
+        return theme.colorScheme.primary;
     }
   }
 
@@ -139,7 +221,6 @@ class CustomButton extends StatelessWidget {
     final textStyle =
         style?.textStyle?.resolve(_states(isDisabled)) ??
         Theme.of(context).textTheme.labelLarge;
-
     return textStyle?.copyWith(fontSize: _getFontSize()) ??
         TextStyle(fontSize: _getFontSize());
   }
@@ -148,9 +229,20 @@ class CustomButton extends StatelessWidget {
     final style = _resolveStyle(context);
     final side = style?.side?.resolve(_states(isDisabled));
 
-    return side != null
-        ? Border.all(color: side.color, width: side.width)
-        : null;
+    if (side != null) {
+      return Border.all(color: side.color, width: side.width);
+    }
+
+    final theme = Theme.of(context);
+    if (widget.type == CustomButtonType.outline) {
+      return Border.all(
+        color: isDisabled
+            ? theme.colorScheme.outlineVariant
+            : theme.colorScheme.outline,
+        width: 1.2,
+      );
+    }
+    return null;
   }
 
   // List<BoxShadow>? _getBoxShadow(BuildContext context, bool isDisabled) {
@@ -170,8 +262,38 @@ class CustomButton extends StatelessWidget {
     return isDisabled ? {WidgetState.disabled} : {};
   }
 
+  List<BoxShadow>? _getBoxShadow(BuildContext context, bool isDisabled) {
+    if (isDisabled || widget.type == CustomButtonType.text) return null;
+    final theme = Theme.of(context);
+    if (_isPressed) {
+      return [
+        BoxShadow(
+          color: theme.shadowColor.withOpacity(0.12),
+          blurRadius: 6,
+          offset: const Offset(0, 2),
+        ),
+      ];
+    }
+    if (_isHovered) {
+      return [
+        BoxShadow(
+          color: theme.shadowColor.withOpacity(0.14),
+          blurRadius: 12,
+          offset: const Offset(0, 6),
+        ),
+      ];
+    }
+    return [
+      BoxShadow(
+        color: theme.shadowColor.withOpacity(0.08),
+        blurRadius: 10,
+        offset: const Offset(0, 4),
+      ),
+    ];
+  }
+
   double _getHeight() {
-    switch (size) {
+    switch (widget.size) {
       case CustomButtonSize.small:
         return 32;
       case CustomButtonSize.medium:
@@ -182,7 +304,7 @@ class CustomButton extends StatelessWidget {
   }
 
   double _getFontSize() {
-    switch (size) {
+    switch (widget.size) {
       case CustomButtonSize.small:
         return 12;
       case CustomButtonSize.medium:
@@ -193,7 +315,7 @@ class CustomButton extends StatelessWidget {
   }
 
   double _getIconSize() {
-    switch (size) {
+    switch (widget.size) {
       case CustomButtonSize.small:
         return 16;
       case CustomButtonSize.medium:
@@ -204,7 +326,7 @@ class CustomButton extends StatelessWidget {
   }
 
   double _getLoaderSize() {
-    switch (size) {
+    switch (widget.size) {
       case CustomButtonSize.small:
         return 24;
       case CustomButtonSize.medium:

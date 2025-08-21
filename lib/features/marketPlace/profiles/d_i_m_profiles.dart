@@ -1,4 +1,4 @@
-import 'package:http/http.dart' as http;
+import 'package:yelpax_pro/shared/services/api_service.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/data/datasources/basic_info_data_source.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/data/datasources/business_information_data_source.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/data/repositoriesImpl/basic_info_repository_impl.dart';
@@ -10,14 +10,21 @@ import 'package:yelpax_pro/features/marketPlace/profiles/domain/usecases/profess
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/controllers/profile_provider.dart';
 
 ProfileProvider createProfileProvider() {
-  final client = http.Client();
+  // services
+  final apiService = ApiService();
+
+  // data sources
+  final basicInfoRemoteDataSource = BasicInfoRemoteDataSourceImpl(apiService);
+  final businessInformationDataSource = BusinessInformationDataSourceImpl(
+    apiService,
+  );
 
   // repositories
   final basicInfoRepository = BasicInfoRepositoryImpl(
-    client as BasicInfoRemoteDataSource,
+    basicInfoRemoteDataSource,
   );
   final businessInfoRepository = BusinessInformationImpl(
-    client as BusinessInformationDataSource,
+    businessInformationDataSource,
   );
 
   // use cases

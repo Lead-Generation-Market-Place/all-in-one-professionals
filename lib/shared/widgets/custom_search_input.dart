@@ -33,11 +33,14 @@ class _DynamicSearchInputState extends State<DynamicSearchInput> {
   List<String> _filteredItems = [];
   bool _isLoading = false;
   Timer? _debounce;
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
 
   void _onSearchChanged() {
     final query = _controller.text.trim().toLowerCase();
 
     // Trigger rebuild to update clear icon
+    if (!mounted) return;
     setState(() {});
 
     // Cancel previous debounce
@@ -47,18 +50,24 @@ class _DynamicSearchInputState extends State<DynamicSearchInput> {
     _debounce = Timer(widget.debounceDuration, () async {
       if (widget.asyncSearch != null) {
         if (query.isEmpty) {
+          if (!mounted) return;
           setState(() => _filteredItems = []);
           return;
         }
+        if (!mounted) return;
         setState(() => _isLoading = true);
         try {
           final results = await widget.asyncSearch!(query);
+          if (!mounted) return;
           setState(() => _filteredItems = results);
         } catch (_) {
+          if (!mounted) return;
           setState(() => _filteredItems = []);
         }
+        if (!mounted) return;
         setState(() => _isLoading = false);
       } else if (widget.items != null) {
+        if (!mounted) return;
         setState(() {
           _filteredItems = query.isEmpty
               ? widget.items!
@@ -77,6 +86,10 @@ class _DynamicSearchInputState extends State<DynamicSearchInput> {
     if (widget.items != null) {
       _filteredItems = widget.items!;
     }
+    _focusNode.addListener(() {
+      if (!mounted) return;
+      setState(() => _isFocused = _focusNode.hasFocus);
+    });
   }
 
   @override
@@ -84,35 +97,38 @@ class _DynamicSearchInputState extends State<DynamicSearchInput> {
     _controller.removeListener(_onSearchChanged);
     _controller.dispose();
     _debounce?.cancel();
+    _focusNode.dispose();
     super.dispose();
   }
 
   Widget _buildItem(String item) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     if (!widget.highlightMatch || _controller.text.isEmpty) {
-      return Text(item);
+      return Text(item, style: theme.textTheme.bodyMedium);
     }
     final query = _controller.text.toLowerCase();
     final index = item.toLowerCase().indexOf(query);
-    if (index == -1) return Text(item);
+    if (index == -1) return Text(item, style: theme.textTheme.bodyMedium);
+
+    final baseStyle = theme.textTheme.bodyMedium?.copyWith(
+      color: colorScheme.onSurface,
+    );
+    final highlightStyle = baseStyle?.copyWith(
+      color: colorScheme.primary,
+      fontWeight: FontWeight.bold,
+    );
 
     return RichText(
       text: TextSpan(
+        style: baseStyle,
         children: [
-          TextSpan(
-            text: item.substring(0, index),
-            style: const TextStyle(color: Colors.black),
-          ),
+          TextSpan(text: item.substring(0, index)),
           TextSpan(
             text: item.substring(index, index + query.length),
-            style: const TextStyle(
-              color: Colors.blue,
-              fontWeight: FontWeight.bold,
-            ),
+            style: highlightStyle,
           ),
-          TextSpan(
-            text: item.substring(index + query.length),
-            style: const TextStyle(color: Colors.black),
-          ),
+          TextSpan(text: item.substring(index + query.length)),
         ],
       ),
     );
@@ -120,94 +136,181 @@ class _DynamicSearchInputState extends State<DynamicSearchInput> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
         TextField(
           controller: _controller,
+          focusNode: _focusNode,
+          textInputAction: TextInputAction.search,
           decoration: InputDecoration(
             hintText: widget.hintText,
-            hintStyle: const TextStyle(color: Colors.grey, fontSize: 16),
-            prefixIcon: const Icon(Icons.search, color: Colors.grey),
-            suffixIcon: _controller.text.isNotEmpty
-                ? IconButton(
-                    icon: const Icon(Icons.clear, color: Colors.grey),
-                    onPressed: () {
-                      _controller.clear();
-                      if (widget.onItemSelected != null) {
-                        widget.onItemSelected!('');
-                      }
-                      setState(() => _filteredItems = widget.items ?? []);
-                    },
+            hintStyle: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+            prefixIcon: Icon(
+              Icons.search,
+              color: _isFocused
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
+            ),
+            suffixIcon: _isLoading
+                ? Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          colorScheme.primary,
+                        ),
+                      ),
+                    ),
                   )
-                : null,
+                : (_controller.text.isNotEmpty
+                      ? IconButton(
+                          icon: Icon(
+                            Icons.clear,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                          onPressed: () {
+                            _debounce?.cancel();
+                            _controller.clear();
+                            if (widget.onItemSelected != null) {
+                              widget.onItemSelected!('');
+                            }
+                            if (!mounted) return;
+                            setState(
+                              () => _filteredItems = widget.items == null
+                                  ? []
+                                  : [],
+                            );
+                          },
+                          tooltip: 'Clear',
+                        )
+                      : null),
             contentPadding: const EdgeInsets.symmetric(
               vertical: 0,
               horizontal: 16,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide.none,
+              borderSide: BorderSide(
+                color: colorScheme.outline.withOpacity(0.6),
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide(color: colorScheme.outline, width: 1.2),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide(color: colorScheme.outline, width: 1.5),
             ),
             filled: true,
-            fillColor: widget.fillColor,
+            fillColor: Color.alphaBlend(
+              colorScheme.primary.withOpacity(_isFocused ? 0.05 : 0.03),
+              isDark ? colorScheme.surface : widget.fillColor,
+            ),
           ),
         ),
         const SizedBox(height: 8),
         if (widget.showDropdown && (_isLoading || _filteredItems.isNotEmpty))
-          _isLoading ? _buildLoading() : _buildDropdown(),
+          _isLoading ? _buildLoading(theme) : _buildDropdown(theme),
+        if (widget.showDropdown &&
+            !_isLoading &&
+            _controller.text.isNotEmpty &&
+            _filteredItems.isEmpty)
+          _buildNoResults(theme),
       ],
     );
   }
 
-  Widget _buildLoading() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: _dropdownDecoration(),
-      child: const Center(
-        child: SizedBox(
-          height: 24,
-          width: 24,
-          child: CircularProgressIndicator(strokeWidth: 2),
+  Widget _buildLoading(ThemeData theme) {
+    return Material(
+      elevation: 4,
+      borderRadius: BorderRadius.circular(12),
+      color: theme.colorScheme.surface,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: _dropdownDecoration(theme),
+        child: const Center(
+          child: SizedBox(
+            height: 24,
+            width: 24,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildDropdown() {
-    return Container(
-      constraints: const BoxConstraints(maxHeight: 200),
-      decoration: _dropdownDecoration(),
-      child: ListView.separated(
-        shrinkWrap: true,
-        itemCount: _filteredItems.length,
-        separatorBuilder: (_, __) => const Divider(height: 1),
-        itemBuilder: (context, index) {
-          final item = _filteredItems[index];
-          return ListTile(
-            title: _buildItem(item),
-            onTap: () {
-              _controller.text = item;
-              if (widget.onItemSelected != null) {
-                widget.onItemSelected!(item);
-              }
-              FocusScope.of(context).unfocus();
-            },
-            hoverColor: Colors.blue.withOpacity(0.1),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
-            ),
-          );
-        },
+  Widget _buildDropdown(ThemeData theme) {
+    return Material(
+      elevation: 4,
+      borderRadius: BorderRadius.circular(12),
+      color: theme.colorScheme.surface,
+      child: Container(
+        constraints: const BoxConstraints(maxHeight: 240),
+        decoration: _dropdownDecoration(theme),
+        child: ListView.separated(
+          shrinkWrap: true,
+          itemCount: _filteredItems.length,
+          separatorBuilder: (_, __) =>
+              Divider(height: 1, color: theme.dividerColor),
+          itemBuilder: (context, index) {
+            final item = _filteredItems[index];
+            return ListTile(
+              title: _buildItem(item),
+              onTap: () {
+                _controller.text = item;
+                if (widget.onItemSelected != null) {
+                  widget.onItemSelected!(item);
+                }
+                if (!mounted) return;
+                setState(() => _filteredItems = []);
+                FocusScope.of(context).unfocus();
+              },
+              hoverColor: theme.colorScheme.primary.withOpacity(0.06),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 8,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 
-  BoxDecoration _dropdownDecoration() {
-    return BoxDecoration(
-      color: Colors.white,
+  Widget _buildNoResults(ThemeData theme) {
+    return Material(
+      elevation: 2,
       borderRadius: BorderRadius.circular(12),
-      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
+      color: theme.colorScheme.surface,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: _dropdownDecoration(theme),
+        child: Row(
+          children: [
+            Icon(Icons.search_off, color: theme.colorScheme.onSurfaceVariant),
+            const SizedBox(width: 8),
+            Text('No results', style: theme.textTheme.bodyMedium),
+          ],
+        ),
+      ),
+    );
+  }
+
+  BoxDecoration _dropdownDecoration(ThemeData theme) {
+    return BoxDecoration(
+      color: theme.colorScheme.surface,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: theme.colorScheme.outline.withOpacity(0.5)),
     );
   }
 }
