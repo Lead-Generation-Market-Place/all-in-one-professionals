@@ -102,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             'Profile',
             style: Theme.of(
               context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           Row(
             children: [
@@ -278,9 +278,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Business info',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 16),
           _buildInfoItem(
@@ -329,9 +332,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Your introduction',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               GestureDetector(
                 onTap: () {
@@ -858,6 +864,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required String value,
     bool isPlaceholder = false,
   }) {
+    final theme = Theme.of(context);
     return InkWell(
       onTap: () {
         Navigator.pushNamed(context, AppRouter.editBusinessInfo);
@@ -865,15 +872,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
       borderRadius: BorderRadius.circular(12),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: theme.colorScheme.surface,
+        ),
         child: ListTile(
-          leading: Icon(icon),
+          leading: Icon(icon, color: theme.iconTheme.color),
           title: Text(
             title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
           ),
-          subtitle: Text(value, style: TextStyle(fontSize: 14)),
-          trailing: const Icon(Icons.chevron_right),
+          subtitle: Text(
+            value,
+            style: theme.textTheme.bodySmall?.copyWith(fontSize: 14),
+          ),
+          trailing: Icon(Icons.chevron_right, color: theme.iconTheme.color),
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
       ),
@@ -886,6 +902,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required String value,
     bool isPlaceholder = false,
   }) {
+    final theme = Theme.of(context);
     return InkWell(
       onTap: () {
         Navigator.pushNamed(context, AppRouter.editBusinessFAQS);
@@ -893,15 +910,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
       borderRadius: BorderRadius.circular(12),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: theme.colorScheme.surface,
+        ),
         child: ListTile(
-          leading: Icon(icon),
+          leading: Icon(icon, color: theme.iconTheme.color),
           title: Text(
             title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
           ),
-          subtitle: Text(value, style: TextStyle(fontSize: 14)),
-          trailing: const Icon(Icons.chevron_right),
+          subtitle: Text(
+            value,
+            style: theme.textTheme.bodySmall?.copyWith(fontSize: 14),
+          ),
+          trailing: Icon(Icons.chevron_right, color: theme.iconTheme.color),
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
       ),
