@@ -102,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             'Profile',
             style: Theme.of(
               context,
-            ).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold),
+            ).textTheme.displayLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           Row(
             children: [
@@ -874,10 +874,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: theme.colorScheme.surface,
+          color: theme.colorScheme.surfaceDim,
         ),
         child: ListTile(
-          leading: Icon(icon, color: theme.iconTheme.color),
+          leading: Icon(icon),
           title: Text(
             title,
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -912,10 +912,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: theme.colorScheme.surface,
+          color: theme.colorScheme.surfaceDim,
         ),
         child: ListTile(
-          leading: Icon(icon, color: theme.iconTheme.color),
+          leading: Icon(icon),
           title: Text(
             title,
             style: theme.textTheme.bodyMedium?.copyWith(

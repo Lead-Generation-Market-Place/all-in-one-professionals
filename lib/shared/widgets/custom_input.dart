@@ -219,8 +219,11 @@ class _CustomInputFieldState extends State<CustomInputField> {
 
           errorStyle: theme.textTheme.bodySmall?.copyWith(
             color: colorScheme.error,
-            height: 1.2,
+            height: 1.3,
+            fontWeight: FontWeight.w500,
+            fontSize: 13,
           ),
+          errorMaxLines: 2,
         ),
       ),
     );

@@ -213,8 +213,8 @@ class _JobsScreenState extends State<JobsScreen>
                     SnackBar(content: Text('Passed on ${lead['name']}')),
                   );
                 },
-                backgroundColor: Theme.of(context).colorScheme.error,
-                foregroundColor: Theme.of(context).colorScheme.onError,
+                // backgroundColor: Theme.of(context).colorScheme.error,
+                // foregroundColor: Theme.of(context).colorScheme.onError,
                 icon: Icons.close,
                 label: 'Pass',
                 borderRadius: BorderRadius.circular(12),

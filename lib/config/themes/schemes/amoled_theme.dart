@@ -11,7 +11,7 @@ ThemeData getSystemTheme(BuildContext context) {
           scaffoldBackgroundColor: Colors.black,
           useMaterial3: true,
           colorScheme: const ColorScheme.dark(
-            primary: AppColors.primaryBlue,
+            primary: AppColors.primary,
             surface: Colors.black,
           ),
           // Add other dark theme properties as needed
@@ -22,7 +22,7 @@ ThemeData getSystemTheme(BuildContext context) {
           scaffoldBackgroundColor: AppColors.background,
           useMaterial3: true,
           colorScheme: ColorScheme.light(
-            primary: AppColors.primaryBlue,
+            primary: AppColors.primary,
             surface: Colors.white,
           ),
           // Add other light theme properties as needed

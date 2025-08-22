@@ -10,6 +10,7 @@ import 'package:yelpax_pro/features/marketPlace/jobs/subs/google_map_leads/prese
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/jobs_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/leads_setting/presentation/screens/lead_setting.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/leads_setting/presentation/screens/leads_details_page.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/subs/reminders/presentation/reminders_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/reponses/presentation/screens/response_credits.dart';
 
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/reponses/presentation/screens/responses.dart';
@@ -96,6 +97,7 @@ class AppRouter {
   static const String google_map_leads = '/homeServices/google_map_leads';
   static const String responses = '/homeServices/responses';
   static const String leadSetting = '/homeServices/leadSetting';
+  static const String reminders = '/homeServices/reminders';
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
@@ -171,6 +173,9 @@ class AppRouter {
 
       case responses:
         return MaterialPageRoute(builder: (_) => Responses());
+
+      case reminders:
+        return MaterialPageRoute(builder: (_) => RemindersScreen());
       case unknownRouteScreen:
         return MaterialPageRoute(
           builder: (_) =>

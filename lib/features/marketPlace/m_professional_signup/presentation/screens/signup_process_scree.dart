@@ -69,7 +69,7 @@ class _SignupProcessScreemState extends State<SignupProcessScreem> {
 
               _buildStep(
                 completed: availabilityInfoCompleted,
-                enabled: true,
+                enabled: false,
                 icon: Icons.calendar_today_outlined,
                 title: "Availability Information",
                 description: "Tell us about your availability",

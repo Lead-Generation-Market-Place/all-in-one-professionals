@@ -5,13 +5,13 @@ final lightTheme = ThemeData(
   fontFamily: 'Inter',
   brightness: Brightness.light,
   scaffoldBackgroundColor: AppColors.background,
-  iconTheme: IconThemeData(color: AppColors.black),
+  iconTheme: IconThemeData(color: AppColors.background),
   useMaterial3: true,
   colorScheme: ColorScheme.light(
-    primary: AppColors.primaryBlue,
-    primaryContainer: AppColors.primaryBlue.withOpacity(0.2),
-    secondary: AppColors.secondaryBlue,
-    secondaryContainer: AppColors.secondaryBlue.withOpacity(0.2),
+    primary: AppColors.primary,
+    primaryContainer: AppColors.primary,
+    secondary: AppColors.secondary,
+    secondaryContainer: AppColors.secondary,
     surface: Colors.white,
     error: AppColors.error,
     onPrimary: Colors.white,
@@ -27,12 +27,12 @@ final lightTheme = ThemeData(
     margin: const EdgeInsets.all(8),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     surfaceTintColor: Colors.transparent,
-    shadowColor: Colors.black.withOpacity(0.1),
+    shadowColor: Colors.black,
   ),
 
   // App Bar
   appBarTheme: AppBarTheme(
-    backgroundColor: AppColors.primaryBlue,
+    backgroundColor: AppColors.primary,
     elevation: 0,
     titleTextStyle: TextStyle(
       fontSize: 20,
@@ -40,7 +40,7 @@ final lightTheme = ThemeData(
       color: AppColors.textPrimary,
       fontFamily: 'Inter',
     ),
-    iconTheme: IconThemeData(color: AppColors.black),
+    iconTheme: IconThemeData(color: AppColors.textPrimary),
   ),
 
   // Text Theme
@@ -90,22 +90,22 @@ final lightTheme = ThemeData(
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: AppColors.neutral200),
+      borderSide: BorderSide(color: AppColors.warning),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: AppColors.neutral200),
+      borderSide: BorderSide(color: AppColors.warning),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: AppColors.primaryBlue, width: 2),
+      borderSide: BorderSide(color: AppColors.primary, width: 2),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: BorderSide(color: AppColors.error, width: 1.5),
     ),
     labelStyle: TextStyle(color: AppColors.textSecondary),
-    hintStyle: TextStyle(color: AppColors.neutral200),
+    hintStyle: TextStyle(color: AppColors.warning),
     errorStyle: TextStyle(
       color: AppColors.error,
       fontSize: 13,
@@ -117,7 +117,7 @@ final lightTheme = ThemeData(
   // Buttons
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: AppColors.primaryBlue,
+      backgroundColor: AppColors.primary,
       foregroundColor: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -131,8 +131,8 @@ final lightTheme = ThemeData(
 
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      foregroundColor: AppColors.primaryBlue,
-      side: BorderSide(color: AppColors.primaryBlue),
+      foregroundColor: AppColors.primary,
+      side: BorderSide(color: AppColors.primary),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       textStyle: TextStyle(
@@ -145,13 +145,13 @@ final lightTheme = ThemeData(
 
   // Other Components
   dividerTheme: DividerThemeData(
-    color: AppColors.neutral200,
+    color: AppColors.accent,
     thickness: 1,
     space: 1,
   ),
 
   floatingActionButtonTheme: FloatingActionButtonThemeData(
-    backgroundColor: AppColors.primaryBlue,
+    backgroundColor: AppColors.primary,
     foregroundColor: Colors.white,
   ),
 );

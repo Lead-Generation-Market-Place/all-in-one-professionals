@@ -124,7 +124,7 @@ class _AvailabilityBody extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: groupValue == value
-                ? AppColors.primaryBlue
+                ? AppColors.primary
                 : Colors.grey.shade300,
             width: 1.5,
           ),
@@ -138,7 +138,7 @@ class _AvailabilityBody extends StatelessWidget {
                   value: value,
                   groupValue: groupValue,
                   onChanged: onChanged,
-                  activeColor: AppColors.primaryBlue,
+                  activeColor: AppColors.primary,
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -212,7 +212,7 @@ class _DayRow extends StatelessWidget {
                     value: provider.selectedDays[day],
                     onChanged: (value) =>
                         provider.updateDaySelection(day, value),
-                    activeColor: AppColors.primaryBlue,
+                    activeColor: AppColors.primary,
                   ),
                   SizedBox(
                     width: 80,

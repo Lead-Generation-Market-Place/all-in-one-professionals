@@ -42,7 +42,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
-
+  final _passwordController = TextEditingController();
   List<Countries> countriesList = [
     Countries(id: 1, countryName: 'Afghanistan'),
     Countries(id: 2, countryName: 'United States'),
@@ -109,7 +109,9 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
                 LinearProgressIndicator(
                   value: (_currentPage + 1) / 2,
 
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.black),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    AppColors.textPrimary,
+                  ),
                   minHeight: 6,
                 ),
                 const SizedBox(height: 10),
@@ -417,7 +419,7 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 28), // Increased spacing for error messages
 
           CustomInputField(
             controller: _emailController,
@@ -437,8 +439,29 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
               return null;
             },
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 8), // Add extra spacing for error messages
 
+          const SizedBox(height: 20),
+          CustomInputField(
+            controller: _passwordController,
+            label: 'Password',
+            hintText: 'Enter your password',
+            prefixIcon: Icons.lock,
+            inputType: TextInputType.visiblePassword,
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Password is required';
+              }
+              if (!RegExp(
+                r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
+              ).hasMatch(value)) {
+                return 'Password must be at least 8 characters with uppercase, lowercase, number & special character';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 8), // Add extra spacing for error messages
+          const SizedBox(height: 20),
           // Terms and conditions checkbox
           Row(
             children: [

@@ -281,15 +281,15 @@ class _CardDetailsState extends State<CardDetails>
                 end: Alignment.bottomRight,
                 colors: isDark
                     ? [
-                        AppColors.primaryBlue.withOpacity(0.8),
-                        AppColors.highlight.withOpacity(0.9),
+                        AppColors.primary.withOpacity(0.8),
+                        AppColors.background.withOpacity(0.9),
                       ]
-                    : [AppColors.primaryBlue, AppColors.highlight],
+                    : [AppColors.primary, AppColors.background],
               ),
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primaryBlue.withOpacity(0.3),
+                  color: AppColors.primary.withOpacity(0.3),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -631,9 +631,6 @@ class _CardDetailsState extends State<CardDetails>
           isLoading: isLoading,
           isFullWidth: true,
           onPressed: _submitForm,
-          gradient: LinearGradient(
-            colors: [AppColors.primaryBlue, AppColors.highlight],
-          ),
         ),
 
         const SizedBox(height: 24),

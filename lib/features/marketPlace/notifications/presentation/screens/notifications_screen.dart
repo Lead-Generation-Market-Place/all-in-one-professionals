@@ -32,7 +32,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           // Professional drawer toggle button
           Container(
             decoration: BoxDecoration(
-              color: AppColors.white,
+              color: AppColors.background,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
@@ -55,7 +55,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.menu, color: AppColors.primaryBlue),
+                  icon: const Icon(Icons.menu, color: AppColors.primary),
                   onPressed: () {
                     _scaffoldKey.currentState?.openDrawer();
                   },
@@ -72,7 +72,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   Icon(
                     Icons.notifications_none,
                     size: 64,
-                    color: AppColors.neutral400,
+                    color: AppColors.warning,
                   ),
                   const SizedBox(height: 16),
                   const Text(
@@ -86,7 +86,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   const SizedBox(height: 8),
                   Text(
                     'We\'ll notify you when something important happens',
-                    style: TextStyle(fontSize: 14, color: AppColors.neutral500),
+                    style: TextStyle(fontSize: 14, color: AppColors.warning),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -101,7 +101,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Widget _buildProfessionalDrawer() {
     return Drawer(
       child: Container(
-        decoration: const BoxDecoration(color: AppColors.white),
+        decoration: const BoxDecoration(color: AppColors.background),
         child: Column(
           children: [
             // Simple notification header
@@ -111,7 +111,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [AppColors.primaryDark, AppColors.highlight],
+                  colors: [AppColors.primaryDark, AppColors.background],
                 ),
               ),
               child: Row(
@@ -120,12 +120,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: AppColors.white.withOpacity(0.2),
+                      color: AppColors.background.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Icon(
                       Icons.notifications,
-                      color: AppColors.white,
+                      color: AppColors.background,
                       size: 24,
                     ),
                   ),
@@ -134,7 +134,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     child: Text(
                       'Notification Settings',
                       style: TextStyle(
-                        color: AppColors.white,
+                        color: AppColors.background,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -243,7 +243,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       child: Text(
         title,
         style: const TextStyle(
-          color: AppColors.neutral500,
+          color: AppColors.warning,
           fontSize: 12,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
@@ -271,10 +271,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: AppColors.softBlue.withOpacity(0.1),
+            color: AppColors.secondary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(icon, color: AppColors.primaryBlue, size: 20),
+          child: Icon(icon, color: AppColors.primary, size: 20),
         ),
         title: Text(
           title,
@@ -286,7 +286,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         ),
         subtitle: Text(
           subtitle,
-          style: const TextStyle(fontSize: 13, color: AppColors.neutral500),
+          style: const TextStyle(fontSize: 13, color: AppColors.warning),
         ),
         trailing: badge != null
             ? Container(
@@ -298,7 +298,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 child: Text(
                   badge,
                   style: const TextStyle(
-                    color: AppColors.white,
+                    color: AppColors.background,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -306,7 +306,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               )
             : const Icon(
                 Icons.chevron_right,
-                color: AppColors.neutral400,
+                color: AppColors.primaryDark,
                 size: 20,
               ),
         onTap: onTap,

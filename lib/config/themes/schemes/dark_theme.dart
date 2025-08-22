@@ -6,12 +6,12 @@ final darkTheme = ThemeData(
   // Changed to dark
   scaffoldBackgroundColor: Colors.grey[900],
   // Dark background
-  iconTheme: IconThemeData(color: AppColors.white),
+  iconTheme: IconThemeData(color: AppColors.background),
   useMaterial3: true,
   colorScheme: ColorScheme.dark(
-    primary: AppColors.primaryBlue,
+    primary: AppColors.primary,
     // Primary color (buttons, app bar)
-    secondary: AppColors.primaryBlue,
+    secondary: AppColors.primary,
     // Secondary color (FAB, accents)
     surface: Colors.grey[800]!,
     // Scaffold background
@@ -20,7 +20,7 @@ final darkTheme = ThemeData(
     onSurface: Colors.white, // Text on surfaces (cards)
   ),
   cardTheme: CardThemeData(
-    color: AppColors.black,
+    color: AppColors.textPrimary,
     elevation: 1,
     margin: const EdgeInsets.all(8),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -74,7 +74,7 @@ final darkTheme = ThemeData(
     fillColor: Colors.grey[800], // Dark fill color
     labelStyle: const TextStyle(color: Colors.white70),
     hintStyle: const TextStyle(color: Colors.white54),
-    iconColor: AppColors.primaryBlue,
+    iconColor: AppColors.primary,
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: const BorderSide(color: Colors.grey),
@@ -100,7 +100,7 @@ final darkTheme = ThemeData(
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: AppColors.primaryBlue,
+      backgroundColor: AppColors.primary,
       foregroundColor: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -114,8 +114,8 @@ final darkTheme = ThemeData(
 
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      foregroundColor: AppColors.primaryBlue,
-      side: BorderSide(color: AppColors.primaryBlue),
+      foregroundColor: AppColors.primary,
+      side: BorderSide(color: AppColors.primary),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       textStyle: const TextStyle(
@@ -128,10 +128,10 @@ final darkTheme = ThemeData(
 
   textButtonTheme: TextButtonThemeData(
     style: TextButton.styleFrom(
-      foregroundColor: AppColors.primaryBlue,
+      foregroundColor: AppColors.primary,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       textStyle: const TextStyle(
-        color: AppColors.white,
+        color: AppColors.background,
         fontSize: 16,
         fontWeight: FontWeight.w500,
         fontFamily: 'Inter',
@@ -140,7 +140,7 @@ final darkTheme = ThemeData(
   ),
 
   appBarTheme: const AppBarTheme(
-    backgroundColor: AppColors.primaryBlue, // Dark app bar
+    backgroundColor: AppColors.textPrimary, // Dark app bar
     titleTextStyle: TextStyle(
       color: Colors.white,
       fontSize: 20,
@@ -151,6 +151,6 @@ final darkTheme = ThemeData(
     color: Colors.grey[700], // Subtle divider lines
   ),
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
-    backgroundColor: AppColors.primaryBlue, // FAB matches primary
+    backgroundColor: AppColors.primary, // FAB matches primary
   ),
 );

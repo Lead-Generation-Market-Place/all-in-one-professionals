@@ -143,8 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           listItemDecoration: ListItemDecoration(
                             selectedColor: theme.colorScheme.primary,
-                            highlightColor: theme.colorScheme.primary
-                                .withOpacity(0.08),
+                            highlightColor: theme.colorScheme.primary,
                           ),
                           closedBorderRadius: BorderRadius.circular(30),
                           expandedBorderRadius: BorderRadius.circular(16),

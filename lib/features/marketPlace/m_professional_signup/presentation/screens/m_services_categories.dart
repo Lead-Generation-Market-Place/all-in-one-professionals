@@ -88,7 +88,7 @@ class _MServicesCategoriesState extends State<MServicesCategories> {
         automaticallyImplyLeading: false,
         title: const Text(
           'Select services you offer',
-          style: TextStyle(color: AppColors.primaryBlue),
+          style: TextStyle(color: AppColors.primary),
         ),
         actions: [
           if (selectedSubCategories.isNotEmpty && selectedServices.isNotEmpty)

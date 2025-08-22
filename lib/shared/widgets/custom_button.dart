@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lottie/lottie.dart';
 
 enum CustomButtonType { primary, secondary, outline, text }
 
@@ -109,7 +108,7 @@ class _CustomButtonState extends State<CustomButton> {
                 child: Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: _buildContent(context, isDisabled, fgColor),
+                    child: _buildContent(context, isDisabled, fgColor, bgColor),
                   ),
                 ),
               ),
@@ -120,15 +119,31 @@ class _CustomButtonState extends State<CustomButton> {
     );
   }
 
-  Widget _buildContent(BuildContext context, bool isDisabled, Color fgColor) {
+  Widget _buildContent(
+    BuildContext context,
+    bool isDisabled,
+    Color fgColor,
+    Color bgColor,
+  ) {
     if (widget.isLoading) {
+      final isBgVeryLight = bgColor.computeLuminance() > 0.85;
+      // Use a visible progress indicator with sufficient contrast in light backgrounds
       return SizedBox(
         height: _getLoaderSize(),
         width: _getLoaderSize(),
-        child: Lottie.asset(
-          'assets/lottie/loader_button3dots.json',
-          fit: BoxFit.contain,
-        ),
+        child: isBgVeryLight
+            ? CircularProgressIndicator(
+                strokeWidth: 2.8,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).colorScheme.primary,
+                ),
+                backgroundColor: Colors.black12,
+              )
+            : CircularProgressIndicator(
+                strokeWidth: 2.8,
+                valueColor: AlwaysStoppedAnimation<Color>(fgColor),
+                backgroundColor: Colors.white24,
+              ),
       );
     }
 

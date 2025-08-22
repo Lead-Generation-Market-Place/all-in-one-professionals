@@ -47,69 +47,72 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
     ),
   ];
 
-  GoogleMapController? mapController;
+  GoogleMapController? _mapController;
   final PageController _pageController = PageController(viewportFraction: 0.8);
-  Set<Marker> markers = {};
+  Set<Marker> _markers = {};
   int _currentPage = 0;
   int _currentNavIndex = 0;
   bool _isMapReady = false;
+  bool _isDisposed = false;
+
+  // Simplified coordinates map
+  static const Map<String, LatLng> _locationCoordinates = {
+    'Ruislip': LatLng(51.5734, -0.4234),
+    'Harrow': LatLng(51.5807, -0.3417),
+    'Wembley': LatLng(51.5524, -0.2962),
+    'Greenford': LatLng(51.5287, -0.3496),
+    'Hayes': LatLng(51.5028, -0.4214),
+    'Southall': LatLng(51.5060, -0.3782),
+    'EALING': LatLng(51.5139, -0.3059),
+    'HAMMERSM': LatLng(51.4927, -0.2229),
+    'Feltham': LatLng(51.4479, -0.4086),
+    'Abu': LatLng(51.5074, -0.1278),
+    'London, TW5': LatLng(51.4813, -0.3762),
+  };
+
+  static const LatLng _defaultLocation = LatLng(51.5074, -0.1278);
 
   LatLng _getCoordinatesForLocation(String location) {
-    final mockLocations = {
-      'Ruislip': const LatLng(51.5734, -0.4234),
-      'Harrow': const LatLng(51.5807, -0.3417),
-      'Wembley': const LatLng(51.5524, -0.2962),
-      'Greenford': const LatLng(51.5287, -0.3496),
-      'Hayes': const LatLng(51.5028, -0.4214),
-      'Southall': const LatLng(51.5060, -0.3782),
-      'EALING': const LatLng(51.5139, -0.3059),
-      'HAMMERSM': const LatLng(51.4927, -0.2229),
-      'Feltham': const LatLng(51.4479, -0.4086),
-      'Abu': const LatLng(51.5074, -0.1278),
-      'London, TW5': const LatLng(51.4813, -0.3762),
-    };
-    return mockLocations[location] ?? const LatLng(51.5074, -0.1278);
+    return _locationCoordinates[location] ?? _defaultLocation;
   }
 
   void _onMapCreated(GoogleMapController controller) {
-    if (!mounted) return;
-    setState(() {
-      mapController = controller;
-      _isMapReady = true;
-    });
-    // Defer the initial update to next frame
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && _isMapReady) {
-        _updateMapForLead(_currentPage);
-      }
-    });
+    if (_isDisposed) return;
+
+    _mapController = controller;
+    _isMapReady = true;
+
+    // Initialize with first lead
+    if (leads.isNotEmpty) {
+      _updateMapForLead(0);
+    }
   }
 
   void _updateMapForLead(int index) {
-    if (index >= leads.length || !mounted) return;
+    if (_isDisposed || index >= leads.length) return;
 
     final lead = leads[index];
     final location = lead.locations.first;
+    final coordinates = _getCoordinatesForLocation(location);
 
     setState(() {
       _currentPage = index;
-      markers = {
+      _markers = {
         Marker(
           markerId: MarkerId(lead.name),
-          position: _getCoordinatesForLocation(location),
+          position: coordinates,
           infoWindow: InfoWindow(title: lead.name, snippet: location),
         ),
       };
     });
 
-    // Only animate camera if map is ready and controller exists
-    if (_isMapReady && mapController != null) {
+    // Animate camera with error handling
+    if (_isMapReady && _mapController != null) {
       try {
-        mapController!.animateCamera(
-          CameraUpdate.newLatLngZoom(_getCoordinatesForLocation(location), 12),
+        _mapController!.animateCamera(
+          CameraUpdate.newLatLngZoom(coordinates, 12),
         );
       } catch (e) {
-        // Handle any animation errors gracefully
         debugPrint('Map animation error: $e');
       }
     }
@@ -130,7 +133,7 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
         Navigator.pushNamed(context, AppRouter.responses);
         break;
       case 2:
-        // Navigator.pushNamed(context, AppRouter.reminders);
+        Navigator.pushNamed(context, AppRouter.reminders);
         break;
     }
   }
@@ -143,7 +146,7 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
     if (leads.isNotEmpty) {
       final lead = leads[0];
       final location = lead.locations.first;
-      markers = {
+      _markers = {
         Marker(
           markerId: MarkerId(lead.name),
           position: _getCoordinatesForLocation(location),
@@ -152,20 +155,25 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
       };
     }
 
-    _pageController.addListener(() {
-      if (!mounted) return;
-      final newPage = _pageController.page?.round();
-      if (newPage != null &&
-          newPage != _currentPage &&
-          newPage < leads.length) {
-        _updateMapForLead(newPage);
-      }
-    });
+    // Add page controller listener
+    _pageController.addListener(_onPageChanged);
+  }
+
+  void _onPageChanged() {
+    if (_isDisposed) return;
+
+    final newPage = _pageController.page?.round();
+    if (newPage != null && newPage != _currentPage && newPage < leads.length) {
+      _updateMapForLead(newPage);
+    }
   }
 
   @override
   void dispose() {
+    _isDisposed = true;
+    _pageController.removeListener(_onPageChanged);
     _pageController.dispose();
+    _mapController?.dispose();
     super.dispose();
   }
 
@@ -173,6 +181,7 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Leads'),
@@ -196,14 +205,15 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
       ),
       body: Stack(
         children: [
+          // Optimized Google Map
           GoogleMap(
             onMapCreated: _onMapCreated,
             initialCameraPosition: const CameraPosition(
-              target: LatLng(51.5074, -0.1278),
+              target: _defaultLocation,
               zoom: 10,
             ),
-            markers: markers,
-            myLocationEnabled: true,
+            markers: _markers,
+            myLocationEnabled: false, // Disabled to reduce overhead
             mapType: MapType.normal,
             zoomControlsEnabled: false,
             myLocationButtonEnabled: false,
@@ -215,21 +225,32 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
             trafficEnabled: false,
             indoorViewEnabled: false,
             buildingsEnabled: false,
+            // Add performance optimizations
+            minMaxZoomPreference: const MinMaxZoomPreference(8, 18),
+            cameraTargetBounds: CameraTargetBounds.unbounded,
           ),
 
+          // Stats Card
           Positioned(
-            top: 16,
-            left: 16,
-            right: 16,
+            top:
+                MediaQuery.of(context).size.height *
+                0.02, // Responsive top margin
+            left:
+                MediaQuery.of(context).size.width *
+                0.04, // Responsive left margin
+            right:
+                MediaQuery.of(context).size.width *
+                0.04, // Responsive right margin
             child: Card(
-              elevation: 0,
+              elevation: 2,
               color: colorScheme.surface,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: colorScheme.outlineVariant),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: EdgeInsets.all(
+                  MediaQuery.of(context).size.width * 0.03,
+                ), // Responsive padding
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -264,8 +285,12 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
 
           // My Location Button
           Positioned(
-            top: 100,
-            right: 16,
+            top:
+                MediaQuery.of(context).size.height *
+                0.12, // Responsive top position
+            right:
+                MediaQuery.of(context).size.width *
+                0.04, // Responsive right margin
             child: FloatingActionButton.small(
               onPressed: () {
                 // Handle my location
@@ -276,29 +301,38 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
             ),
           ),
 
+          // Leads Cards
           Positioned(
             bottom: 16,
             left: 0,
             right: 0,
-            child: SizedBox(
-              height: 160,
+            child: Container(
+              height:
+                  MediaQuery.of(context).size.height *
+                  0.25, // Responsive height
               child: PageView.builder(
                 controller: _pageController,
                 itemCount: leads.length,
                 itemBuilder: (context, index) {
                   final lead = leads[index];
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: EdgeInsets.symmetric(
+                      horizontal:
+                          MediaQuery.of(context).size.width *
+                          0.04, // Responsive padding
+                    ),
                     child: Card(
-                      elevation: 0,
+                      elevation: 2,
                       color: colorScheme.surface,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(color: colorScheme.outlineVariant),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: ListView(
+                        padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width * 0.03,
+                        ), // Responsive padding
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -322,13 +356,12 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
                                     ),
                                     backgroundColor: colorScheme.tertiary
                                         .withOpacity(0.12),
-                                    side: BorderSide(
-                                      color: colorScheme.outlineVariant,
-                                    ),
                                   ),
                               ],
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.01,
+                            ), // Responsive spacing
                             Text(
                               lead.service,
                               style: theme.textTheme.bodyMedium?.copyWith(
@@ -336,23 +369,35 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              lead.details,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.01,
+                            ), // Responsive spacing
+                            Expanded(
+                              child: Text(
+                                lead.details,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
                               ),
                             ),
-                            const SizedBox(height: 8),
                             SizedBox(
-                              height: 32,
+                              height: MediaQuery.of(context).size.height * 0.01,
+                            ), // Responsive spacing
+                            SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height *
+                                  0.04, // Responsive height
                               child: ListView(
                                 scrollDirection: Axis.horizontal,
                                 children: lead.locations.map((location) {
                                   return Padding(
-                                    padding: const EdgeInsets.only(right: 8.0),
+                                    padding: EdgeInsets.only(
+                                      right:
+                                          MediaQuery.of(context).size.width *
+                                          0.02, // Responsive padding
+                                    ),
                                     child: Chip(
                                       label: Text(
                                         location,
@@ -363,9 +408,6 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
                                               0.12,
                                             )
                                           : colorScheme.surfaceContainerHighest,
-                                      side: BorderSide(
-                                        color: colorScheme.outlineVariant,
-                                      ),
                                     ),
                                   );
                                 }).toList(),

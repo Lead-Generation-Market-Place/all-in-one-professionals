@@ -22,11 +22,11 @@ class CustomFlutterToast {
 
     switch (type) {
       case ToastType.success:
-        backgroundColor = AppColors.successGreen;
+        backgroundColor = AppColors.success;
         icon = Icons.check_circle;
         break;
       case ToastType.error:
-        backgroundColor = AppColors.failureRed;
+        backgroundColor = AppColors.error;
         icon = Icons.error;
         break;
       case ToastType.warning:
@@ -35,7 +35,7 @@ class CustomFlutterToast {
         break;
       case ToastType.info:
       default:
-        backgroundColor = AppColors.primaryBlue;
+        backgroundColor = AppColors.primary;
         icon = Icons.info;
         break;
     }
