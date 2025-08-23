@@ -8,196 +8,463 @@ class LeadSetting extends StatefulWidget {
 }
 
 class _LeadSettingState extends State<LeadSetting> {
-  bool _windsorChecked = false;
+  bool _windsorChecked = true;
+  bool _onlineLeadsEnabled = true;
 
   // Dynamic list of services
   final List<Service> _services = [
-    Service(name: 'House Cleaning', description: 'All leads * 1 locations'),
+    Service(
+      name: 'House Cleaning',
+      description: 'All leads • 1 location',
+      isActive: true,
+    ),
     Service(
       name: 'End of Tenancy Cleaning',
-      description: 'All leads * 1 locations',
+      description: 'All leads • 1 location',
+      isActive: true,
     ),
     Service(
       name: 'Deep Cleaning Services',
-      description: 'All leads * 1 locations',
+      description: 'All leads • 1 location',
+      isActive: false,
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Lead settings')),
+      appBar: AppBar(
+        title: const Text('Lead Settings'),
+        elevation: 0,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Leads you can choose to contact.',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 24),
-
-            // Your Services Section
-            const Text(
-              'Your services',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Fine tune the leads you want to be alerted about.',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-            const SizedBox(height: 16),
-
-            // Dynamic list of services
-            ..._services
-                .map(
-                  (service) =>
-                      _buildServiceItem(service.name, service.description),
-                )
-                .toList(),
-
-            const Divider(height: 32),
-
-            _buildAddButton(
-              'Add a service',
-              onPressed: () {
-                // Handle add service logic
-              },
-            ),
+            // Header Section
+            _buildHeaderSection(theme, colorScheme),
             const SizedBox(height: 32),
 
-            // Your Locations Section
-            const Text(
-              'Your locations',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Choose where you want to find new customers.',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-            const SizedBox(height: 16),
+            // Your Services Section
+            _buildServicesSection(theme, colorScheme),
+            const SizedBox(height: 24),
 
-            Row(
+            // Your Locations Section
+            _buildLocationsSection(theme, colorScheme),
+            const SizedBox(height: 24),
+
+            // Online/Remote Leads Section
+            _buildOnlineLeadsSection(theme, colorScheme),
+            const SizedBox(height: 32),
+
+            // View Leads Button
+            _buildViewLeadsButton(theme, colorScheme),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeaderSection(ThemeData theme, ColorScheme colorScheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Lead Preferences',
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Customize which leads you want to be alerted about based on your services and locations',
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildServicesSection(ThemeData theme, ColorScheme colorScheme) {
+    return Container(
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Checkbox(
-                  value: _windsorChecked,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _windsorChecked = value!;
-                    });
-                  },
-                ),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Within 20 miles of Windsor'),
-                      SizedBox(height: 4),
-                      Text(
-                        '3 services',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.work_outline,
+                      color: colorScheme.primary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Your Services',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Fine-tune the leads you want to be alerted about',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
             ),
-
-            const Divider(height: 32),
-
-            _buildAddButton(
-              'Add a location',
-              onPressed: () {
-                // Handle add location logic
-              },
-            ),
-            const SizedBox(height: 32),
-
-            // Online/Remote Leads Section
-            const Text(
-              'Online/remote leads',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Customers tell us if they\'re happy to receive services online or remotely.',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-            const SizedBox(height: 16),
-
-            TextButton(
-              onPressed: () {
-                // Navigator.pushNamed(context, AppRouter.onlineLeadsScreen);
-              },
-              child: const Text('See online/remote leads'),
-            ),
-            const SizedBox(height: 32),
-
-            // View Leads Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Navigator.pushNamed(context, AppRouter.viewLeadsScreen);
-                },
-                child: const Text('View leads'),
-              ),
-            ),
-          ],
-        ),
+          ),
+          const Divider(height: 1),
+          ..._services
+              .map((service) => _buildServiceItem(service, theme, colorScheme))
+              .toList(),
+          const Divider(height: 1),
+          _buildAddButton(
+            'Add a service',
+            Icons.add,
+            onPressed: () {
+              // Handle add service logic
+            },
+            theme: theme,
+            colorScheme: colorScheme,
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildServiceItem(String title, String subtitle) {
-    return GestureDetector(
-      onTap: () {
-        // Navigator.pushNamed(
-        //     context,
-        //     // AppRouter.serviceDetailsScreen,
-        //     arguments: {'serviceName': title}
-        // );
+  Widget _buildServiceItem(
+    Service service,
+    ThemeData theme,
+    ColorScheme colorScheme,
+  ) {
+    return SwitchListTile(
+      value: service.isActive,
+      onChanged: (value) {
+        setState(() {
+          // Update service status
+          final index = _services.indexWhere((s) => s.name == service.name);
+          if (index != -1) {
+            _services[index] = Service(
+              name: service.name,
+              description: service.description,
+              isActive: value,
+            );
+          }
+        });
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Row(
-          children: [
-            const Icon(Icons.check_circle, color: Colors.green),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+      title: Text(
+        service.name,
+        style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
+      ),
+      subtitle: Text(
+        service.description,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: colorScheme.onSurfaceVariant,
+        ),
+      ),
+      secondary: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: colorScheme.primary.withOpacity(0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          Icons.cleaning_services,
+          color: colorScheme.primary,
+          size: 20,
+        ),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+    );
+  }
+
+  Widget _buildLocationsSection(ThemeData theme, ColorScheme colorScheme) {
+    return Container(
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_on_outlined,
+                      color: colorScheme.primary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Your Locations',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Choose where you want to find new customers',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
                   ),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                ],
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          SwitchListTile(
+            value: _windsorChecked,
+            onChanged: (value) {
+              setState(() {
+                _windsorChecked = value;
+              });
+            },
+            title: Text(
+              'Within 20 miles of Windsor',
+              style: theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w500,
               ),
             ),
-          ],
-        ),
+            subtitle: Text(
+              '3 services available',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+            secondary: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: colorScheme.primary.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.location_pin,
+                color: colorScheme.primary,
+                size: 20,
+              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 8,
+            ),
+          ),
+          const Divider(height: 1),
+          _buildAddButton(
+            'Add a location',
+            Icons.add_location_alt,
+            onPressed: () {
+              // Handle add location logic
+            },
+            theme: theme,
+            colorScheme: colorScheme,
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildAddButton(String text, {VoidCallback? onPressed}) {
+  Widget _buildOnlineLeadsSection(ThemeData theme, ColorScheme colorScheme) {
+    return Container(
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.laptop_outlined,
+                      color: colorScheme.primary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Online/Remote Leads',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Customers tell us if they\'re happy to receive services online or remotely',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          SwitchListTile(
+            value: _onlineLeadsEnabled,
+            onChanged: (value) {
+              setState(() {
+                _onlineLeadsEnabled = value;
+              });
+            },
+            title: Text(
+              'Enable Online Leads',
+              style: theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            subtitle: Text(
+              'Receive leads from customers open to remote services',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+            secondary: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: colorScheme.primary.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.video_call,
+                color: colorScheme.primary,
+                size: 20,
+              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 8,
+            ),
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: Icon(
+              Icons.visibility_outlined,
+              color: colorScheme.primary,
+            ),
+            title: Text('View Online Leads', style: theme.textTheme.bodyLarge),
+            trailing: Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            onTap: () {
+              // Navigator.pushNamed(context, AppRouter.onlineLeadsScreen);
+            },
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddButton(
+    String text,
+    IconData icon, {
+    required VoidCallback? onPressed,
+    required ThemeData theme,
+    required ColorScheme colorScheme,
+  }) {
     return TextButton(
       onPressed: onPressed,
+      style: TextButton.styleFrom(
+        foregroundColor: colorScheme.primary,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.add, size: 18),
-          const SizedBox(width: 4),
-          Text(text),
+          Icon(icon, size: 18),
+          const SizedBox(width: 8),
+          Text(
+            text,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildViewLeadsButton(ThemeData theme, ColorScheme colorScheme) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          // Navigator.pushNamed(context, AppRouter.viewLeadsScreen);
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 0,
+        ),
+        child: Text(
+          'View Matching Leads',
+          style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }
@@ -207,6 +474,11 @@ class _LeadSettingState extends State<LeadSetting> {
 class Service {
   final String name;
   final String description;
+  final bool isActive;
 
-  Service({required this.name, required this.description});
+  Service({
+    required this.name,
+    required this.description,
+    required this.isActive,
+  });
 }

@@ -30,17 +30,13 @@ class _ResponsesState extends State<Responses> {
 
     switch (index) {
       case 0:
-        Navigator.pushNamed(context, AppRouter.google_map_leads);
+        Navigator.pushReplacementNamed(context, AppRouter.google_map_leads);
         break;
       case 1:
         // Already on Responses screen
         break;
       case 2:
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/reminders',
-          (route) => false,
-        );
+        Navigator.pushNamed(context, AppRouter.reminders);
         break;
     }
   }
@@ -103,11 +99,7 @@ class _ResponsesState extends State<Responses> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  AppRouter.homeServicesJobs,
-                  (route) => false,
-                );
+                Navigator.pop(context);
               },
               child: Text('View Leads', style: TextStyle(inherit: true)),
             ),

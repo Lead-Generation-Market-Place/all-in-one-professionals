@@ -130,10 +130,10 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
         // Already on Leads screen
         break;
       case 1:
-        Navigator.pushNamed(context, AppRouter.responses);
+        Navigator.pushReplacementNamed(context, AppRouter.responses);
         break;
       case 2:
-        Navigator.pushNamed(context, AppRouter.reminders);
+        Navigator.pushReplacementNamed(context, AppRouter.reminders);
         break;
     }
   }
@@ -191,11 +191,7 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              AppRouter.homeServicesJobs,
-              (route) => false,
-            );
+            Navigator.pop(context);
           },
           icon: const Icon(Icons.arrow_back),
         ),

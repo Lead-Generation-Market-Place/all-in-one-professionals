@@ -51,11 +51,11 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
                 ),
               ),
               const SizedBox(height: 8),
-              _buildReminderOption('In 30 minutes'),
-              _buildReminderOption('In 1 hour'),
-              _buildReminderOption('In 3 hours'),
-              _buildReminderOption('Tomorrow at 09:00'),
-              _buildReminderOption('Monday at 09:00'),
+              _buildReminderOption('In 30 minutes', Icons.access_time),
+              _buildReminderOption('In 1 hour', Icons.access_time),
+              _buildReminderOption('In 3 hours', Icons.access_time),
+              _buildReminderOption('Tomorrow at 09:00', Icons.calendar_today),
+              _buildReminderOption('Monday at 09:00', Icons.calendar_today),
               const SizedBox(height: 16),
               CustomButton(
                 text: 'Create reminder',
@@ -67,6 +67,9 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
                       content: Text('Reminder set for $_selectedReminder'),
                       backgroundColor: colorScheme.surface,
                       behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   );
                 },
@@ -101,10 +104,18 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
                 ),
               ),
               const SizedBox(height: 20),
-              Icon(
-                Icons.info_outline,
-                size: 40,
-                color: theme.colorScheme.primary,
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.info_outline,
+                  size: 30,
+                  color: theme.colorScheme.primary,
+                ),
               ),
               const SizedBox(height: 16),
               Text(
@@ -124,6 +135,11 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
+              CustomButton(
+                text: 'Got it',
+                isFullWidth: true,
+                onPressed: () => Navigator.pop(context),
+              ),
             ],
           ),
         );
@@ -131,23 +147,46 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
     );
   }
 
-  Widget _buildReminderOption(String text) {
+  Widget _buildReminderOption(String text, IconData icon) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Radio<String>(
-            value: text,
-            groupValue: _selectedReminder,
-            onChanged: (value) {
-              setState(() {
-                _selectedReminder = value;
-              });
-            },
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _selectedReminder = text;
+          });
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: _selectedReminder == text
+                ? theme.colorScheme.primary.withOpacity(0.1)
+                : theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: _selectedReminder == text
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.outlineVariant,
+              width: _selectedReminder == text ? 1.5 : 1,
+            ),
           ),
-          const SizedBox(width: 8),
-          Text(text),
-        ],
+          child: Row(
+            children: [
+              Icon(icon, size: 20, color: theme.colorScheme.primary),
+              const SizedBox(width: 12),
+              Text(text, style: theme.textTheme.bodyMedium),
+              const Spacer(),
+              if (_selectedReminder == text)
+                Icon(
+                  Icons.check_circle,
+                  color: theme.colorScheme.primary,
+                  size: 20,
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -166,7 +205,7 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: 16),
             child: CustomButton(
               text: 'Pass',
               type: CustomButtonType.outline,
@@ -182,93 +221,151 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header section
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: colorScheme.surfaceContainerHighest,
-                  child: Icon(
-                    Icons.person,
-                    size: 30,
-                    color: colorScheme.onSurface,
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: colorScheme.surface,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Muna',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [
+                          colorScheme.primary,
+                          colorScheme.primaryContainer,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Staines-Upon-Thames, TW18',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
+                    child: Icon(
+                      Icons.person,
+                      size: 30,
+                      color: colorScheme.onPrimary,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'House Cleaning',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Muna',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              size: 16,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Staines-Upon-Thames, TW18',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.work,
+                              size: 16,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'House Cleaning',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
 
             const SizedBox(height: 16),
 
             // Be the first to respond banner
-            Card(
-              elevation: 0,
-              color: theme.colorScheme.surface,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: theme.colorScheme.outlineVariant),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.timer, color: colorScheme.primary),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Be the 1st to respond',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    OutlinedButton(
-                      onPressed: _showResponsesBottomSheet,
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(
-                          color: theme.colorScheme.outlineVariant,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: const Text('Details'),
-                    ),
-                    const SizedBox(width: 8),
-                    FilledButton.tonal(
-                      onPressed: _showReminderBottomSheet,
-                      child: const Text('Set reminder'),
-                    ),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    colorScheme.primary.withOpacity(0.08),
+                    colorScheme.primary.withOpacity(0.04),
                   ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: colorScheme.primary.withOpacity(0.2)),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.timer,
+                      color: colorScheme.primary,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Be the 1st to respond',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  OutlinedButton(
+                    onPressed: _showResponsesBottomSheet,
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: theme.colorScheme.outlineVariant),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text('Details'),
+                  ),
+                  const SizedBox(width: 8),
+                  FilledButton.tonal(
+                    onPressed: _showReminderBottomSheet,
+                    child: const Text('Set reminder'),
+                  ),
+                ],
               ),
             ),
 
@@ -281,15 +378,31 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: [
-                _buildHighlightChip('Urgent', colorScheme.error),
-                _buildHighlightChip('High hiring intent', colorScheme.tertiary),
-                _buildHighlightChip('Verified phone', colorScheme.primary),
-                _buildHighlightChip('Frequent user', colorScheme.secondary),
+                _buildHighlightChip(
+                  'Urgent',
+                  Icons.warning_amber_rounded,
+                  colorScheme.error,
+                ),
+                _buildHighlightChip(
+                  'High hiring intent',
+                  Icons.trending_up_rounded,
+                  colorScheme.tertiary,
+                ),
+                _buildHighlightChip(
+                  'Verified phone',
+                  Icons.verified_rounded,
+                  colorScheme.primary,
+                ),
+                _buildHighlightChip(
+                  'Frequent user',
+                  Icons.star_rounded,
+                  colorScheme.secondary,
+                ),
               ],
             ),
 
@@ -302,26 +415,60 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            const SizedBox(height: 12),
+            _buildContactOption('079**************', Icons.phone, false),
             const SizedBox(height: 8),
-            _buildContactOption('079**************', false),
-            _buildContactOption('m**************9@g****l.com', true),
+            _buildContactOption(
+              'm**************9@g****l.com',
+              Icons.email,
+              true,
+            ),
 
             const SizedBox(height: 24),
 
             // Credits
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
               decoration: BoxDecoration(
                 color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.credit_card),
-                  SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.credit_card,
+                      color: theme.colorScheme.primary,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
                   Text(
                     '8 Credits',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    'View pricing',
+                    style: TextStyle(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               ),
@@ -337,50 +484,98 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
               ),
             ),
             const SizedBox(height: 16),
-            _buildDetailRow('What type of property needs cleaning?', 'House'),
-            _buildDetailRow('How often do you need cleaning?', 'Weekly'),
-            _buildDetailRow('How many bedroom(s) need cleaning?', '3 bedrooms'),
+            _buildDetailRow(
+              'What type of property needs cleaning?',
+              'House',
+              Icons.home_work,
+            ),
+            _buildDetailRow(
+              'How often do you need cleaning?',
+              'Weekly',
+              Icons.calendar_today,
+            ),
+            _buildDetailRow(
+              'How many bedroom(s) need cleaning?',
+              '3 bedrooms',
+              Icons.bed,
+            ),
             _buildDetailRow(
               'How many bathroom(s) need cleaning?',
               '1 bathroom + 1 additional toilet',
+              Icons.bathtub,
             ),
-            _buildDetailRow('How many reception room(s) need cleaning?', '1'),
+            _buildDetailRow(
+              'How many reception room(s) need cleaning?',
+              '1',
+              Icons.living,
+            ),
             _buildDetailRow(
               'What type of cleaning would you like?',
               'Standard cleaning',
+              Icons.cleaning_services,
             ),
             _buildDetailRow(
               'Do you currently have a cleaner?',
               'Yes, replacing a current cleaner',
+              Icons.person,
             ),
-            _buildDetailRow('When are the best days for cleaning?', 'Any'),
+            _buildDetailRow(
+              'When are the best days for cleaning?',
+              'Any',
+              Icons.event_available,
+            ),
             _buildDetailRow(
               'Will you be supplying cleaning materials/equipment?',
               'Yes - Cleaning materials and equipment',
+              Icons.cleaning_services,
             ),
             _buildDetailRow(
               'How likely are you to make a hiring decision?',
               'I\'m ready to hire now',
+              Icons.thumb_up,
             ),
 
             const SizedBox(height: 16),
 
             // Additional details
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Additional Details',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.note,
+                        size: 18,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Additional Details',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 4),
-                  Text('I need 4 to 5 hours once a week'),
+                  const SizedBox(height: 8),
+                  Text(
+                    'I need 4 to 5 hours once a week',
+                    style: theme.textTheme.bodyMedium,
+                  ),
                 ],
               ),
             ),
@@ -394,16 +589,33 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
-            Card(
-              elevation: 0,
-              color: theme.colorScheme.surface,
-              shape: RoundedRectangleBorder(
+            const SizedBox(height: 12),
+            Container(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: theme.colorScheme.outlineVariant),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+                border: Border.all(color: theme.colorScheme.outlineVariant),
               ),
               child: ListTile(
-                leading: Icon(Icons.location_on, color: colorScheme.error),
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: colorScheme.error.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.location_on,
+                    color: colorScheme.error,
+                    size: 20,
+                  ),
+                ),
                 title: const Text('Staines-Upon-Thames, TW18'),
                 trailing: OutlinedButton(
                   onPressed: () {
@@ -436,52 +648,110 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
     );
   }
 
-  Widget _buildHighlightChip(String text, Color color) {
+  Widget _buildHighlightChip(String text, IconData icon, Color color) {
     final theme = Theme.of(context);
     return Chip(
-      label: Text(text, style: theme.textTheme.labelSmall),
+      avatar: Icon(icon, size: 16, color: color),
+      label: Text(
+        text,
+        style: theme.textTheme.labelSmall?.copyWith(color: color),
+      ),
       backgroundColor: color.withOpacity(0.12),
-      labelStyle: theme.textTheme.labelSmall?.copyWith(color: color),
       side: BorderSide(color: theme.colorScheme.outlineVariant),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     );
   }
 
-  Widget _buildContactOption(String text, bool isSelected) {
+  Widget _buildContactOption(String text, IconData icon, bool isSelected) {
     final theme = Theme.of(context);
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        border: Border.all(color: theme.colorScheme.outline),
-        borderRadius: BorderRadius.circular(8),
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          Checkbox(value: isSelected, onChanged: (value) {}),
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 18, color: theme.colorScheme.primary),
+          ),
+          const SizedBox(width: 12),
           Text(text, style: theme.textTheme.bodyMedium),
+          const Spacer(),
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : Colors.transparent,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.outlineVariant,
+              ),
+            ),
+            child: isSelected
+                ? Icon(
+                    Icons.check,
+                    size: 16,
+                    color: theme.colorScheme.onPrimary,
+                  )
+                : null,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildDetailRow(String question, String answer) {
+  Widget _buildDetailRow(String question, String answer, IconData icon) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Column(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            question,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withOpacity(0.1),
+              shape: BoxShape.circle,
             ),
+            child: Icon(icon, size: 16, color: theme.colorScheme.primary),
           ),
-          const SizedBox(height: 4),
-          Text(
-            answer,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  question,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  answer,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
