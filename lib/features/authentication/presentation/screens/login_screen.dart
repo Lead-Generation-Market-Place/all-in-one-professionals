@@ -19,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isLoading = false;
-  bool _isButtonEnabled = false;
+  bool _isButtonEnabled = true;
 
   final List<String> _countries = ['United States', 'Canada', 'UK'];
   String? _selectedCountry;
@@ -167,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: double.infinity,
                         child: CustomButton(
                           text: 'Log In',
-                          onPressed: _isButtonEnabled
+                          onPressed: _isButtonEnabled == true
                               ? () async {
                                   if (_formKey.currentState!.validate()) {
                                     setState(() => _isLoading = true);
