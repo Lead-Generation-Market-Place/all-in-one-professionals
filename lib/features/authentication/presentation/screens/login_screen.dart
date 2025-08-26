@@ -167,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: double.infinity,
                         child: CustomButton(
                           text: 'Log In',
-                          onPressed: _isButtonEnabled == true
+                          onPressed: _isButtonEnabled
                               ? () async {
                                   if (_formKey.currentState!.validate()) {
                                     setState(() => _isLoading = true);

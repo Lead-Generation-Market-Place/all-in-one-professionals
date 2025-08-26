@@ -42,6 +42,12 @@ class _LeadSettingState extends State<LeadSetting> {
         elevation: 0,
         backgroundColor: colorScheme.surface,
         foregroundColor: colorScheme.onSurface,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
@@ -60,11 +66,11 @@ class _LeadSettingState extends State<LeadSetting> {
             _buildLocationsSection(theme, colorScheme),
             const SizedBox(height: 24),
 
-            // Online/Remote Leads Section
+
             _buildOnlineLeadsSection(theme, colorScheme),
             const SizedBox(height: 32),
 
-            // View Leads Button
+
             _buildViewLeadsButton(theme, colorScheme),
           ],
         ),

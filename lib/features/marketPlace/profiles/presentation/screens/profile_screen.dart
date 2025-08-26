@@ -8,7 +8,6 @@ import '../../../../../shared/widgets/custom_appbar.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
-
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
@@ -16,8 +15,15 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   bool isSetupFinished = false;
   int stepNumber = 2;
+  final ScrollController _scrollController = ScrollController();
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+@override
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
@@ -25,76 +31,87 @@ class _ProfileScreenState extends State<ProfileScreen> {
       left: false,
       right: false,
       child: Scaffold(
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Profile Completion Banner
-              if (!isSetupFinished)
-                ProfileCompletionBanner(
-                  stepNumber: 3,
-                  onFinishSetupPressed: () {
-                    Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
-                  },
-                ),
+        body: Column(
+          children: [
+            // 🔹 Optional banner
+            if (!isSetupFinished)
+              ProfileCompletionBanner(
+                stepNumber: 3,
+                onFinishSetupPressed: () {
+                  Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
+                },
+              ),
 
-              CustomAppBar(
-                title: 'Profile',
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.notifications),
-                    onPressed: () {
-                      Navigator.pushNamed(
-                        context,
-                        AppRouter.homeServicesNotifications,
-                      );
-                    },
+            // 🔹 Custom AppBar placed manually below banner
+            Container(
+              color:
+                  Theme.of(context).appBarTheme.backgroundColor ?? Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Profile',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.settings),
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRouter.settingsScreen);
-                    },
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.notifications),
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRouter.homeServicesNotifications,
+                          );
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.settings),
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRouter.settingsScreen,
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
-              _buildProfileHeader(),
+            ),
 
-              // Profile Picture Section
-              _buildProfilePictureSection(),
-
-              // Profile Action Buttons
-              _buildProfileActionButtons(),
-
-              // Business Info Section
-              _buildBusinessInfoSection(),
-
-              // Credentials Section
-              _buildCredentialsSection(),
-
-              // Professional License Section
-              _buildProfessionalLicenseSection(),
-
-              // Photos & Videos Section
-              _buildPhotosVideosSection(),
-
-              // Featured Projects Section
-              _buildFeaturedProjectsSection(),
-
-              // Review Section
-              _buildReviewSection(),
-
-              const SizedBox(height: 20),
-            ],
-          ),
+            // 🔹 Scrollable content below AppBar
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // _buildProfileHeader(),
+                    _buildProfilePictureSection(),
+                    _buildProfileActionButtons(),
+                    _buildBusinessInfoSection(),
+                    _buildCredentialsSection(),
+                    _buildProfessionalLicenseSection(),
+                    _buildPhotosVideosSection(),
+                    _buildFeaturedProjectsSection(),
+                    _buildReviewSection(),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
+
+
   // 2. Profile Header Widget
   Widget _buildProfileHeader() {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+      color: Theme.of(context).appBarTheme.backgroundColor,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -102,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             'Profile',
             style: Theme.of(
               context,
-            ).textTheme.displayLarge?.copyWith(fontWeight: FontWeight.bold),
+            ).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           Row(
             children: [
@@ -130,7 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // 3. Profile Picture Section Widget
   Widget _buildProfilePictureSection() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Column(
         children: [
           Row(
@@ -622,10 +639,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text(
-                      "Add photos",
-                      style: theme.textTheme.labelLarge,
-                    ),
+                    child: Text("Add photos"),
                   ),
                 ],
               ),

@@ -27,9 +27,9 @@ class AuthUserController extends ChangeNotifier {
       errorMessage = null;
       notifyListeners();
       Logger().d('Controler is here');
-      final user = await authUserUsecase.call(email, password);
-
-      await _storage.write(key: 'isAuthenticated', value: true.toString());
+      // final user = await authUserUsecase.call(email, password);
+      await Future.delayed(const Duration(seconds: 1));
+      // await _storage.write(key: 'isAuthenticated', value: true.toString());
       isAuthenticated.value = true;
       onSuccess();
     } catch (e) {

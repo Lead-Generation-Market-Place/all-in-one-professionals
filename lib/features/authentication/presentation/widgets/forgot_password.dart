@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 import 'package:yelpax_pro/shared/widgets/custom_flutter_toast.dart';
 import 'package:yelpax_pro/shared/widgets/custom_input.dart';
@@ -41,7 +40,7 @@ class _ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: const BoxDecoration(
-        color: Colors.white,
+   
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
@@ -53,7 +52,7 @@ class _ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppColors.primaryDark,
+            
             ),
           ),
           const SizedBox(height: 16),

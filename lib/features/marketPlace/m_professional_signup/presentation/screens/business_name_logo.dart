@@ -24,7 +24,6 @@ class BusinessNameLogo extends StatefulWidget {
 
 class _BusinessNameLogoState extends State<BusinessNameLogo> {
   final _formKey = GlobalKey<FormState>();
-  bool isFormValid = false;
   bool isSubmitting = false;
 
   List<BusinessType> businessTypeList = [
@@ -42,56 +41,11 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
       selectedBusinessType == 'Company' ||
       selectedBusinessType == 'Sub-Contractor';
 
-  void validateForm() {
-    final isValid = _formKey.currentState?.validate() ?? false;
-    final hasBusinessType =
-        selectedBusinessType != null && selectedBusinessType!.isNotEmpty;
-    final hasImage = Provider.of<ProfessionalSignUpProvider>(
-      context,
-      listen: false,
-    ).businessImageUrl.isNotEmpty;
-
-    setState(() {
-      isFormValid = isValid && hasBusinessType && hasImage;
-    });
-  }
-
-  String? _validateYearFounded(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Please enter year founded.';
-    }
-
-    final year = int.tryParse(value);
-    if (year == null) {
-      return 'Please enter a valid year.';
-    }
-
-    final currentYear = DateTime.now().year;
-    if (year < 1900 || year > currentYear) {
-      return 'Year must be between 1900 and $currentYear.';
-    }
-
-    return null;
-  }
-
-  String? _validateBusinessDetails(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Please provide details about your business.';
-    }
-
-    if (value.trim().length < 20) {
-      return 'Please provide at least 20 characters.';
-    }
-
-    if (value.trim().length > 500) {
-      return 'Maximum 500 characters allowed.';
-    }
-
-    return null;
-  }
-
   Future<void> _handleSubmit() async {
-    if (!isFormValid) return;
+    // Validate the form when submit is pressed
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
 
     setState(() {
       isSubmitting = true;
@@ -152,6 +106,12 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
         foregroundColor: colorScheme.onPrimary,
         elevation: 0,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: SafeArea(
         child: Padding(
@@ -159,7 +119,6 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,
-              onChanged: validateForm,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -292,10 +251,6 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                       }
                       return null;
                     },
-                    onChanged: (value) {
-                      professionalSignUpProvider.onBusinessNameChanged(value);
-                      validateForm();
-                    },
                   ),
                   const SizedBox(height: 24),
 
@@ -306,7 +261,6 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                     controller: _yearFoundedController,
                     inputType: TextInputType.number,
                     validator: _validateYearFounded,
-                    onChanged: (value) => validateForm(),
                   ),
                   const SizedBox(height: 24),
 
@@ -349,19 +303,8 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                             selectedBusinessType = value;
                           });
                           professionalSignUpProvider.setBusinessType(value!);
-                          validateForm();
                         },
                       ),
-                      if (selectedBusinessType == null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(
-                            'Please select a business type',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.error,
-                            ),
-                          ),
-                        ),
                     ],
                   ),
 
@@ -383,7 +326,6 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                         }
                         return null;
                       },
-                      onChanged: (value) => validateForm(),
                     ),
                   ],
 
@@ -437,7 +379,6 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                           contentPadding: const EdgeInsets.all(16),
                         ),
                         validator: _validateBusinessDetails,
-                        onChanged: (value) => validateForm(),
                       ),
                       const SizedBox(height: 8),
                       Row(
@@ -449,18 +390,6 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                               color: colorScheme.onSurfaceVariant,
                             ),
                           ),
-                          if (_businessDetailsController.text.isNotEmpty)
-                            Text(
-                              _businessDetailsController.text.length < 20
-                                  ? '${20 - _businessDetailsController.text.length} more needed'
-                                  : '✓ Good length',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color:
-                                    _businessDetailsController.text.length < 20
-                                    ? colorScheme.error
-                                    : colorScheme.primary,
-                              ),
-                            ),
                         ],
                       ),
                     ],
@@ -468,15 +397,13 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
 
                   const SizedBox(height: 32),
 
-                  // Save & Continue Button
+                  // Save & Continue Button (always enabled)
                   SizedBox(
                     width: double.infinity,
                     child: CustomButton(
                       text: isSubmitting ? 'Saving...' : 'Save & Continue',
-                      onPressed: isFormValid && !isSubmitting
-                          ? _handleSubmit
-                          : null,
-                      enabled: isFormValid && !isSubmitting,
+                      onPressed: isSubmitting ? null : _handleSubmit,
+                      enabled: true, // Always enabled
                     ),
                   ),
                 ],
@@ -486,6 +413,40 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
         ),
       ),
     );
+  }
+
+  String? _validateYearFounded(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter year founded.';
+    }
+
+    final year = int.tryParse(value);
+    if (year == null) {
+      return 'Please enter a valid year.';
+    }
+
+    final currentYear = DateTime.now().year;
+    if (year < 1900 || year > currentYear) {
+      return 'Year must be between 1900 and $currentYear.';
+    }
+
+    return null;
+  }
+
+  String? _validateBusinessDetails(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please provide details about your business.';
+    }
+
+    if (value.trim().length < 20) {
+      return 'Please provide at least 20 characters.';
+    }
+
+    if (value.trim().length > 500) {
+      return 'Maximum 500 characters allowed.';
+    }
+
+    return null;
   }
 
   Widget _buildPlaceholder() {

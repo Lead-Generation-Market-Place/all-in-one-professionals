@@ -21,7 +21,7 @@ import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentati
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/m_services_categories.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/rating.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/service_question_form.dart';
-import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/signup_process_scree.dart';
+import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/signup_process_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/notifications/presentation/screens/notifications_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/profile_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/business_faqs.dart';
@@ -135,7 +135,7 @@ class AppRouter {
       case mServicesAndCategories:
         return MaterialPageRoute(builder: (_) => MServicesCategories());
       case signUpProcessScreen:
-        return MaterialPageRoute(builder: (_) => SignupProcessScreem());
+        return MaterialPageRoute(builder: (_) => SignupProcessScreen());
       case signUpProcessBusinessNameLogo:
         return MaterialPageRoute(builder: (_) => BusinessNameLogo());
       case professionalRating:
