@@ -211,7 +211,12 @@ class _ServiceDashboardState extends State<ServiceScreen> {
 
                           const SizedBox(height: 16),
                           ElevatedButton.icon(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRouter.add_service,
+                              );
+                            },
                             icon: const Icon(Icons.add),
                             label: const Text("Add a Service"),
                           ),

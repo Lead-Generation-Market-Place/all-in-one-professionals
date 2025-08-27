@@ -43,42 +43,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
 
             // 🔹 Custom AppBar placed manually below banner
-            Container(
-              color:
-                  Theme.of(context).appBarTheme.backgroundColor ?? Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Profile',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.notifications),
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            AppRouter.homeServicesNotifications,
-                          );
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.settings),
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            AppRouter.settingsScreen,
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+            CustomAppBar(
+              title: 'Jobs',
+
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.notifications),
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      AppRouter.homeServicesNotifications,
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRouter.settingsScreen);
+                  },
+                ),
+              ],
             ),
+
 
             // 🔹 Scrollable content below AppBar
             Expanded(

@@ -86,25 +86,25 @@ final lightTheme = ThemeData(
   // Input Decoration
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
-    fillColor: Colors.white,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    // fillColor: Colors.white,
+    // contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
     border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: AppColors.warning),
+      // borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: AppColors.accent),
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: AppColors.warning),
+      // borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: AppColors.accent),
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: AppColors.primary, width: 2),
+      // borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: AppColors.primary),
     ),
     errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: AppColors.error, width: 1.5),
+      // borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: AppColors.error),
     ),
-    labelStyle: TextStyle(color: AppColors.textSecondary),
+    labelStyle: TextStyle(color: AppColors.background),
     hintStyle: TextStyle(color: AppColors.warning),
     errorStyle: TextStyle(
       color: AppColors.error,

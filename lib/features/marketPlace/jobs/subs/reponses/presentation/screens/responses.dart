@@ -1,6 +1,7 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
+import 'package:yelpax_pro/shared/widgets/custom_advanced_dropdown.dart';
 
 import '../../../../presentation/widgets/bottom_navbar_leads.dart';
 
@@ -66,21 +67,32 @@ class _ResponsesState extends State<Responses> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            CustomDropdown<String>(
+
+            AdvancedDropdown(
               items: statusItems,
-              initialItem: selectedStatus?.name,
-              hintText: 'Select Status',
-              onChanged: (name) {
-                setState(() {
-                  selectedStatus = statusList.firstWhere(
-                    (status) => status.name == name,
-                  );
-                });
-                debugPrint(
-                  'Selected status: ${selectedStatus!.name} (ID: ${selectedStatus!.id})',
-                );
-              },
+              itemToString: (item) => item,
+              enableSearch: false,
             ),
+            // CustomDropdown<String>(
+            //   // decoration: CustomDropdownDecoration(
+            //   //   searchFieldDecoration: SearchFieldDecoration(
+            //   //     border: InputBorder.none,
+            //   //   ),
+            //   // ),
+            //   items: statusItems,
+            //   initialItem: selectedStatus?.name,
+            //   hintText: 'Select Status',
+            //   onChanged: (name) {
+            //     setState(() {
+            //       selectedStatus = statusList.firstWhere(
+            //         (status) => status.name == name,
+            //       );
+            //     });
+            //     debugPrint(
+            //       'Selected status: ${selectedStatus!.name} (ID: ${selectedStatus!.id})',
+            //     );
+            //   },
+            // ),
             const SizedBox(height: 40),
 
             Padding(

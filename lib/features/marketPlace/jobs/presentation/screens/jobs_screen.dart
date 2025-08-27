@@ -131,8 +131,9 @@ class _JobsScreenState extends State<JobsScreen>
 
           // Custom App Bar
           CustomAppBar(
+            
             title: 'Jobs',
-            toolbarHeight: 48.0,
+        
             actions: [
               IconButton(
                 icon: const Icon(Icons.notifications),
@@ -477,35 +478,35 @@ class _JobsScreenState extends State<JobsScreen>
                       if (lead['hasHighHiringIntent'])
                         _buildSimpleTag(
                           label: 'High hiring intent',
-                          color: Theme.of(context).colorScheme.tertiary,
+
                           icon: Icons.trending_up,
                         ),
                       // Verified Phone Tag
                       if (lead['isVerifiedPhone'])
                         _buildSimpleTag(
                           label: 'Verified phone',
-                          color: Theme.of(context).colorScheme.primary,
+
                           icon: Icons.verified,
                         ),
                       // Additional Details Tag
                       if (lead['hasAdditionalDetails'])
                         _buildSimpleTag(
                           label: 'Additional details',
-                          color: Theme.of(context).colorScheme.primary,
+
                           icon: Icons.info_outline,
                         ),
                       // Frequent User Tag
                       if (lead['isFrequentUser'])
                         _buildSimpleTag(
                           label: 'Frequent user',
-                          color: Theme.of(context).colorScheme.secondary,
+
                           icon: Icons.star,
                         ),
                       // Rating if available
                       if (lead['rating'] != null)
                         _buildSimpleTag(
                           label: '${lead['rating']} ★',
-                          color: Theme.of(context).colorScheme.secondary,
+
                           icon: Icons.star_rate,
                         ),
                     ],
@@ -654,31 +655,71 @@ class _JobsScreenState extends State<JobsScreen>
     );
   }
 
-  Widget _buildSimpleTag({
+Widget _buildSimpleTag({
     required String label,
-    required Color color,
     IconData? icon,
+    Color? backgroundColor,
+    Color? textColor,
+    bool isInteractive = false,
+    VoidCallback? onTap,
   }) {
     final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) Icon(icon, size: 14, color: color),
-          if (icon != null) const SizedBox(width: 4),
-          Text(
-            label,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w500,
+    final isDarkMode = theme.brightness == Brightness.dark;
+
+    // Default colors based on context
+    final defaultBgColor = isDarkMode
+        ? theme.colorScheme.primary.withOpacity(0.15)
+        : theme.colorScheme.primary.withOpacity(0.08);
+
+    final defaultTextColor = isDarkMode
+        ? theme.colorScheme.primary.withOpacity(0.9)
+        : theme.colorScheme.primary;
+
+    return GestureDetector(
+      onTap: isInteractive ? onTap : null,
+      child: MouseRegion(
+        cursor: isInteractive
+            ? SystemMouseCursors.click
+            : SystemMouseCursors.basic,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: backgroundColor ?? defaultBgColor,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: (backgroundColor ?? defaultBgColor).withOpacity(0.3),
+              width: 1,
             ),
+            boxShadow: isInteractive
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    ),
+                  ]
+                : null,
           ),
-        ],
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icon != null) ...[
+                Icon(icon, size: 14, color: textColor ?? defaultTextColor),
+                const SizedBox(width: 4),
+              ],
+              Text(
+                label,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: textColor ?? defaultTextColor,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                  letterSpacing: -0.1,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

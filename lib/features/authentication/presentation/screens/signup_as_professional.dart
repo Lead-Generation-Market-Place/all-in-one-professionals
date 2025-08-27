@@ -233,7 +233,11 @@ class _SignupAsProfessionalState extends State<SignupAsProfessional> {
             decoration: CustomDropdownDecoration(
               searchFieldDecoration: SearchFieldDecoration(
                 fillColor: Theme.of(context).colorScheme.surface,
+                border: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                contentPadding: EdgeInsets.all(0)
               ),
+              
               closedFillColor: Theme.of(context).highlightColor,
               expandedFillColor: Theme.of(context).scaffoldBackgroundColor,
             ),

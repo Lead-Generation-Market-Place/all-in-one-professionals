@@ -32,6 +32,7 @@ import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/pr
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/profile_picture_edit.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/your_introduction.dart';
 import 'package:yelpax_pro/features/marketPlace/search/presentation/screens/search_screen.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/add_service_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/business_availability.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/settings/presentation/widgets/theme_selection.dart';
@@ -98,6 +99,9 @@ class AppRouter {
   static const String responses = '/homeServices/responses';
   static const String leadSetting = '/homeServices/leadSetting';
   static const String reminders = '/homeServices/reminders';
+
+  static const String add_service = '/homeServices/add_service';
+
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
@@ -176,6 +180,8 @@ class AppRouter {
 
       case reminders:
         return MaterialPageRoute(builder: (_) => RemindersScreen());
+      case add_service:
+        return MaterialPageRoute(builder: (_) => AddServiceScreen());
       case unknownRouteScreen:
         return MaterialPageRoute(
           builder: (_) =>

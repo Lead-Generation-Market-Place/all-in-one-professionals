@@ -2,6 +2,7 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/features/authentication/presentation/widgets/forgot_password.dart';
+import 'package:yelpax_pro/shared/widgets/custom_advanced_dropdown.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 import 'package:yelpax_pro/shared/widgets/custom_flutter_toast.dart';
 import 'package:yelpax_pro/shared/widgets/custom_input.dart';
@@ -131,34 +132,38 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
 
                       SizedBox(height: verticalSpacing),
-
-                      /// Country Dropdown
-                      CustomDropdown<String>(
-                        decoration: CustomDropdownDecoration(
-                          closedFillColor: Colors.transparent,
-                          expandedFillColor: theme.colorScheme.surface,
-                          headerStyle: theme.textTheme.bodyMedium,
-                          hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                          listItemDecoration: ListItemDecoration(
-                            selectedColor: theme.colorScheme.primary,
-                            highlightColor: theme.colorScheme.primary,
-                          ),
-                          closedBorderRadius: BorderRadius.circular(30),
-                          expandedBorderRadius: BorderRadius.circular(16),
-                          closedBorder: Border.fromBorderSide(BorderSide.none),
-                        ),
-                        hintText: 'Select a Country',
+                      AdvancedDropdown(
                         items: _countries,
-                        initialItem: _selectedCountry,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedCountry = value;
-                          });
-                          _validateForm();
-                        },
+                        itemToString: (item) => item,
+                        enableSearch: false,
                       ),
+                      /// Country Dropdown
+                      // CustomDropdown<String>(
+                      //   decoration: CustomDropdownDecoration(
+                      //     closedFillColor: Colors.transparent,
+                      //     expandedFillColor: theme.colorScheme.surface,
+                      //     headerStyle: theme.textTheme.bodyMedium,
+                      //     hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                      //       color: theme.colorScheme.onSurfaceVariant,
+                      //     ),
+                      //     listItemDecoration: ListItemDecoration(
+                      //       selectedColor: theme.colorScheme.primary,
+                      //       highlightColor: theme.colorScheme.primary,
+                      //     ),
+                      //     closedBorderRadius: BorderRadius.circular(30),
+                      //     expandedBorderRadius: BorderRadius.circular(16),
+                      //     closedBorder: Border.fromBorderSide(BorderSide.none),
+                      //   ),
+                      //   hintText: 'Select a Country',
+                      //   items: _countries,
+                      //   initialItem: _selectedCountry,
+                      //   onChanged: (value) {
+                      //     setState(() {
+                      //       _selectedCountry = value;
+                      //     });
+                      //     _validateForm();
+                      //   },
+                      // ),
 
                       SizedBox(height: verticalSpacing * 1.5),
 
