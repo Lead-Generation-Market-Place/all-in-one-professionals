@@ -22,6 +22,10 @@ class ProfessionalSignUpProvider extends ChangeNotifier {
   }) {
     _loadQuestions();
   }
+void setBusinessImage(String path) {
+    businessImageUrl = path;
+    notifyListeners();
+  }
 
   // Controllers
   final TextEditingController businessNameController = TextEditingController();
@@ -495,4 +499,10 @@ class ProfessionalSignUpProvider extends ChangeNotifier {
       return false;
     }
   }
+
+  // void setBusinessImage(String path) {
+  //   businessImageUrl = path;
+  //   notifyListeners();
+  // }
+
 }

@@ -164,7 +164,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
           filled: true,
           fillColor: (widget.fillColor ?? colorScheme.surfaceVariant)
               .withOpacity(_isFocused ? 0.28 : 0.18),
-          labelText: widget.label,
+   
           labelStyle: theme.textTheme.bodyMedium?.copyWith(
             color: _isFocused
                 ? colorScheme.primary
@@ -197,32 +197,24 @@ class _CustomInputFieldState extends State<CustomInputField> {
           suffixIcon: _buildSuffixIcon(colorScheme),
           contentPadding:
               widget.contentPadding ??
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
 
-          // Borders from theme
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide(color: colorScheme.outline, width: 1.2),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: colorScheme.outline, // You can customize the color
+              width: 1.2,
+            ),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide(color: colorScheme.outline, width: 1.5),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: colorScheme.primary, width: 2),
           ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
+          errorBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: colorScheme.error, width: 1.2),
           ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide(color: colorScheme.error, width: 1.5),
+          focusedErrorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: colorScheme.error, width: 2),
           ),
 
-          errorStyle: theme.textTheme.bodySmall?.copyWith(
-            color: colorScheme.error,
-            height: 1.3,
-            fontWeight: FontWeight.w500,
-            fontSize: 13,
-          ),
           errorMaxLines: 2,
         ),
       ),

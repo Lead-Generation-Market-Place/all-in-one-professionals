@@ -28,24 +28,24 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    _emailController.addListener(_validateForm);
-    _passwordController.addListener(_validateForm);
+    // _emailController.addListener(_validateForm);
+    // _passwordController.addListener(_validateForm);
   }
 
-  void _validateForm() {
-    final email = _emailController.text;
-    final password = _passwordController.text;
+  // void _validateForm() {
+  //   final email = _emailController.text;
+  //   final password = _passwordController.text;
 
-    final isEmailValid = RegExp(
-      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-    ).hasMatch(email);
-    final isPasswordValid = password.length >= 8;
-    final isCountrySelected = _selectedCountry != null;
+  //   final isEmailValid = RegExp(
+  //     r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+  //   ).hasMatch(email);
+  //   final isPasswordValid = password.length >= 8;
+  //   final isCountrySelected = _selectedCountry != null;
 
-    setState(() {
-      _isButtonEnabled = isEmailValid && isPasswordValid && isCountrySelected;
-    });
-  }
+  //   setState(() {
+  //     _isButtonEnabled = isEmailValid && isPasswordValid && isCountrySelected;
+  //   });
+  // }
 
   @override
   void dispose() {
@@ -172,8 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: double.infinity,
                         child: CustomButton(
                           text: 'Log In',
-                          onPressed: _isButtonEnabled
-                              ? () async {
+                          onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
                                     setState(() => _isLoading = true);
                                     await Future.delayed(
@@ -185,8 +184,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     );
                                   }
                                 }
-                              : null,
-                          isLoading: _isLoading,
+                        
+         
                         ),
                       ),
 

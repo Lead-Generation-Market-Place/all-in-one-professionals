@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/controllers/m_professional_signup_controller.dart';
+import 'package:yelpax_pro/shared/widgets/custom_advanced_dropdown.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 import 'package:yelpax_pro/shared/widgets/custom_input.dart';
+import 'package:yelpax_pro/shared/widgets/image_cropper.dart';
 
 class BusinessType {
   final int id;
@@ -144,8 +147,8 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                     child: Column(
                       children: [
                         Container(
-                          width: 120,
-                          height: 120,
+                          width: 180,
+                          height: 180,
                           child: Stack(
                             alignment: Alignment.bottomRight,
                             children: [
@@ -154,13 +157,13 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                                     provider.businessImageUrl,
                                 builder: (context, imageUrl, child) {
                                   return Container(
-                                    width: 120,
-                                    height: 120,
+                                    width: 250,
+                                    height: 250,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       border: Border.all(
                                         color: colorScheme.outlineVariant,
-                                        width: 3,
+                                        width: 1,
                                       ),
                                       boxShadow: [
                                         BoxShadow(
@@ -176,8 +179,8 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                                         ? ClipOval(
                                             child: Image.file(
                                               File(imageUrl),
-                                              width: 120,
-                                              height: 120,
+                                              width: 250,
+                                              height: 250,
                                               fit: BoxFit.cover,
                                               errorBuilder:
                                                   (
@@ -192,10 +195,33 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                                 },
                               ),
                               GestureDetector(
-                                onTap: () {
-                                  professionalSignUpProvider
-                                      .showImagePickerBottomSheet(context);
+                                onTap: () async {
+                                  final picker = ImagePicker();
+                                  final pickedFile = await picker.pickImage(
+                                    source: ImageSource.gallery,
+                                  );
+
+                                  if (pickedFile != null) {
+                                    final originalFile = File(pickedFile.path);
+
+                                    // Navigate to cropper screen and wait for result
+                                    final croppedImage =
+                                        await Navigator.push<File?>(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => ImageCropperScreen(
+                                              imageFile: originalFile,
+                                            ),
+                                          ),
+                                        );
+
+                                    if (croppedImage != null) {
+                                      professionalSignUpProvider
+                                          .setBusinessImage(croppedImage.path);
+                                    }
+                                  }
                                 },
+
                                 child: Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
@@ -276,28 +302,10 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      CustomDropdown<String>(
-                        decoration: CustomDropdownDecoration(
-                          closedFillColor: colorScheme.surfaceContainerHighest,
-                          expandedFillColor: colorScheme.surface,
-                          headerStyle: theme.textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurface,
-                          ),
-                          listItemStyle: theme.textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurface,
-                          ),
-                          closedBorderRadius: BorderRadius.circular(12),
-                          expandedBorderRadius: BorderRadius.circular(12),
-                          closedBorder: Border.all(
-                            color: colorScheme.outlineVariant,
-                          ),
-                          expandedBorder: Border.all(
-                            color: colorScheme.primary,
-                          ),
-                        ),
-                        hintText: 'Select Business Type',
+
+                      AdvancedDropdown(
                         items: businessList,
-                        initialItem: selectedBusinessType,
+                        itemToString: (item) => item,
                         onChanged: (value) {
                           setState(() {
                             selectedBusinessType = value;
@@ -305,6 +313,7 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                           professionalSignUpProvider.setBusinessType(value!);
                         },
                       ),
+                     
                     ],
                   ),
 
@@ -351,32 +360,8 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                         decoration: InputDecoration(
                           hintText:
                               'Describe your business, services, and what makes you unique...',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: colorScheme.outlineVariant,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: colorScheme.outlineVariant,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: colorScheme.primary,
-                              width: 2,
-                            ),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: colorScheme.error),
-                          ),
-                          filled: true,
-                          fillColor: colorScheme.surfaceContainerHighest,
-                          contentPadding: const EdgeInsets.all(16),
+                          hintStyle: TextStyle(color: Colors.black)
+                         
                         ),
                         validator: _validateBusinessDetails,
                       ),
@@ -386,9 +371,7 @@ class _BusinessNameLogoState extends State<BusinessNameLogo> {
                         children: [
                           Text(
                             '${_businessDetailsController.text.length}/500 characters',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
+                         
                           ),
                         ],
                       ),
