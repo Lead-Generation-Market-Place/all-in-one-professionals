@@ -1,6 +1,7 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:yelpax_pro/shared/widgets/custom_advanced_dropdown.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 import 'package:yelpax_pro/shared/widgets/custom_input.dart';
 
@@ -59,6 +60,7 @@ class _FeaturedProjectsState extends State<FeaturedProjects> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Featured Projects', style: theme.textTheme.titleLarge),
+        centerTitle: true,
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -76,26 +78,25 @@ class _FeaturedProjectsState extends State<FeaturedProjects> {
                   color: theme.inputDecorationTheme.fillColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: CustomDropdown.search(
-                  hintText: 'Select service...',
-                  items: serviceNames,
-                  initialItem: selectedServiceId != null
-                      ? _services
-                            .firstWhere((s) => s.id == selectedServiceId)
-                            .name
+                child: AdvancedDropdown<Service>(
+                  items: _services,
+                  selectedItem: selectedServiceId != null
+                      ? _services.firstWhere((s) => s.id == selectedServiceId)
                       : null,
-                  onChanged: (selectedName) {
-                    final selectedService = _services.firstWhere(
-                      (service) => service.name == selectedName,
-                    );
-                    setState(() {
-                      selectedServiceId = selectedService.id;
-                    });
-                    Logger().i(
-                      'Selected Service ID: ${selectedService.id}, Name: ${selectedService.name}',
-                    );
+                  hintText: 'Select service...',
+                  itemToString: (service) => service.name,
+                  onChanged: (selected) {
+                    if (selected != null) {
+                      setState(() {
+                        selectedServiceId = selected.id;
+                      });
+                      Logger().i(
+                        'Selected Service ID: ${selected.id}, Name: ${selected.name}',
+                      );
+                    }
                   },
                 ),
+
               ),
               const SizedBox(height: 20),
               Container(
@@ -103,24 +104,25 @@ class _FeaturedProjectsState extends State<FeaturedProjects> {
                   color: theme.inputDecorationTheme.fillColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: CustomDropdown.search(
-                  hintText: 'Select job...',
-                  items: jobNames,
-                  initialItem: selectedJobId != null
-                      ? _jobs.firstWhere((j) => j.id == selectedJobId).name
+                child: AdvancedDropdown<Job>(
+                  items: _jobs,
+                  selectedItem: selectedJobId != null
+                      ? _jobs.firstWhere((j) => j.id == selectedJobId)
                       : null,
-                  onChanged: (selectedName) {
-                    final selectedJob = _jobs.firstWhere(
-                      (job) => job.name == selectedName,
-                    );
-                    setState(() {
-                      selectedJobId = selectedJob.id;
-                    });
-                    Logger().i(
-                      'Selected Job ID: ${selectedJob.id}, Name: ${selectedJob.name}',
-                    );
+                  hintText: 'Select job...',
+                  itemToString: (job) => job.name,
+                  onChanged: (selected) {
+                    if (selected != null) {
+                      setState(() {
+                        selectedJobId = selected.id;
+                      });
+                      Logger().i(
+                        'Selected Job ID: ${selected.id}, Name: ${selected.name}',
+                      );
+                    }
                   },
                 ),
+
               ),
               const SizedBox(height: 20),
               Column(

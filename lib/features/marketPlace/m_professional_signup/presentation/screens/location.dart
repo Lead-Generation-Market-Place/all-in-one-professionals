@@ -162,6 +162,7 @@ class _LocationScreenState extends State<LocationScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Select Location'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),

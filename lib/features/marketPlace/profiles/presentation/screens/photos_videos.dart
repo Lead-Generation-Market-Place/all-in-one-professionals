@@ -25,7 +25,7 @@ class _PhotosVideosState extends State<PhotosVideos> {
     final profileProvider = Provider.of<ProfileProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Photos & Videos')),
+      appBar: AppBar(title: Text('Photos & Videos'), centerTitle: true),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(

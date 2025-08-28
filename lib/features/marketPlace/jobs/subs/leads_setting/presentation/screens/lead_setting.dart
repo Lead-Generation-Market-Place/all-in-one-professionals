@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yelpax_pro/config/routes/router.dart';
 
 class LeadSetting extends StatefulWidget {
   const LeadSetting({super.key});
@@ -39,8 +40,9 @@ class _LeadSettingState extends State<LeadSetting> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lead Settings'),
+        centerTitle: true,
         elevation: 0,
-        backgroundColor: colorScheme.surface,
+
         foregroundColor: colorScheme.onSurface,
         leading: IconButton(
           onPressed: () {
@@ -66,10 +68,8 @@ class _LeadSettingState extends State<LeadSetting> {
             _buildLocationsSection(theme, colorScheme),
             const SizedBox(height: 24),
 
-
             _buildOnlineLeadsSection(theme, colorScheme),
             const SizedBox(height: 32),
-
 
             _buildViewLeadsButton(theme, colorScheme),
           ],
@@ -155,7 +155,7 @@ class _LeadSettingState extends State<LeadSetting> {
             'Add a service',
             Icons.add,
             onPressed: () {
-              // Handle add service logic
+              Navigator.pushNamed(context, AppRouter.add_service);
             },
             theme: theme,
             colorScheme: colorScheme,
@@ -302,7 +302,7 @@ class _LeadSettingState extends State<LeadSetting> {
             'Add a location',
             Icons.add_location_alt,
             onPressed: () {
-              // Handle add location logic
+              Navigator.pushNamed(context, AppRouter.add_location);
             },
             theme: theme,
             colorScheme: colorScheme,

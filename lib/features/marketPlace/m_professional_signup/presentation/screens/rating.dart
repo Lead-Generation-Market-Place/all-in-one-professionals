@@ -25,7 +25,7 @@ class _RatingState extends State<Rating> {
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
-        backgroundColor: Colors.transparent,
+
         elevation: 0,
         // leading: IconButton(
         //   icon: const Icon(Icons.arrow_back),

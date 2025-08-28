@@ -15,6 +15,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       key: _scaffoldKey,
       drawer: _buildProfessionalDrawer(),
       appBar: AppBar(
@@ -108,11 +109,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             Container(
               padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
               decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [AppColors.primaryDark, AppColors.background],
-                ),
+            
+                color: AppColors.primary,
               ),
               child: Row(
                 children: [
@@ -243,7 +241,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       child: Text(
         title,
         style: const TextStyle(
-          color: AppColors.warning,
+          color: AppColors.textPrimary,
           fontSize: 12,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
@@ -286,7 +284,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         ),
         subtitle: Text(
           subtitle,
-          style: const TextStyle(fontSize: 13, color: AppColors.warning),
+          style: const TextStyle(fontSize: 13, color: AppColors.textPrimary),
         ),
         trailing: badge != null
             ? Container(

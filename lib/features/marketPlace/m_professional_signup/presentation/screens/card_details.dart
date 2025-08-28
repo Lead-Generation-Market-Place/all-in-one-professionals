@@ -189,7 +189,7 @@ class _CardDetailsState extends State<CardDetails>
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
         elevation: 0,
-        backgroundColor: Colors.transparent,
+        centerTitle: true,
         foregroundColor: theme.colorScheme.onSurface,
       ),
       body: FadeTransition(

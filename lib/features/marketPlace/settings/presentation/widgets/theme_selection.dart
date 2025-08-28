@@ -14,7 +14,7 @@ class ThemeSelection extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Select Theme')),
+      appBar: AppBar(title: const Text('Select Theme'), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

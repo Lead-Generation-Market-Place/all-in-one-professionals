@@ -22,7 +22,8 @@ class ProfilePictureEdit extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Basic info', style: TextStyle()),
+        title: const Text('Basic Info', style: TextStyle()),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Padding(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
+import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 
 class LeadsDetailsPage extends StatefulWidget {
@@ -198,6 +199,7 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lead Details'),
+        centerTitle: true,
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
@@ -312,63 +314,99 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
 
             // Be the first to respond banner
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    colorScheme.primary.withOpacity(0.08),
+                    colorScheme.primary.withOpacity(0.12),
                     colorScheme.primary.withOpacity(0.04),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: colorScheme.primary.withOpacity(0.2)),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: colorScheme.primary.withOpacity(0.25),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.primary.withOpacity(0.15),
+                    offset: const Offset(0, 3),
+                    blurRadius: 10,
+                    spreadRadius: 1,
+                  ),
+                ],
               ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: colorScheme.primary.withOpacity(0.1),
+                      color: colorScheme.primary.withOpacity(0.15),
                       shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorScheme.primary.withOpacity(0.25),
+                          blurRadius: 6,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
                     child: Icon(
                       Icons.timer,
                       color: colorScheme.primary,
-                      size: 20,
+                      size: 24,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 18),
                   Expanded(
-                    child: Text(
-                      'Be the 1st to respond',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Be the 1st to respond',
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            OutlinedButton(
+                              onPressed: _showResponsesBottomSheet,
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                  color: theme.colorScheme.outlineVariant,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 12,
+                                ),
+                                textStyle: theme.textTheme.labelLarge,
+                              ),
+                              child: const Text('Details'),
+                            ),
+                            const SizedBox(width: 14),
+                            CustomButton(
+                              text: 'Set reminder',
+                              onPressed: _showReminderBottomSheet,
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  OutlinedButton(
-                    onPressed: _showResponsesBottomSheet,
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: theme.colorScheme.outlineVariant),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text('Details'),
-                  ),
-                  const SizedBox(width: 8),
-                  FilledButton.tonal(
-                    onPressed: _showReminderBottomSheet,
-                    child: const Text('Set reminder'),
                   ),
                 ],
               ),
-            ),
+            )
 
+,
             const SizedBox(height: 24),
 
             // Highlights section
@@ -385,23 +423,19 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
               children: [
                 _buildHighlightChip(
                   'Urgent',
-                  Icons.warning_amber_rounded,
-                  colorScheme.error,
+                  Icons.warning_amber_rounded
                 ),
                 _buildHighlightChip(
                   'High hiring intent',
-                  Icons.trending_up_rounded,
-                  colorScheme.tertiary,
+                  Icons.trending_up_rounded
                 ),
                 _buildHighlightChip(
                   'Verified phone',
-                  Icons.verified_rounded,
-                  colorScheme.primary,
+                  Icons.verified_rounded
                 ),
                 _buildHighlightChip(
                   'Frequent user',
-                  Icons.star_rounded,
-                  colorScheme.secondary,
+                  Icons.star_rounded
                 ),
               ],
             ),
@@ -648,15 +682,15 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
     );
   }
 
-  Widget _buildHighlightChip(String text, IconData icon, Color color) {
+  Widget _buildHighlightChip(String text, IconData icon) {
     final theme = Theme.of(context);
     return Chip(
-      avatar: Icon(icon, size: 16, color: color),
+      avatar: Icon(icon, size: 16),
       label: Text(
         text,
-        style: theme.textTheme.labelSmall?.copyWith(color: color),
+
       ),
-      backgroundColor: color.withOpacity(0.12),
+
       side: BorderSide(color: theme.colorScheme.outlineVariant),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     );

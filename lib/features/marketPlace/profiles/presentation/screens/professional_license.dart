@@ -2,6 +2,7 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/controllers/profile_provider.dart';
+import 'package:yelpax_pro/shared/widgets/custom_advanced_dropdown.dart';
 import 'package:yelpax_pro/shared/widgets/custom_input.dart';
 
 class ProfessionalLicense extends StatelessWidget {
@@ -24,6 +25,7 @@ class ProfessionalLicense extends StatelessWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text('Professional License'),
+        centerTitle: true,
         actions: [
           TextButton(
             onPressed: () {
@@ -90,42 +92,41 @@ class ProfessionalLicense extends StatelessWidget {
                       ),
                       const SizedBox(height: 25),
                       Container(
-                        child: CustomDropdown<String>(
-                          decoration: CustomDropdownDecoration(
-                            closedFillColor: Theme.of(context).highlightColor,
-                            expandedFillColor: Theme.of(
-                              context,
-                            ).scaffoldBackgroundColor,
-                          ),
-                          hintText: 'Select state',
+                        child: AdvancedDropdown<String>(
                           items: provider.states,
-                          initialItem: provider.selectedState.isNotEmpty
+                          selectedItem: provider.selectedState.isNotEmpty
                               ? provider.selectedState
                               : null,
-                          onChanged: (value) =>
-                              provider.setSelectedState(value.toString()),
+                          hintText: 'Select state',
+                          itemToString: (item) => item,
+                          onChanged: (value) {
+                            if (value != null) {
+                              provider.setSelectedState(value);
+                            }
+                          },
                         ),
+
                       ),
                       const SizedBox(height: 25),
                       Container(
-                        child: CustomDropdown<String>(
-                          decoration: CustomDropdownDecoration(
-                            closedFillColor: Theme.of(context).highlightColor,
-                            expandedFillColor: Theme.of(
-                              context,
-                            ).scaffoldBackgroundColor,
-                          ),
-                          hintText: 'Select license type',
-
+                        child: AdvancedDropdown<String>(
                           items: provider.licenseTypes,
-                          initialItem: provider.selectedLicenseType.isNotEmpty
+                          selectedItem: provider.selectedLicenseType.isNotEmpty
                               ? provider.selectedLicenseType
                               : null,
-                          onChanged: (value) =>
-                              provider.setSelectedLicenseType(value.toString()),
+                          hintText: 'Select license type',
+                          itemToString: (item) => item,
+                          onChanged: (value) {
+                            if (value != null) {
+                              provider.setSelectedLicenseType(value);
+                            }
+                          },
                         ),
+
                       ),
                       const SizedBox(height: 25),
+
+
                       CustomInputField(
                         controller: provider.licenseNumberController,
                         label: 'License number',

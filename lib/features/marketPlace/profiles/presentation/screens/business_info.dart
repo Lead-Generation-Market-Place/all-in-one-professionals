@@ -25,9 +25,11 @@ class BusinessInfo extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Business Information'),
+        centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
+        
         ),
         actions: [
           IconButton(

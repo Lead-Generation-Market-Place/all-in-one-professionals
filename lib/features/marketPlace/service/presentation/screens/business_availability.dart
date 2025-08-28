@@ -84,7 +84,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Business Availability'),
-        backgroundColor: scheme.primary,
+        centerTitle: true,
         foregroundColor: scheme.onPrimary,
         elevation: 0,
       ),

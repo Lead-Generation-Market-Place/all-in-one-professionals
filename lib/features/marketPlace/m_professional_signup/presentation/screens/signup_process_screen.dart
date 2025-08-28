@@ -23,9 +23,11 @@ class _SignupProcessScreenState extends State<SignupProcessScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
+        centerTitle: true,
         title: const Text(
           'Complete Your Profile',
           style: TextStyle(fontWeight: FontWeight.w600),
+          
         ),
         leading: IconButton(
           icon: const Icon(CupertinoIcons.back, size: 22),

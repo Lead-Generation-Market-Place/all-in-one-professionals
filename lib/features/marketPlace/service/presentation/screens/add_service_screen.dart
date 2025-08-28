@@ -71,7 +71,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         elevation: 0,
-        backgroundColor: Colors.transparent,
+
         foregroundColor: theme.colorScheme.onBackground,
       ),
       body: Padding(

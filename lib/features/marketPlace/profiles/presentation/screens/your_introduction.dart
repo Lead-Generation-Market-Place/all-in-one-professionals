@@ -15,6 +15,7 @@ class YourIntroduction extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your introduction'),
+        centerTitle: true,
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
