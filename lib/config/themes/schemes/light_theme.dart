@@ -105,7 +105,7 @@ final lightTheme = ThemeData(
       borderSide: BorderSide(color: AppColors.error),
     ),
     labelStyle: TextStyle(color: AppColors.background),
-    hintStyle: TextStyle(color: AppColors.warning),
+    hintStyle: TextStyle(color: AppColors.textPrimary),
     errorStyle: TextStyle(
       color: AppColors.error,
       fontSize: 13,

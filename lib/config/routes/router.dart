@@ -12,6 +12,8 @@ import 'package:yelpax_pro/features/marketPlace/jobs/subs/leads_setting/presenta
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/leads_setting/presentation/screens/leads_details_page.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/location/presentation/screens/add_location.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/location/presentation/screens/distance.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/subs/location/presentation/screens/nationwide.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/subs/location/presentation/screens/travel_time.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/reminders/presentation/reminders_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/reponses/presentation/screens/response_credits.dart';
 
@@ -105,6 +107,8 @@ class AppRouter {
   static const String add_service = '/homeServices/add_service';
   static const String add_location = '/homeServices/add_location';
   static const String distance = '/homeServices/location/distance';
+  static const String travel_time = '/homeServices/location/travel_time';
+  static const String nationwide = '/homeServices/location/nationwide';
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
@@ -189,6 +193,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => AddLocation());
       case distance:
         return MaterialPageRoute(builder: (_) => Distance());
+      case travel_time:
+        return MaterialPageRoute(builder: (_) => TravelTime());
+      case nationwide:
+        return MaterialPageRoute(builder: (_) => Nationwide());
       case unknownRouteScreen:
         return MaterialPageRoute(
           builder: (_) =>

@@ -10,14 +10,14 @@ class DistanceInMiles {
   DistanceInMiles(this.name, this.id);
 }
 
-class Distance extends StatefulWidget {
-  const Distance({super.key});
+class TravelTime extends StatefulWidget {
+  const TravelTime({super.key});
 
   @override
-  State<Distance> createState() => _DistanceState();
+  State<TravelTime> createState() => _TravelTimeState();
 }
 
-class _DistanceState extends State<Distance> {
+class _TravelTimeState extends State<TravelTime> {
   final List<DistanceInMiles> _distances = [
     DistanceInMiles('1 Mile', 1),
     DistanceInMiles('5 Miles', 5),
@@ -102,7 +102,7 @@ class _DistanceState extends State<Distance> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Distance'),
+        title: const Text('Travel Time'),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
