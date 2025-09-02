@@ -77,7 +77,7 @@ class BottomNavbar extends StatelessWidget {
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.briefcase),
             activeIcon: Icon(CupertinoIcons.briefcase_fill),
-            label: 'Jobs',
+            label: 'Leads',
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.search),

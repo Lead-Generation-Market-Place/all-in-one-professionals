@@ -132,7 +132,7 @@ class _JobsScreenState extends State<JobsScreen>
           // Custom App Bar
           CustomAppBar(
             
-            title: 'Jobs',
+            title: 'Leads',
         
             actions: [
               IconButton(

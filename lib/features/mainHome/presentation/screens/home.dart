@@ -121,7 +121,7 @@ String _getAppBarTitle(BusinessType type, int index) {
     case BusinessType.homeServices:
       switch (index) {
         case 0:
-          return 'Jobs';
+          return 'Leads';
         case 1:
           return 'Search';
         case 2:

@@ -44,7 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             // 🔹 Custom AppBar placed manually below banner
             CustomAppBar(
-              title: 'Jobs',
+              title: 'Leads',
 
               actions: [
                 IconButton(

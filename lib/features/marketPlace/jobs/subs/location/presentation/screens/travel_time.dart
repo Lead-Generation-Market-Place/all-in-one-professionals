@@ -114,6 +114,12 @@ class _TravelTimeState extends State<TravelTime> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              Text(
+                'Note:- Please select your coverage area carefully. '
+                'This will determine where your services are available and can impact your visibility to potential customers.',
+                style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+              ),
+              const SizedBox(height: 20),
               /// 🔍 Search input
               TextField(
                 controller: _searchController,
