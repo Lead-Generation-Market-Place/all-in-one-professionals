@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
+import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
 import 'package:yelpax_pro/shared/widgets/custom_appbar.dart';
 import 'package:yelpax_pro/shared/widgets/custom_search_input.dart';
@@ -15,7 +16,7 @@ class JobsScreen extends StatefulWidget {
 class _JobsScreenState extends State<JobsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  bool isSetupFinished = false;
+  bool isSetupFinished = true;
   int _currentTabIndex = 0;
   final TextEditingController _searchController = TextEditingController();
 
@@ -115,6 +116,23 @@ class _JobsScreenState extends State<JobsScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Leads'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRouter.homeServicesNotifications);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRouter.settingsScreen);
+            },
+          ),
+        ],
+      ),
       backgroundColor: Theme.of(
         context,
       ).colorScheme.surfaceVariant.withOpacity(0.2),
@@ -128,30 +146,6 @@ class _JobsScreenState extends State<JobsScreen>
                 Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
               },
             ),
-
-          // Custom App Bar
-          CustomAppBar(
-            
-            title: 'Leads',
-        
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.notifications),
-                onPressed: () {
-                  Navigator.pushNamed(
-                    context,
-                    AppRouter.homeServicesNotifications,
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.settings),
-                onPressed: () {
-                  Navigator.pushNamed(context, AppRouter.settingsScreen);
-                },
-              ),
-            ],
-          ),
 
           // Search and filter section
           Padding(
@@ -223,7 +217,6 @@ class _JobsScreenState extends State<JobsScreen>
 
           // Tab Bar
           Container(
-            color: Theme.of(context).colorScheme.surface,
             child: TabBar(
               controller: _tabController,
               indicatorSize: TabBarIndicatorSize.tab,
@@ -279,7 +272,7 @@ class _JobsScreenState extends State<JobsScreen>
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       itemCount: leads.length,
       itemBuilder: (context, index) {
         final lead = leads[index];
@@ -292,47 +285,36 @@ class _JobsScreenState extends State<JobsScreen>
     return Slidable(
       key: Key(lead['name']),
       endActionPane: ActionPane(
+        extentRatio: 0.25,
         motion: const ScrollMotion(),
         children: [
-          SlidableAction(
-            onPressed: (context) {
-              setState(() {
-                leads.removeAt(index);
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Passed on ${lead['name']}'),
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              );
-            },
-            backgroundColor: Theme.of(context).colorScheme.errorContainer,
-            foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
-            icon: Icons.close,
-            label: 'Pass',
-            borderRadius: BorderRadius.circular(12),
-          ),
-          SlidableAction(
-            onPressed: (context) {
-              // Handle save action
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Saved ${lead['name']} for later'),
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              );
-            },
-            backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-            foregroundColor: Theme.of(context).colorScheme.onTertiaryContainer,
-            icon: Icons.bookmark,
-            label: 'Save',
-            borderRadius: BorderRadius.circular(12),
+          // Pass button - full height of the container
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.only(left: 8, bottom: 16),
+              child: SlidableAction(
+                onPressed: (context) {
+                  setState(() {
+                    leads.removeAt(index);
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Passed on ${lead['name']}'),
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  );
+                },
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                icon: Icons.close,
+                label: 'Pass',
+                borderRadius: BorderRadius.circular(16),
+                autoClose: true,
+              ),
+            ),
           ),
         ],
       ),
@@ -341,13 +323,7 @@ class _JobsScreenState extends State<JobsScreen>
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          border: Border.all(color: Theme.of(context).colorScheme.outline),
         ),
         child: Material(
           color: Colors.transparent,
@@ -524,12 +500,13 @@ class _JobsScreenState extends State<JobsScreen>
                         lead['serviceType'],
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         lead['serviceDetails'],
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
@@ -559,7 +536,7 @@ class _JobsScreenState extends State<JobsScreen>
                           Expanded(
                             child: Text(
                               lead['notes'],
-                              style: Theme.of(context).textTheme.bodyMedium
+                              style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(
                                     color: Theme.of(
                                       context,
@@ -588,14 +565,7 @@ class _JobsScreenState extends State<JobsScreen>
                             size: 20,
                           ),
                           const SizedBox(width: 4),
-                          Text(
-                            '${lead['credits']} Credits',
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                          ),
+                          Text('${lead['credits']} Credits'),
                         ],
                       ),
                       Container(
@@ -609,14 +579,7 @@ class _JobsScreenState extends State<JobsScreen>
                           ).colorScheme.primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: Text(
-                          lead['responseStatus'],
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                        ),
+                        child: Text(lead['responseStatus']),
                       ),
                     ],
                   ),
@@ -655,7 +618,7 @@ class _JobsScreenState extends State<JobsScreen>
     );
   }
 
-Widget _buildSimpleTag({
+  Widget _buildSimpleTag({
     required String label,
     IconData? icon,
     Color? backgroundColor,
@@ -710,7 +673,7 @@ Widget _buildSimpleTag({
               ],
               Text(
                 label,
-                style: theme.textTheme.labelSmall?.copyWith(
+                style: theme.textTheme.bodySmall?.copyWith(
                   color: textColor ?? defaultTextColor,
                   fontWeight: FontWeight.w600,
                   fontSize: 12,

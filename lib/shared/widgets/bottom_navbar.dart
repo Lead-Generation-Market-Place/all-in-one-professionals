@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/features/mainHome/presentation/controllers/business_context_controller.dart';
 import 'package:yelpax_pro/shared/services/bottom_navbar_notifier.dart';
 
@@ -76,24 +77,34 @@ class BottomNavbar extends StatelessWidget {
         return const [
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.briefcase),
-            activeIcon: Icon(CupertinoIcons.briefcase_fill),
+            activeIcon: Icon(
+              CupertinoIcons.briefcase_fill,
+              color: AppColors.primary,
+            ),
             label: 'Leads',
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.search),
             activeIcon: Icon(
               CupertinoIcons.search,
+              color: AppColors.primary
             ), // No filled version available
             label: 'Search',
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.gear),
-            activeIcon: Icon(CupertinoIcons.gear_solid),
+            activeIcon: Icon(
+              CupertinoIcons.gear_solid,
+              color: AppColors.primary,
+            ),
             label: 'Services',
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.person),
-            activeIcon: Icon(CupertinoIcons.person_fill),
+            activeIcon: Icon(
+              CupertinoIcons.person_fill,
+              color: AppColors.primary,
+            ),
             label: 'Profile',
           ),
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
@@ -12,7 +13,9 @@ class LeadsDetailsPage extends StatefulWidget {
 
 class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
   String? _selectedReminder;
-
+  final String phone = '079**************'; // Example phone number
+  final String email = 'm**************9@g****l.com'; // Example email
+  final int credits = 8; // Example credits
   void _showReminderBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -200,22 +203,9 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
       appBar: AppBar(
         title: const Text('Lead Details'),
         centerTitle: true,
-        elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Divider(height: 1, thickness: 1, color: theme.dividerColor),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: CustomButton(
-              text: 'Pass',
-              type: CustomButtonType.outline,
-              size: CustomButtonSize.small,
-              onPressed: () {},
-            ),
-          ),
-        ],
+
+       
+      
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -228,13 +218,9 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
               decoration: BoxDecoration(
                 color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                border: Border.all(
+                  color: colorScheme.primary.withOpacity(0.25),
+                ),
               ),
               child: Row(
                 children: [
@@ -243,14 +229,7 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
                     height: 60,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [
-                          colorScheme.primary,
-                          colorScheme.primaryContainer,
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                      color: colorScheme.primary,
                     ),
                     child: Icon(
                       Icons.person,
@@ -316,26 +295,12 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    colorScheme.primary.withOpacity(0.12),
-                    colorScheme.primary.withOpacity(0.04),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                color: colorScheme.surface,
+
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: colorScheme.primary.withOpacity(0.25),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: colorScheme.primary.withOpacity(0.15),
-                    offset: const Offset(0, 3),
-                    blurRadius: 10,
-                    spreadRadius: 1,
-                  ),
-                ],
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -343,15 +308,15 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: colorScheme.primary.withOpacity(0.15),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: colorScheme.primary.withOpacity(0.25),
-                          blurRadius: 6,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
+                      // color: colorScheme.primary.withOpacity(0.15),
+                      // shape: BoxShape.circle,
+                      // boxShadow: [
+                      // BoxShadow(
+                      //   color: colorScheme.primary.withOpacity(0.25),
+                      //   blurRadius: 6,
+                      //   offset: const Offset(0, 3),
+                      // ),
+                      // ],
                     ),
                     child: Icon(
                       Icons.timer,
@@ -366,11 +331,11 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
                       children: [
                         Text(
                           'Be the 1st to respond',
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            color: colorScheme.primary,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.3,
-                          ),
+                          // style: theme.textTheme.headlineSmall?.copyWith(
+                          //   color: colorScheme.primary,
+                          //   fontWeight: FontWeight.w700,
+                          //   letterSpacing: 0.3,
+                          // ),
                         ),
                         const SizedBox(height: 10),
                         Row(
@@ -404,9 +369,7 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
                   ),
                 ],
               ),
-            )
-
-,
+            ),
             const SizedBox(height: 24),
 
             // Highlights section
@@ -421,92 +384,66 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
               spacing: 8,
               runSpacing: 8,
               children: [
-                _buildHighlightChip(
-                  'Urgent',
-                  Icons.warning_amber_rounded
-                ),
+                _buildHighlightChip('Urgent', Icons.warning_amber_rounded),
                 _buildHighlightChip(
                   'High hiring intent',
-                  Icons.trending_up_rounded
+                  Icons.trending_up_rounded,
                 ),
-                _buildHighlightChip(
-                  'Verified phone',
-                  Icons.verified_rounded
-                ),
-                _buildHighlightChip(
-                  'Frequent user',
-                  Icons.star_rounded
-                ),
+                _buildHighlightChip('Verified phone', Icons.verified_rounded),
+                _buildHighlightChip('Frequent user', Icons.star_rounded),
               ],
             ),
 
             const SizedBox(height: 24),
-
-            // Contact details
             Text(
               'Contact Details',
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 12),
-            _buildContactOption('079**************', Icons.phone, false),
-            const SizedBox(height: 8),
-            _buildContactOption(
-              'm**************9@g****l.com',
-              Icons.email,
-              true,
-            ),
 
-            const SizedBox(height: 24),
-
-            // Credits
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
+              margin: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.all(2),
+              child: Column(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.credit_card,
-                      color: theme.colorScheme.primary,
-                      size: 20,
-                    ),
+                  Row(
+                    children: [
+                      Icon(Icons.phone, size: 20, color: colorScheme.primary),
+                      SizedBox(width: 12),
+                      Text(phone), // assuming phone is a variable
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  Text(
-                    '8 Credits',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface,
-                    ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(Icons.email, size: 20, color: colorScheme.primary),
+                      SizedBox(width: 12),
+                      Text(email), // assuming phone is a variable
+                    ],
                   ),
-                  const Spacer(),
-                  Text(
-                    'View pricing',
-                    style: TextStyle(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.w500,
-                    ),
+
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.credit_card_outlined,
+                        size: 20,
+                        color: colorScheme.primary,
+                      ),
+                      SizedBox(width: 12),
+                      Text(
+                        '${credits} credits',
+                      ), // assuming phone is a variable
+                    ],
                   ),
                 ],
-              ),
+              )
+              
             ),
+      
+
+      
 
             const SizedBox(height: 24),
 
@@ -572,47 +509,43 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
             const SizedBox(height: 16),
 
             // Additional details
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.note,
-                        size: 18,
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Additional Details',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onSurface,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'I need 4 to 5 hours once a week',
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            ),
+            // Container(
+            //   padding: const EdgeInsets.all(16),
+            //   decoration: BoxDecoration(
+            //     color: colorScheme.surface,
+            //     borderRadius: BorderRadius.circular(16),
+            //     border: Border.all(
+            //       color: colorScheme.primary.withOpacity(0.25),
+            //     ),
+            //   ),
+            //   child: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: [
+            //       Row(
+            //         children: [
+            //           Icon(
+            //             Icons.note,
+            //             size: 18,
+            //             color: theme.colorScheme.onSurfaceVariant,
+            //           ),
+            //           const SizedBox(width: 8),
+            //           Text(
+            //             'Additional Details',
+            //             style: TextStyle(
+            //               fontWeight: FontWeight.bold,
+            //               color: theme.colorScheme.onSurface,
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //       const SizedBox(height: 8),
+            //       Text(
+            //         'I need 4 to 5 hours once a week',
+            //         style: theme.textTheme.bodyMedium,
+            //       ),
+            //     ],
+            //   ),
+            // ),
 
             const SizedBox(height: 24),
 
@@ -625,57 +558,73 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
             ),
             const SizedBox(height: 12),
             Container(
+              height: 200, // Set your desired height
               decoration: BoxDecoration(
-                color: theme.colorScheme.surface,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-                border: Border.all(color: theme.colorScheme.outlineVariant),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: colorScheme.primary.withOpacity(0.25),
+                ),
               ),
-              child: ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: colorScheme.error.withOpacity(0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.location_on,
-                    color: colorScheme.error,
-                    size: 20,
-                  ),
+              clipBehavior: Clip.antiAlias,
+              child: GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(
+                    51.4300,
+                    -0.5167,
+                  ), // Example: Staines-Upon-Thames
+                  zoom: 14,
                 ),
-                title: const Text('Staines-Upon-Thames, TW18'),
-                trailing: OutlinedButton(
-                  onPressed: () {
-                    // Open Google Maps
-                  },
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: theme.colorScheme.outlineVariant),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                markers: {
+                  Marker(
+                    markerId: MarkerId('lead_location'),
+                    position: LatLng(51.4300, -0.5167),
+                    infoWindow: InfoWindow(title: 'Customer Location'),
                   ),
-                  child: const Text('Google'),
-                ),
+                },
+                myLocationEnabled: false,
+                zoomControlsEnabled: false,
+                onMapCreated: (GoogleMapController controller) {
+                  // Optional: store the controller
+                },
               ),
             ),
 
             const SizedBox(height: 32),
 
             // Contact button
-            CustomButton(
-              text: 'Contact Muna',
-              isFullWidth: true,
-              onPressed: () {
-                Navigator.pushNamed(context, AppRouter.response_credits);
-              },
+            // Contact + Pass buttons
+            SafeArea(
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 3, // 3/4 of the row
+                    child: CustomButton(
+                      text: 'Contact Muna',
+                      isFullWidth: true,
+                      onPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          AppRouter.response_credits,
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 1, // 1/4 of the row
+                    child: CustomButton(
+                      text: 'Pass',
+                      isFullWidth: true,
+                      onPressed: () {
+                        Navigator.pop(context); // or whatever action you want
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
+
+           
           ],
         ),
       ),
@@ -686,72 +635,14 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
     final theme = Theme.of(context);
     return Chip(
       avatar: Icon(icon, size: 16),
-      label: Text(
-        text,
-
-      ),
+      label: Text(text),
 
       side: BorderSide(color: theme.colorScheme.outlineVariant),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     );
   }
 
-  Widget _buildContactOption(String text, IconData icon, bool isSelected) {
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: theme.colorScheme.outlineVariant),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, size: 18, color: theme.colorScheme.primary),
-          ),
-          const SizedBox(width: 12),
-          Text(text, style: theme.textTheme.bodyMedium),
-          const Spacer(),
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? theme.colorScheme.primary
-                  : Colors.transparent,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: isSelected
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.outlineVariant,
-              ),
-            ),
-            child: isSelected
-                ? Icon(
-                    Icons.check,
-                    size: 16,
-                    color: theme.colorScheme.onPrimary,
-                  )
-                : null,
-          ),
-        ],
-      ),
-    );
-  }
-
+  
   Widget _buildDetailRow(String question, String answer, IconData icon) {
     final theme = Theme.of(context);
     return Padding(

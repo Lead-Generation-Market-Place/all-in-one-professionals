@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
 
-import '../../../../../shared/widgets/custom_appbar.dart';
+
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -12,11 +12,28 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  bool isSetupFinished = false;
+  bool isSetupFinished = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Search'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRouter.homeServicesNotifications);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRouter.settingsScreen);
+            },
+          ),
+        ],
+      ),
       body: Column(
         children: [
           if (!isSetupFinished)
@@ -28,26 +45,12 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
 
           // Manually add AppBar here below the banner
-          CustomAppBar(
-            title: 'Search',
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.notifications),
-                onPressed: () {
-                  Navigator.pushNamed(
-                    context,
-                    AppRouter.homeServicesNotifications,
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.settings),
-                onPressed: () {
-                  Navigator.pushNamed(context, AppRouter.settingsScreen);
-                },
-              ),
-            ],
-          ),
+          // CustomAppBar(
+
+          //   showBackButton: false,
+          //   title: 'Search',
+
+          // ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(10.0),

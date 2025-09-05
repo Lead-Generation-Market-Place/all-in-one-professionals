@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:yelpax_pro/features/mainHome/presentation/controllers/business_context_controller.dart';
 import 'package:yelpax_pro/features/mainHome/presentation/widgets/grocery_screen.dart';
 import 'package:yelpax_pro/features/mainHome/presentation/widgets/resturant_screen.dart';
-import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/jobs_screen.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/leads_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/profile_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/search/presentation/screens/search_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_screen.dart';

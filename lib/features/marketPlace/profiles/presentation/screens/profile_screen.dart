@@ -25,68 +25,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      bottom: true,
-      left: false,
-      right: false,
-      child: Scaffold(
-        body: Column(
-          children: [
-            // 🔹 Optional banner
-            if (!isSetupFinished)
-              ProfileCompletionBanner(
-                stepNumber: 3,
-                onFinishSetupPressed: () {
-                  Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
-                },
-              ),
-
-            // 🔹 Custom AppBar placed manually below banner
-            CustomAppBar(
-              title: 'Leads',
-
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.notifications),
-                  onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      AppRouter.homeServicesNotifications,
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.settings),
-                  onPressed: () {
-                    Navigator.pushNamed(context, AppRouter.settingsScreen);
-                  },
-                ),
-              ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Profile'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRouter.homeServicesNotifications);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRouter.settingsScreen);
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          // 🔹 Optional banner
+          if (!isSetupFinished)
+            ProfileCompletionBanner(
+              stepNumber: 3,
+              onFinishSetupPressed: () {
+                Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
+              },
             ),
-
-
-            // 🔹 Scrollable content below AppBar
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // _buildProfileHeader(),
-                    _buildProfilePictureSection(),
-                    _buildProfileActionButtons(),
-                    _buildBusinessInfoSection(),
-                    _buildCredentialsSection(),
-                    _buildProfessionalLicenseSection(),
-                    _buildPhotosVideosSection(),
-                    _buildFeaturedProjectsSection(),
-                    _buildReviewSection(),
-                    const SizedBox(height: 20),
-                  ],
-                ),
+    
+          // 🔹 Custom AppBar placed manually below banner
+         
+    
+    
+          // 🔹 Scrollable content below AppBar
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // _buildProfileHeader(),
+                  _buildProfilePictureSection(),
+                  _buildProfileActionButtons(),
+                  _buildBusinessInfoSection(),
+                  _buildCredentialsSection(),
+                  _buildProfessionalLicenseSection(),
+                  _buildPhotosVideosSection(),
+                  _buildFeaturedProjectsSection(),
+                  _buildReviewSection(),
+                  const SizedBox(height: 20),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

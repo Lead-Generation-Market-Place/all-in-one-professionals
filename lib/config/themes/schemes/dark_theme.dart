@@ -6,18 +6,18 @@ final darkTheme = ThemeData(
   // Changed to dark
   scaffoldBackgroundColor: Colors.grey[900],
   // Dark background
-  iconTheme: IconThemeData(color: AppColors.background),
+  iconTheme: IconThemeData(color: AppColors.textSecondary),
   useMaterial3: true,
   colorScheme: ColorScheme.dark(
-    primary: AppColors.primary,
+    primary: AppColors.textSecondary,
     // Primary color (buttons, app bar)
-    secondary: AppColors.primary,
-    // Secondary color (FAB, accents)
-    surface: Colors.grey[800]!,
-    // Scaffold background
-    onPrimary: Colors.white,
-    // Text on background
-    onSurface: Colors.white, // Text on surfaces (cards)
+    // secondary: AppColors.textSecondary,
+    // // Secondary color (FAB, accents)
+    // surface: AppColors.textSecondary,
+    // // Scaffold background
+    // onPrimary: Colors.white,
+    // // Text on background
+    // onSurface: Colors.white, // Text on surfaces (cards)
   ),
   cardTheme: CardThemeData(
     color: AppColors.textPrimary,
@@ -114,7 +114,7 @@ final darkTheme = ThemeData(
 
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      foregroundColor: AppColors.primary,
+      foregroundColor: AppColors.background,
       side: BorderSide(color: AppColors.primary),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -139,9 +139,10 @@ final darkTheme = ThemeData(
     ),
   ),
 
-  appBarTheme: const AppBarTheme(
-    backgroundColor: AppColors.textPrimary, // Dark app bar
-    titleTextStyle: TextStyle(
+  appBarTheme: AppBarTheme(
+    backgroundColor: Colors.grey[800], // Dark app bar
+    scrolledUnderElevation: 0,
+    titleTextStyle: const TextStyle(
       color: Colors.white,
       fontSize: 20,
       fontWeight: FontWeight.bold,

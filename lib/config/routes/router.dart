@@ -7,7 +7,7 @@ import 'package:yelpax_pro/features/mainHome/presentation/screens/home.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/filter/presentation/screens/filter_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/google_map_leads/presentation/screens/google_map_leads.dart';
 
-import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/jobs_screen.dart';
+import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/leads_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/leads_setting/presentation/screens/lead_setting.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/leads_setting/presentation/screens/leads_details_page.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/location/presentation/screens/add_location.dart';

@@ -126,7 +126,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
     // Background paint: gradient takes precedence
     return Material(
-      elevation: elevation,
+  
       color: backgroundGradient == null ? bgColor : Colors.transparent,
       shape: shape,
       clipBehavior: Clip.antiAlias,

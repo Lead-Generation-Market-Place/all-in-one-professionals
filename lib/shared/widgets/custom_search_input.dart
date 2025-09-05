@@ -20,7 +20,7 @@ class DynamicSearchInput extends StatefulWidget {
     this.highlightMatch = false,
     this.onItemSelected,
     this.hintText = 'Search...',
-    this.fillColor = const Color(0xFFE0E0E0),
+    this.fillColor = Colors.white,
     this.debounceDuration = const Duration(milliseconds: 300),
   }) : super(key: key);
 

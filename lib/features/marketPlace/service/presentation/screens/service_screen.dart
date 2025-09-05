@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
+import 'package:yelpax_pro/core/constants/app_colors.dart';
 
 import '../../../../../shared/widgets/custom_appbar.dart';
 import '../../../jobs/presentation/widgets/finish_setup.dart';
@@ -76,6 +77,23 @@ class _ServiceDashboardState extends State<ServiceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Services'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRouter.homeServicesNotifications);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRouter.settingsScreen);
+            },
+          ),
+        ],
+      ),
       body: Column(
         children: [
           if (!isSetupFinished)
@@ -85,28 +103,6 @@ class _ServiceDashboardState extends State<ServiceScreen> {
                 Navigator.pushNamed(context, AppRouter.signUpProcessScreen);
               },
             ),
-
-          // App Bar
-          CustomAppBar(
-            title: 'Services',
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.notifications),
-                onPressed: () {
-                  Navigator.pushNamed(
-                    context,
-                    AppRouter.homeServicesNotifications,
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.settings),
-                onPressed: () {
-                  Navigator.pushNamed(context, AppRouter.settingsScreen);
-                },
-              ),
-            ],
-          ),
 
           // Stats Cards
           Padding(
@@ -169,8 +165,15 @@ class _ServiceDashboardState extends State<ServiceScreen> {
               child: Column(
                 children: [
                   // Services section
-                  Card(
+                  Container(
                     margin: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
@@ -178,12 +181,12 @@ class _ServiceDashboardState extends State<ServiceScreen> {
                         children: [
                           Text(
                             "Your Services",
-                            style: Theme.of(context).textTheme.titleLarge,
+                            style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           const SizedBox(height: 8),
                           Text(
                             "Set your job preferences, activate or deactivate services, and choose where you want to work.",
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           const SizedBox(height: 8),
                           TextButton.icon(
@@ -230,9 +233,9 @@ class _ServiceDashboardState extends State<ServiceScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
                       children: [
-                        const ActivityCard(),
+                        ActivityCard(),
                         const SizedBox(height: 16),
-                        const SpendingCard(),
+                        SpendingCard(),
                       ],
                     ),
                   ),
@@ -268,18 +271,16 @@ class ServiceCard extends StatelessWidget {
     final bool isCompleted = service.completed;
 
     final scheme = Theme.of(context).colorScheme;
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(
-          color: service.active
-              ? scheme.primary.withOpacity(0.24)
-              : scheme.outlineVariant,
-        ),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: InkWell(
         onTap: onExpand,
+        borderRadius: BorderRadius.circular(16),
         child: Column(
           children: [
             // Service header
@@ -313,7 +314,7 @@ class ServiceCard extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(
                         service.description,
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ),
                   if (hasSetupProgress && !isCompleted)
@@ -508,7 +509,7 @@ class StatCard extends StatelessWidget {
             Text(
               value,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: scheme.primary,
+                color: AppColors.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -637,7 +638,6 @@ class PricingCard extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          // Changed from baseline to start
           children: [
             Row(
               children: [
@@ -679,12 +679,15 @@ class PricingCard extends StatelessWidget {
 }
 
 class ActivityCard extends StatelessWidget {
-  const ActivityCard({super.key});
-
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -748,12 +751,15 @@ class ActivityCard extends StatelessWidget {
 }
 
 class SpendingCard extends StatelessWidget {
-  const SpendingCard({super.key});
-
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

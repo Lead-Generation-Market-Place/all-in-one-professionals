@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
+import 'package:yelpax_pro/shared/widgets/custom_advanced_dropdown.dart';
 
 class GoogleMapLeads extends StatefulWidget {
   const GoogleMapLeads({super.key});
@@ -9,7 +10,8 @@ class GoogleMapLeads extends StatefulWidget {
   State<GoogleMapLeads> createState() => _GoogleMapLeadsState();
 }
 
-class _GoogleMapLeadsState extends State<GoogleMapLeads> {
+class _GoogleMapLeadsState extends State<GoogleMapLeads>
+    with SingleTickerProviderStateMixin {
   final List<Lead> leads = [
     Lead(
       name: 'Planer',
@@ -51,9 +53,11 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
   final PageController _pageController = PageController(viewportFraction: 0.8);
   Set<Marker> _markers = {};
   int _currentPage = 0;
-  int _currentNavIndex = 0;
   bool _isMapReady = false;
   bool _isDisposed = false;
+
+  // Tab controller
+  late TabController _tabController;
 
   // Simplified coordinates map
   static const Map<String, LatLng> _locationCoordinates = {
@@ -118,29 +122,19 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
     }
   }
 
-  void _onNavItemTapped(int index, BuildContext context) {
-    if (index == _currentNavIndex) return;
-
-    setState(() {
-      _currentNavIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        // Already on Leads screen
-        break;
-      case 1:
-        Navigator.pushReplacementNamed(context, AppRouter.responses);
-        break;
-      case 2:
-        Navigator.pushReplacementNamed(context, AppRouter.reminders);
-        break;
-    }
-  }
-
   @override
   void initState() {
     super.initState();
+
+    // Initialize tab controller
+    _tabController = TabController(length: 3, vsync: this);
+
+    // Add tab listener
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        // Handle tab changes if needed
+      }
+    });
 
     // Initialize first lead's marker
     if (leads.isNotEmpty) {
@@ -174,6 +168,7 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
     _pageController.removeListener(_onPageChanged);
     _pageController.dispose();
     _mapController?.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -186,253 +181,259 @@ class _GoogleMapLeadsState extends State<GoogleMapLeads> {
       appBar: AppBar(
         title: const Text('Leads'),
         centerTitle: true,
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back),
+        // backgroundColor: colorScheme.primary,
+        // foregroundColor: colorScheme.onPrimary,
+        // elevation: 0,
+        // leading: IconButton(
+        //   onPressed: () {
+        //     Navigator.pop(context);
+        //   },
+        //   icon: const Icon(Icons.arrow_back),
+        // ),
+        // actions: [
+        //   IconButton(icon: const Icon(Icons.settings), onPressed: () {
+
+        //   }),
+        // ],
+        bottom: TabBar(
+          controller: _tabController,
+          labelStyle: TextStyle(fontSize: 10),
+          tabs: const [
+            Tab(icon: Icon(Icons.list), text: 'Leads'),
+            Tab(icon: Icon(Icons.email), text: 'Responses'),
+            Tab(icon: Icon(Icons.notifications), text: 'Reminders'),
+          ],
+          indicatorColor: colorScheme.inverseSurface,
+          labelColor: Colors.grey,
+          unselectedLabelColor: colorScheme.onSurface,
         ),
-        actions: [
-          IconButton(icon: const Icon(Icons.settings), onPressed: () {}),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // Leads Tab
+          _buildLeadsTab(theme, colorScheme),
+
+          // Responses Tab
+          _buildResponsesTab(theme, colorScheme),
+
+          // Reminders Tab
+          _buildRemindersTab(theme, colorScheme),
         ],
       ),
-      body: Stack(
-        children: [
-          // Optimized Google Map
-          GoogleMap(
-            onMapCreated: _onMapCreated,
-            initialCameraPosition: const CameraPosition(
-              target: _defaultLocation,
-              zoom: 10,
-            ),
-            markers: _markers,
-            myLocationEnabled: false, // Disabled to reduce overhead
-            mapType: MapType.normal,
-            zoomControlsEnabled: false,
-            myLocationButtonEnabled: false,
-            compassEnabled: false,
-            mapToolbarEnabled: false,
-            tiltGesturesEnabled: false,
-            rotateGesturesEnabled: false,
-            liteModeEnabled: false,
-            trafficEnabled: false,
-            indoorViewEnabled: false,
-            buildingsEnabled: false,
-            // Add performance optimizations
-            minMaxZoomPreference: const MinMaxZoomPreference(8, 18),
-            cameraTargetBounds: CameraTargetBounds.unbounded,
-          ),
+    );
+  }
 
-          // Stats Card
-          Positioned(
-            top:
-                MediaQuery.of(context).size.height *
-                0.02, // Responsive top margin
-            left:
-                MediaQuery.of(context).size.width *
-                0.04, // Responsive left margin
-            right:
-                MediaQuery.of(context).size.width *
-                0.04, // Responsive right margin
-            child: Card(
-              elevation: 2,
-              color: colorScheme.surface,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+  Widget _buildLeadsTab(ThemeData theme, ColorScheme colorScheme) {
+    return Stack(
+      children: [
+        // Optimized Google Map
+        GoogleMap(
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: const CameraPosition(
+            target: _defaultLocation,
+            zoom: 10,
+          ),
+          markers: _markers,
+          myLocationEnabled: false, // Disabled to reduce overhead
+          mapType: MapType.normal,
+          zoomControlsEnabled: false,
+          myLocationButtonEnabled: false,
+          compassEnabled: false,
+          mapToolbarEnabled: false,
+          tiltGesturesEnabled: false,
+          rotateGesturesEnabled: false,
+          liteModeEnabled: false,
+          trafficEnabled: false,
+          indoorViewEnabled: false,
+          buildingsEnabled: false,
+          // Add performance optimizations
+          minMaxZoomPreference: const MinMaxZoomPreference(8, 18),
+          cameraTargetBounds: CameraTargetBounds.unbounded,
+        ),
+
+        // Stats Card
+        Positioned(
+          top: MediaQuery.of(context).size.height * 0.02,
+          left: MediaQuery.of(context).size.width * 0.04,
+          right: MediaQuery.of(context).size.width * 0.04,
+          child: Card(
+            elevation: 2,
+            color: colorScheme.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.03),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${leads.length} matching leads',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '${leads.map((e) => e.service).toSet().length} services ● ${leads.expand((e) => e.locations).toSet().length} locations',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.filter_list, color: colorScheme.primary),
+                  ),
+                ],
               ),
-              child: Padding(
-                padding: EdgeInsets.all(
-                  MediaQuery.of(context).size.width * 0.03,
-                ), // Responsive padding
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
+            ),
+          ),
+        ),
+
+        // My Location Button
+        Positioned(
+          top: MediaQuery.of(context).size.height * 0.12,
+          right: MediaQuery.of(context).size.width * 0.04,
+          child: FloatingActionButton.small(
+            onPressed: () {
+              // Handle my location
+            },
+            backgroundColor: colorScheme.surface,
+            foregroundColor: colorScheme.onSurface,
+            child: Icon(Icons.my_location, color: colorScheme.onSurface),
+          ),
+        ),
+
+        // Leads Cards
+        Positioned(
+          bottom: 16,
+          left: 0,
+          right: 0,
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.25,
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: leads.length,
+              itemBuilder: (context, index) {
+                final lead = leads[index];
+                return Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.04,
+                  ),
+                  child: Card(
+                    elevation: 2,
+                    color: colorScheme.surface,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width * 0.03,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            '${leads.length} matching leads',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  lead.name,
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              if (lead.isFrequentUser)
+                                Chip(
+                                  label: Text(
+                                    'Frequent user',
+                                    style: theme.textTheme.labelSmall?.copyWith(
+                                      color: colorScheme.tertiary,
+                                    ),
+                                  ),
+                                  backgroundColor: colorScheme.tertiary
+                                      .withOpacity(0.12),
+                                ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.01,
                           ),
                           Text(
-                            '${leads.map((e) => e.service).toSet().length} services ● ${leads.expand((e) => e.locations).toSet().length} locations',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
+                            lead.service,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.01,
+                          ),
+                          Expanded(
+                            child: Text(
+                              lead.details,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.01,
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.04,
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: lead.locations.map((location) {
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                    right:
+                                        MediaQuery.of(context).size.width *
+                                        0.02,
+                                  ),
+                                  child: Chip(
+                                    label: Text(
+                                      location,
+                                      style: theme.textTheme.labelSmall,
+                                    ),
+                                    backgroundColor: index == _currentPage
+                                        ? colorScheme.primary.withOpacity(0.12)
+                                        : colorScheme.surfaceContainerHighest,
+                                  ),
+                                );
+                              }).toList(),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.filter_list, color: colorScheme.primary),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          // My Location Button
-          Positioned(
-            top:
-                MediaQuery.of(context).size.height *
-                0.12, // Responsive top position
-            right:
-                MediaQuery.of(context).size.width *
-                0.04, // Responsive right margin
-            child: FloatingActionButton.small(
-              onPressed: () {
-                // Handle my location
+                  ),
+                );
               },
-              backgroundColor: colorScheme.surface,
-              foregroundColor: colorScheme.onSurface,
-              child: const Icon(Icons.my_location),
             ),
           ),
-
-          // Leads Cards
-          Positioned(
-            bottom: 16,
-            left: 0,
-            right: 0,
-            child: Container(
-              height:
-                  MediaQuery.of(context).size.height *
-                  0.25, // Responsive height
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: leads.length,
-                itemBuilder: (context, index) {
-                  final lead = leads[index];
-                  return Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal:
-                          MediaQuery.of(context).size.width *
-                          0.04, // Responsive padding
-                    ),
-                    child: Card(
-                      elevation: 2,
-                      color: colorScheme.surface,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width * 0.03,
-                        ), // Responsive padding
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    lead.name,
-                                    style: theme.textTheme.titleMedium
-                                        ?.copyWith(fontWeight: FontWeight.bold),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                if (lead.isFrequentUser)
-                                  Chip(
-                                    label: Text(
-                                      'Frequent user',
-                                      style: theme.textTheme.labelSmall
-                                          ?.copyWith(
-                                            color: colorScheme.tertiary,
-                                          ),
-                                    ),
-                                    backgroundColor: colorScheme.tertiary
-                                        .withOpacity(0.12),
-                                  ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.01,
-                            ), // Responsive spacing
-                            Text(
-                              lead.service,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.primary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.01,
-                            ), // Responsive spacing
-                            Expanded(
-                              child: Text(
-                                lead.details,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.01,
-                            ), // Responsive spacing
-                            SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height *
-                                  0.04, // Responsive height
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
-                                children: lead.locations.map((location) {
-                                  return Padding(
-                                    padding: EdgeInsets.only(
-                                      right:
-                                          MediaQuery.of(context).size.width *
-                                          0.02, // Responsive padding
-                                    ),
-                                    child: Chip(
-                                      label: Text(
-                                        location,
-                                        style: theme.textTheme.labelSmall,
-                                      ),
-                                      backgroundColor: index == _currentPage
-                                          ? colorScheme.primary.withOpacity(
-                                              0.12,
-                                            )
-                                          : colorScheme.surfaceContainerHighest,
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentNavIndex,
-        onDestinationSelected: (index) => _onNavItemTapped(index, context),
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.list), label: 'Leads'),
-          NavigationDestination(icon: Icon(Icons.email), label: 'Responses'),
-          NavigationDestination(
-            icon: Icon(Icons.notifications),
-            label: 'Reminders',
-          ),
-        ],
-      ),
+        ),
+      ],
     );
+  }
+
+  Widget _buildResponsesTab(ThemeData theme, ColorScheme colorScheme) {
+    return ResponsesTab(theme: theme, colorScheme: colorScheme);
+  }
+
+  Widget _buildRemindersTab(ThemeData theme, ColorScheme colorScheme) {
+    return RemindersTab(theme: theme, colorScheme: colorScheme);
   }
 }
 
@@ -449,5 +450,167 @@ class Lead {
     required this.service,
     required this.details,
     required this.isFrequentUser,
+  });
+}
+
+class ResponsesTab extends StatefulWidget {
+  final ThemeData theme;
+  final ColorScheme colorScheme;
+
+  const ResponsesTab({
+    super.key,
+    required this.theme,
+    required this.colorScheme,
+  });
+
+  @override
+  State<ResponsesTab> createState() => _ResponsesTabState();
+}
+
+class _ResponsesTabState extends State<ResponsesTab> {
+  final List<String> statusItems = ['All', 'Pending', 'Accepted', 'Rejected'];
+  String? selectedStatus;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: AdvancedDropdown(
+            items: statusItems,
+            itemToString: (item) => item,
+            enableSearch: false,
+          ),
+        ),
+
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.email,
+                  size: 64,
+                  color: widget.theme.colorScheme.onSurface.withOpacity(0.6),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'No Responses',
+                  style: widget.theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                  child: Text(
+                    "You haven't responded to any customers yet. When you do, you'll be able to contact and access their details here.",
+                    textAlign: TextAlign.center,
+                    style: widget.theme.textTheme.bodyMedium?.copyWith(
+                      color: widget.theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class RemindersTab extends StatefulWidget {
+  final ThemeData theme;
+  final ColorScheme colorScheme;
+
+  const RemindersTab({
+    super.key,
+    required this.theme,
+    required this.colorScheme,
+  });
+
+  @override
+  State<RemindersTab> createState() => _RemindersTabState();
+}
+
+class _RemindersTabState extends State<RemindersTab> {
+  final List<Reminder> reminders = [];
+
+  @override
+  Widget build(BuildContext context) {
+    return reminders.isEmpty
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.notifications,
+                  size: 64,
+                  color: widget.theme.colorScheme.onSurface.withOpacity(0.6),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'No Reminders',
+                  style: widget.theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'You have no active reminders',
+                  style: widget.theme.textTheme.bodyMedium?.copyWith(
+                    color: widget.theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          )
+        : ListView.builder(
+            itemCount: reminders.length,
+            itemBuilder: (context, index) {
+              final reminder = reminders[index];
+              return ListTile(
+                leading: Icon(
+                  Icons.notifications,
+                  color: widget.colorScheme.primary,
+                ),
+                title: Text(
+                  reminder.title,
+                  style: widget.theme.textTheme.bodyLarge,
+                ),
+                subtitle: Text(
+                  reminder.description,
+                  style: widget.theme.textTheme.bodyMedium?.copyWith(
+                    color: widget.theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                trailing: Text(
+                  reminder.time,
+                  style: widget.theme.textTheme.bodyMedium?.copyWith(
+                    color: widget.theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                onTap: () {
+                  // Handle reminder tap
+                },
+              );
+            },
+          );
+  }
+}
+
+class Reminder {
+  final String title;
+  final String description;
+  final String time;
+
+  Reminder({
+    required this.title,
+    required this.description,
+    required this.time,
   });
 }

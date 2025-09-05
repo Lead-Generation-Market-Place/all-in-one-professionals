@@ -5,19 +5,19 @@ final lightTheme = ThemeData(
   fontFamily: 'Inter',
   brightness: Brightness.light,
   scaffoldBackgroundColor: AppColors.background,
-  iconTheme: IconThemeData(color: AppColors.background),
+  iconTheme: IconThemeData(color: AppColors.textSecondary),
   useMaterial3: true,
   colorScheme: ColorScheme.light(
-    primary: AppColors.primary,
-    primaryContainer: AppColors.primary,
-    secondary: AppColors.secondary,
-    secondaryContainer: AppColors.secondary,
-    surface: Colors.white,
-    error: AppColors.error,
-    onPrimary: Colors.white,
-    onSecondary: Colors.white,
-    onSurface: AppColors.textPrimary,
-    onError: Colors.white,
+    primary: AppColors.textSecondary,
+    // primaryContainer: AppColors.textSecondary,
+    // secondary: AppColors.textSecondary,
+    // secondaryContainer: AppColors.textSecondary,
+    // surface: Colors.white,
+    // error: AppColors.error,
+    // onPrimary: Colors.white,
+    // onSecondary: Colors.white,
+    // onSurface: AppColors.textSecondary,
+    // onError: Colors.white,
   ),
 
   // Card Theme
@@ -32,8 +32,8 @@ final lightTheme = ThemeData(
 
   // App Bar
   appBarTheme: AppBarTheme(
-    backgroundColor: AppColors.primary,
-    elevation: 0,
+    backgroundColor: AppColors.background,
+    scrolledUnderElevation: 0,
     titleTextStyle: TextStyle(
       fontSize: 20,
       fontWeight: FontWeight.w600,

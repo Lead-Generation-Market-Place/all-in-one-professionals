@@ -41,9 +41,9 @@ class _LeadSettingState extends State<LeadSetting> {
       appBar: AppBar(
         title: const Text('Lead Settings'),
         centerTitle: true,
-        elevation: 0,
+    
 
-        foregroundColor: colorScheme.onSurface,
+
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -91,7 +91,7 @@ class _LeadSettingState extends State<LeadSetting> {
         const SizedBox(height: 8),
         Text(
           'Customize which leads you want to be alerted about based on your services and locations',
-          style: theme.textTheme.bodyMedium?.copyWith(
+          style: theme.textTheme.bodySmall?.copyWith(
             color: colorScheme.onSurfaceVariant,
           ),
         ),
@@ -102,15 +102,9 @@ class _LeadSettingState extends State<LeadSetting> {
   Widget _buildServicesSection(ThemeData theme, ColorScheme colorScheme) {
     return Container(
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainer,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,7 +133,7 @@ class _LeadSettingState extends State<LeadSetting> {
                 const SizedBox(height: 8),
                 Text(
                   'Fine-tune the leads you want to be alerted about',
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  style: theme.textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                   ),
                 ),
@@ -187,7 +181,7 @@ class _LeadSettingState extends State<LeadSetting> {
       },
       title: Text(
         service.name,
-        style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
+        style: theme.textTheme.bodyMedium
       ),
       subtitle: Text(
         service.description,
@@ -215,15 +209,9 @@ class _LeadSettingState extends State<LeadSetting> {
   Widget _buildLocationsSection(ThemeData theme, ColorScheme colorScheme) {
     return Container(
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainer,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,7 +240,7 @@ class _LeadSettingState extends State<LeadSetting> {
                 const SizedBox(height: 8),
                 Text(
                   'Choose where you want to find new customers',
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  style: theme.textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                   ),
                 ),
@@ -269,7 +257,7 @@ class _LeadSettingState extends State<LeadSetting> {
             },
             title: Text(
               'Within 20 miles of Windsor',
-              style: theme.textTheme.bodyLarge?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -315,15 +303,9 @@ class _LeadSettingState extends State<LeadSetting> {
   Widget _buildOnlineLeadsSection(ThemeData theme, ColorScheme colorScheme) {
     return Container(
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainer,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -352,7 +334,7 @@ class _LeadSettingState extends State<LeadSetting> {
                 const SizedBox(height: 8),
                 Text(
                   'Customers tell us if they\'re happy to receive services online or remotely',
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  style: theme.textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                   ),
                 ),
@@ -369,7 +351,7 @@ class _LeadSettingState extends State<LeadSetting> {
             },
             title: Text(
               'Enable Online Leads',
-              style: theme.textTheme.bodyLarge?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
               ),
             ),
