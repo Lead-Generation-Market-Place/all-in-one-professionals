@@ -126,6 +126,12 @@ class _JobsScreenState extends State<JobsScreen>
             },
           ),
           IconButton(
+            icon: const Icon(Icons.campaign),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRouter.marketing_dashboard);
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
               Navigator.pushNamed(context, AppRouter.settingsScreen);
@@ -221,8 +227,8 @@ class _JobsScreenState extends State<JobsScreen>
               controller: _tabController,
               indicatorSize: TabBarIndicatorSize.tab,
               indicatorWeight: 3.0,
-              indicatorColor: Theme.of(context).colorScheme.primary,
-              labelColor: Theme.of(context).colorScheme.primary,
+              indicatorColor: AppColors.primary,
+              labelColor: AppColors.primary,
               unselectedLabelColor: Theme.of(
                 context,
               ).colorScheme.onSurfaceVariant,
@@ -282,308 +288,314 @@ class _JobsScreenState extends State<JobsScreen>
   }
 
   Widget _buildLeadCard(Map<String, dynamic> lead, int index) {
-    return Slidable(
-      key: Key(lead['name']),
-      endActionPane: ActionPane(
-        extentRatio: 0.25,
-        motion: const ScrollMotion(),
-        children: [
-          // Pass button - full height of the container
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.only(left: 8, bottom: 16),
-              child: SlidableAction(
-                onPressed: (context) {
-                  setState(() {
-                    leads.removeAt(index);
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Passed on ${lead['name']}'),
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+    return Container(
+      child: Slidable(
+        key: Key(lead['name']),
+        endActionPane: ActionPane(
+          extentRatio: 0.25,
+          motion: const ScrollMotion(),
+          children: [
+            // Pass button - full height of the container
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.only(left: 8, bottom: 16),
+                child: SlidableAction(
+                  onPressed: (context) {
+                    setState(() {
+                      leads.removeAt(index);
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Passed on ${lead['name']}'),
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                    ),
-                  );
-                },
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                icon: Icons.close,
-                label: 'Pass',
-                borderRadius: BorderRadius.circular(16),
-                autoClose: true,
+                    );
+                  },
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  icon: Icons.close,
+                  label: 'Pass',
+                  borderRadius: BorderRadius.circular(16),
+                  autoClose: true,
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Theme.of(context).colorScheme.outline),
+          ],
         ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
-            onTap: () {
-              Navigator.pushNamed(context, AppRouter.leadDetailsPage);
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header with profile and basic info
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Profile avatar
-                      CircleAvatar(
-                        radius: 24,
-                        backgroundColor: Theme.of(
-                          context,
-                        ).colorScheme.primaryContainer,
-                        child: lead['profileImage'] != null
-                            ? ClipOval(
-                                child: Image.asset(
-                                  lead['profileImage'],
-                                  width: 48,
-                                  height: 48,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Text(
-                                      lead['name'][0],
-                                      style: TextStyle(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onPrimaryContainer,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    );
-                                  },
+            border: Border.all(color: Theme.of(context).colorScheme.outline),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () {
+                Navigator.pushNamed(context, AppRouter.leadDetailsPage);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header with profile and basic info
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Profile avatar
+                        CircleAvatar(
+                          radius: 24,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primaryContainer,
+                          child: lead['profileImage'] != null
+                              ? ClipOval(
+                                  child: Image.asset(
+                                    lead['profileImage'],
+                                    width: 48,
+                                    height: 48,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Text(
+                                        lead['name'][0],
+                                        style: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onPrimaryContainer,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                )
+                              : Text(
+                                  lead['name'][0],
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimaryContainer,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              )
-                            : Text(
-                                lead['name'][0],
-                                style: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimaryContainer,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                        ),
+                        const SizedBox(width: 12),
+                        // Name and location
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                lead['name'],
+                                style: Theme.of(context).textTheme.titleMedium
+                                    ?.copyWith(fontWeight: FontWeight.bold),
                               ),
-                      ),
-                      const SizedBox(width: 12),
-                      // Name and location
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                              const SizedBox(height: 4),
+                              Text(
+                                lead['location'],
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Time and urgent indicator
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              lead['name'],
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              lead['location'],
+                              lead['timeAgo'],
                               style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(
                                     color: Theme.of(
                                       context,
                                     ).colorScheme.onSurfaceVariant,
                                   ),
+                            ),
+                            if (lead['isUrgent'])
+                              Container(
+                                margin: const EdgeInsets.only(top: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.errorContainer,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  'Urgent',
+                                  style: Theme.of(context).textTheme.labelSmall
+                                      ?.copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onErrorContainer,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Tags Row
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        // High Hiring Intent Tag
+                        if (lead['hasHighHiringIntent'])
+                          _buildSimpleTag(
+                            label: 'High hiring intent',
+
+                            icon: Icons.trending_up,
+                          ),
+                        // Verified Phone Tag
+                        if (lead['isVerifiedPhone'])
+                          _buildSimpleTag(
+                            label: 'Verified phone',
+
+                            icon: Icons.verified,
+                          ),
+                        // Additional Details Tag
+                        if (lead['hasAdditionalDetails'])
+                          _buildSimpleTag(
+                            label: 'Additional details',
+
+                            icon: Icons.info_outline,
+                          ),
+                        // Frequent User Tag
+                        if (lead['isFrequentUser'])
+                          _buildSimpleTag(
+                            label: 'Frequent user',
+
+                            icon: Icons.star,
+                          ),
+                        // Rating if available
+                        if (lead['rating'] != null)
+                          _buildSimpleTag(
+                            label: '${lead['rating']} ★',
+
+                            icon: Icons.star_rate,
+                          ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+                    const Divider(height: 1),
+                    const SizedBox(height: 16),
+
+                    // Service Information
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          lead['serviceType'],
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                              ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          lead['serviceDetails'],
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
+                        ),
+                      ],
+                    ),
+
+                    // Notes (if any)
+                    if (lead['notes'] != null && lead['notes'].isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.surfaceVariant.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.lightbulb_outline,
+                              size: 16,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                lead['notes'],
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      // Time and urgent indicator
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            lead['timeAgo'],
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
-                                ),
-                          ),
-                          if (lead['isUrgent'])
-                            Container(
-                              margin: const EdgeInsets.only(top: 4),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.errorContainer,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                'Urgent',
-                                style: Theme.of(context).textTheme.labelSmall
-                                    ?.copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onErrorContainer,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                            ),
-                        ],
-                      ),
                     ],
-                  ),
 
-                  const SizedBox(height: 16),
-
-                  // Tags Row
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      // High Hiring Intent Tag
-                      if (lead['hasHighHiringIntent'])
-                        _buildSimpleTag(
-                          label: 'High hiring intent',
-
-                          icon: Icons.trending_up,
-                        ),
-                      // Verified Phone Tag
-                      if (lead['isVerifiedPhone'])
-                        _buildSimpleTag(
-                          label: 'Verified phone',
-
-                          icon: Icons.verified,
-                        ),
-                      // Additional Details Tag
-                      if (lead['hasAdditionalDetails'])
-                        _buildSimpleTag(
-                          label: 'Additional details',
-
-                          icon: Icons.info_outline,
-                        ),
-                      // Frequent User Tag
-                      if (lead['isFrequentUser'])
-                        _buildSimpleTag(
-                          label: 'Frequent user',
-
-                          icon: Icons.star,
-                        ),
-                      // Rating if available
-                      if (lead['rating'] != null)
-                        _buildSimpleTag(
-                          label: '${lead['rating']} ★',
-
-                          icon: Icons.star_rate,
-                        ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-                  const Divider(height: 1),
-                  const SizedBox(height: 16),
-
-                  // Service Information
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        lead['serviceType'],
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        lead['serviceDetails'],
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // Notes (if any)
-                  if (lead['notes'] != null && lead['notes'].isNotEmpty) ...[
                     const SizedBox(height: 16),
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.surfaceVariant.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.lightbulb_outline,
-                            size: 16,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              lead['notes'],
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurfaceVariant,
-                                  ),
+                    const Divider(height: 1),
+                    const SizedBox(height: 16),
+
+                    // Footer with credits and response status
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.bolt,
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 20,
                             ),
+                            const SizedBox(width: 4),
+                            Text('${lead['credits']} Credits'),
+                          ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
                           ),
-                        ],
-                      ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(lead['responseStatus']),
+                        ),
+                      ],
                     ),
                   ],
-
-                  const SizedBox(height: 16),
-                  const Divider(height: 1),
-                  const SizedBox(height: 16),
-
-                  // Footer with credits and response status
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.bolt,
-                            color: Theme.of(context).colorScheme.primary,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 4),
-                          Text('${lead['credits']} Credits'),
-                        ],
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Text(lead['responseStatus']),
-                      ),
-                    ],
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -629,14 +641,14 @@ class _JobsScreenState extends State<JobsScreen>
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
 
-    // Default colors based on context
-    final defaultBgColor = isDarkMode
-        ? theme.colorScheme.primary.withOpacity(0.15)
-        : theme.colorScheme.primary.withOpacity(0.08);
+    // // Default colors based on context
+    // final defaultBgColor = isDarkMode
+    //     ? theme.colorScheme.primary.withOpacity(0.15)
+    //     : theme.colorScheme.primary.withOpacity(0.08);
 
-    final defaultTextColor = isDarkMode
-        ? theme.colorScheme.primary.withOpacity(0.9)
-        : theme.colorScheme.primary;
+    // final defaultTextColor = isDarkMode
+    //     ? theme.colorScheme.primary.withOpacity(0.9)
+    //     : theme.colorScheme.primary;
 
     return GestureDetector(
       onTap: isInteractive ? onTap : null,
@@ -648,10 +660,10 @@ class _JobsScreenState extends State<JobsScreen>
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
-            color: backgroundColor ?? defaultBgColor,
+            // color: backgroundColor ?? defaultBgColor,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: (backgroundColor ?? defaultBgColor).withOpacity(0.3),
+              // color: (backgroundColor ?? defaultBgColor).withOpacity(0.3),
               width: 1,
             ),
             boxShadow: isInteractive
@@ -668,13 +680,13 @@ class _JobsScreenState extends State<JobsScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               if (icon != null) ...[
-                Icon(icon, size: 14, color: textColor ?? defaultTextColor),
+                Icon(icon, size: 14),
                 const SizedBox(width: 4),
               ],
               Text(
                 label,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: textColor ?? defaultTextColor,
+                  // color: textColor ?? defaultTextColor,
                   fontWeight: FontWeight.w600,
                   fontSize: 12,
                   letterSpacing: -0.1,

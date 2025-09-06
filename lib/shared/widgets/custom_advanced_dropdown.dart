@@ -1,37 +1,17 @@
 import 'package:flutter/material.dart';
 
 typedef DropdownItemBuilder<T> = Widget Function(BuildContext context, T item);
-typedef DropdownSearchFilter<T> = bool Function(T item, String query);
 
 class AdvancedDropdown<T> extends StatefulWidget {
-  /// List of all items to display in dropdown
   final List<T> items;
-
-  /// Called when selected item changes
   final ValueChanged<T?>? onChanged;
-
-  /// The currently selected item
   final T? selectedItem;
-
-  /// Optional search placeholder
   final String searchHintText;
-
-  /// Whether search is enabled
   final bool enableSearch;
-
-  /// How to display items as string in dropdown (fallback if no builder given)
   final String Function(T item) itemToString;
-
-  /// Optional custom widget builder for dropdown items
   final DropdownItemBuilder<T>? itemBuilder;
-
-  /// Decoration for the dropdown container
   final BoxDecoration? decoration;
-
-  /// Hint text for dropdown
   final String hintText;
-
-  /// TextStyle for hint and selected item display
   final TextStyle? textStyle;
 
   const AdvancedDropdown({
@@ -62,12 +42,13 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
   final LayerLink _layerLink = LayerLink();
 
   bool _isDropdownOpen = false;
+  bool _isDisposed = false;
 
   @override
   void initState() {
     super.initState();
     _selectedItem = widget.selectedItem;
-    _filteredItems = widget.items;
+    _filteredItems = List<T>.from(widget.items);
     _searchController.addListener(_filterItems);
   }
 
@@ -75,29 +56,33 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
   void didUpdateWidget(covariant AdvancedDropdown<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.items != oldWidget.items) {
-      _filteredItems = widget.items;
-      _filterItems();
+      _filteredItems = List<T>.from(widget.items);
     }
     if (widget.selectedItem != oldWidget.selectedItem) {
-      setState(() {
-        _selectedItem = widget.selectedItem;
-      });
+      _selectedItem = widget.selectedItem;
     }
   }
 
   void _filterItems() {
+    if (_isDisposed) return;
+
     final query = _searchController.text.toLowerCase();
-    setState(() {
-      if (query.isEmpty) {
-        _filteredItems = widget.items;
-      } else {
-        _filteredItems = widget.items
-            .where(
-              (item) => widget.itemToString(item).toLowerCase().contains(query),
-            )
-            .toList();
-      }
-    });
+    final newFilteredItems = query.isEmpty
+        ? List<T>.from(widget.items)
+        : widget.items
+              .where(
+                (item) =>
+                    widget.itemToString(item).toLowerCase().contains(query),
+              )
+              .toList();
+
+    if (mounted) {
+      setState(() {
+        _filteredItems = newFilteredItems;
+      });
+    } else {
+      _filteredItems = newFilteredItems;
+    }
   }
 
   void _toggleDropdown() {
@@ -109,66 +94,133 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
   }
 
   void _openDropdown() {
-    _overlayEntry = _createOverlayEntry();
-    Overlay.of(context)!.insert(_overlayEntry!);
-    setState(() {
-      _isDropdownOpen = true;
-    });
+    if (_isDisposed || !mounted) return;
+
+    try {
+      final overlay = Overlay.of(context);
+      if (overlay == null) return;
+
+      _overlayEntry = _createOverlayEntry();
+      overlay.insert(_overlayEntry!);
+
+      if (mounted) {
+        setState(() {
+          _isDropdownOpen = true;
+        });
+      } else {
+        _isDropdownOpen = true;
+      }
+    } catch (e) {
+      _isDropdownOpen = false;
+    }
   }
 
-  void _closeDropdown() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
+  void _closeDropdown({bool fromDispose = false}) {
+    if (_overlayEntry != null) {
+      _overlayEntry?.remove();
+      _overlayEntry = null;
+    }
+
     _searchController.clear();
-    setState(() {
-      _filteredItems = widget.items;
+
+    if (!fromDispose && mounted) {
+      setState(() {
+        _isDropdownOpen = false;
+        _filteredItems = List<T>.from(widget.items);
+      });
+    } else {
       _isDropdownOpen = false;
-    });
+      _filteredItems = List<T>.from(widget.items);
+    }
   }
 
   OverlayEntry _createOverlayEntry() {
-    RenderBox renderBox = context.findRenderObject() as RenderBox;
-    Size size = renderBox.size;
-    Offset offset = renderBox.localToGlobal(Offset.zero);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
 
     return OverlayEntry(
       builder: (context) {
+        final currentTheme = Theme.of(context);
+        final currentColorScheme = currentTheme.colorScheme;
+        final currentTextTheme = currentTheme.textTheme;
+
         return Positioned(
-          left: offset.dx,
-          top: offset.dy + size.height + 5,
-          width: size.width,
+          width: MediaQuery.of(context).size.width - 32,
           child: CompositedTransformFollower(
             link: _layerLink,
             showWhenUnlinked: false,
-            offset: Offset(0, size.height + 5),
+            offset: const Offset(0, 5),
             child: Material(
-              elevation: 5,
-              borderRadius: BorderRadius.circular(8),
+              elevation: 4,
+              borderRadius: BorderRadius.circular(12),
               child: Container(
                 constraints: const BoxConstraints(maxHeight: 300),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300),
+                  color: currentColorScheme.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: currentColorScheme.outline.withOpacity(0.3),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: currentColorScheme.shadow.withOpacity(0.1),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (widget.enableSearch)
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(12),
                         child: TextField(
                           controller: _searchController,
                           autofocus: true,
+                          style: currentTextTheme.bodyMedium?.copyWith(
+                            color: currentColorScheme.onSurface,
+                          ),
                           decoration: InputDecoration(
                             hintText: widget.searchHintText,
-                            prefixIcon: const Icon(Icons.search),
+                            hintStyle: currentTextTheme.bodyMedium?.copyWith(
+                              color: currentColorScheme.onSurfaceVariant,
+                            ),
+                            prefixIcon: Icon(
+                              Icons.search,
+                              color: currentColorScheme.onSurfaceVariant,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: currentColorScheme.outline.withOpacity(
+                                  0.5,
+                                ),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: currentColorScheme.outline.withOpacity(
+                                  0.3,
+                                ),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: currentColorScheme.primary,
+                                width: 2,
+                              ),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 12,
+                              horizontal: 16,
+                              vertical: 12,
                             ),
+                            fillColor: currentColorScheme.surfaceVariant
+                                .withOpacity(0.3),
+                            filled: true,
                           ),
                         ),
                       ),
@@ -176,12 +228,15 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
                       child: _filteredItems.isNotEmpty
                           ? ListView.builder(
                               padding: EdgeInsets.zero,
+                              shrinkWrap: true,
                               itemCount: _filteredItems.length,
                               itemBuilder: (context, index) {
                                 final item = _filteredItems[index];
                                 final isSelected = item == _selectedItem;
                                 return InkWell(
                                   onTap: () {
+                                    if (_isDisposed) return;
+
                                     setState(() {
                                       _selectedItem = item;
                                     });
@@ -190,8 +245,9 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
                                   },
                                   child: Container(
                                     color: isSelected
-                                        ? Colors.blue.shade100
-                                        : null,
+                                        ? currentColorScheme.primary
+                                              .withOpacity(0.1)
+                                        : Colors.transparent,
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 12,
                                       horizontal: 16,
@@ -200,14 +256,17 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
                                         ? widget.itemBuilder!(context, item)
                                         : Text(
                                             widget.itemToString(item),
-                                            style: TextStyle(
-                                              color: isSelected
-                                                  ? Colors.blue
-                                                  : Colors.black87,
-                                              fontWeight: isSelected
-                                                  ? FontWeight.bold
-                                                  : FontWeight.normal,
-                                            ),
+                                            style: currentTextTheme.bodyMedium
+                                                ?.copyWith(
+                                                  color: isSelected
+                                                      ? currentColorScheme
+                                                            .primary
+                                                      : currentColorScheme
+                                                            .onSurface,
+                                                  fontWeight: isSelected
+                                                      ? FontWeight.w600
+                                                      : FontWeight.normal,
+                                                ),
                                           ),
                                   ),
                                 );
@@ -217,7 +276,9 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
                               padding: const EdgeInsets.all(16),
                               child: Text(
                                 'No items found',
-                                style: TextStyle(color: Colors.grey.shade600),
+                                style: currentTextTheme.bodyMedium?.copyWith(
+                                  color: currentColorScheme.onSurfaceVariant,
+                                ),
                               ),
                             ),
                     ),
@@ -233,14 +294,19 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
 
   @override
   void dispose() {
+    _isDisposed = true;
     _searchController.dispose();
     _focusNode.dispose();
-    _closeDropdown();
+    _closeDropdown(fromDispose: true);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return CompositedTransformTarget(
       link: _layerLink,
       child: GestureDetector(
@@ -249,13 +315,25 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
           decoration:
               widget.decoration ??
               BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade400),
-                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: _isDropdownOpen
+                      ? colorScheme.primary
+                      : colorScheme.outline.withOpacity(0.4),
+                ),
+                color: colorScheme.surface,
+                boxShadow: [
+                  if (_isDropdownOpen)
+                    BoxShadow(
+                      color: colorScheme.primary.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                ],
               ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: Text(
@@ -264,20 +342,18 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
                       : widget.hintText,
                   style:
                       widget.textStyle ??
-                      TextStyle(
+                      textTheme.bodyMedium?.copyWith(
                         color: _selectedItem != null
-                            ? Colors.black87
-                            : Colors.grey.shade600,
-                        fontSize: 16,
+                            ? colorScheme.onSurface
+                            : colorScheme.onSurfaceVariant,
                       ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(width: 12),
               Icon(
                 _isDropdownOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                color: Colors.grey.shade700,
-                size: 28,
+                color: colorScheme.onSurfaceVariant,
+                size: 24,
               ),
             ],
           ),

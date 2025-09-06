@@ -6,18 +6,18 @@ final darkTheme = ThemeData(
   // Changed to dark
   scaffoldBackgroundColor: Colors.grey[900],
   // Dark background
-  iconTheme: IconThemeData(color: AppColors.textSecondary),
+  iconTheme: IconThemeData(color: Colors.grey[800]),
   useMaterial3: true,
   colorScheme: ColorScheme.dark(
-    primary: AppColors.textSecondary,
-    // Primary color (buttons, app bar)
-    // secondary: AppColors.textSecondary,
-    // // Secondary color (FAB, accents)
-    // surface: AppColors.textSecondary,
-    // // Scaffold background
-    // onPrimary: Colors.white,
-    // // Text on background
-    // onSurface: Colors.white, // Text on surfaces (cards)
+    primary: AppColors.primary,
+
+    secondary: AppColors.primary,
+    // Secondary color (FAB, accents)
+    surface: AppColors.textSecondary,
+    // Scaffold background
+    onPrimary: Colors.white,
+    // Text on background
+    onSurface: Colors.white, // Text on surfaces (cards)
   ),
   cardTheme: CardThemeData(
     color: AppColors.textPrimary,
