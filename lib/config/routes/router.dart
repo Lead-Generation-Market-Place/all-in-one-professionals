@@ -27,6 +27,7 @@ import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentati
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/service_question_form.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/signup_process_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/marketing/presentation/screens/marketing_dashboard.dart';
+import 'package:yelpax_pro/features/marketPlace/marketing/presentation/screens/subscription_plan.dart';
 import 'package:yelpax_pro/features/marketPlace/notifications/presentation/screens/notifications_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/profile_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/business_faqs.dart';
@@ -111,7 +112,9 @@ class AppRouter {
   static const String travel_time = '/homeServices/location/travel_time';
   static const String nationwide = '/homeServices/location/nationwide';
   static const String marketing_dashboard = '/homeServices/marketing_dashboard';
-  
+  static const String subscription_plan = '/homeServices/subscription_plan';
+
+
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
@@ -202,6 +205,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => Nationwide());
       case marketing_dashboard:
         return MaterialPageRoute(builder: (_) => MarketingDashboard());
+      case subscription_plan:
+        return MaterialPageRoute(builder: (_) => SubscriptionPlan());
       case unknownRouteScreen:
         return MaterialPageRoute(
           builder: (_) =>

@@ -103,6 +103,7 @@ class _MyAppState extends State<MyApp> {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         return MaterialApp(
+
           navigatorKey: navigatorKey,
           onGenerateRoute: AppRouter.generateRoute,
           onUnknownRoute: (settings) => AppRouter.unknownRoute(settings),

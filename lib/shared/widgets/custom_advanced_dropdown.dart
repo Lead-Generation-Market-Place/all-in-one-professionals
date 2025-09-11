@@ -98,7 +98,6 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
 
     try {
       final overlay = Overlay.of(context);
-      if (overlay == null) return;
 
       _overlayEntry = _createOverlayEntry();
       overlay.insert(_overlayEntry!);
@@ -121,7 +120,7 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
       _overlayEntry = null;
     }
 
-    _searchController.clear();
+    // _searchController.clear();
 
     if (!fromDispose && mounted) {
       setState(() {
@@ -218,7 +217,8 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
                               horizontal: 16,
                               vertical: 12,
                             ),
-                            fillColor: currentColorScheme.surfaceVariant
+                            fillColor: currentColorScheme
+                                .surfaceContainerHighest
                                 .withOpacity(0.3),
                             filled: true,
                           ),

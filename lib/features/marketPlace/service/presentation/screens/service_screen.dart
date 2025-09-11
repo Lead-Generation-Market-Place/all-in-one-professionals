@@ -87,6 +87,12 @@ class _ServiceDashboardState extends State<ServiceScreen> {
             },
           ),
           IconButton(
+            icon: const Icon(Icons.campaign),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRouter.marketing_dashboard);
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
               Navigator.pushNamed(context, AppRouter.settingsScreen);
