@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:yelpax_pro/features/marketPlace/marketing/presentation/screens/customer_retention.dart';
 import 'package:yelpax_pro/features/marketPlace/marketing/presentation/screens/get_more_leads.dart';
+import 'package:yelpax_pro/features/marketPlace/marketing/presentation/screens/guarantee.dart';
 import 'package:yelpax_pro/features/marketPlace/marketing/presentation/screens/profile_visibility.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 
@@ -122,45 +123,7 @@ Widget _buildRetentionStrategy(String title, String description) {
   );
 }
 
-class GuaranteeContent extends StatelessWidget {
-  const GuaranteeContent({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Satisfaction Guarantee Options',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 16),
-        _buildGuaranteeOption(
-          'Money-back guarantee',
-          'Offer full or partial refunds if clients are not satisfied.',
-        ),
-        _buildGuaranteeOption(
-          'Free touch-ups',
-          'Provide free adjustments within a certain time frame.',
-        ),
-        _buildGuaranteeOption(
-          'Replacement guarantee',
-          'Offer to redo the service if the client is unhappy.',
-        ),
-        _buildGuaranteeOption(
-          'Warranty on products',
-          'Stand behind the products you use or sell.',
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          'A strong guarantee can increase conversions by up to 30%',
-          style: TextStyle(fontStyle: FontStyle.italic, color: Colors.grey),
-        ),
-        const SizedBox(height: 16),
-        CustomButton(text: 'Set Up Guarantee', enabled: true, onPressed: () {}),
-      ],
-    );
-  }
 
   Widget _buildGuaranteeOption(String title, String description) {
     return Container(
@@ -195,7 +158,7 @@ class GuaranteeContent extends StatelessWidget {
       ),
     );
   }
-}
+
 
 class MarketingDashboard extends StatefulWidget {
   const MarketingDashboard({super.key});
@@ -743,7 +706,7 @@ class _MarketingDashboardState extends State<MarketingDashboard> {
       case 2:
         return CustomerRetention();
       case 3:
-        return const GuaranteeContent();
+        return Guarantee();
       default:
         return GetMoreLeadsContent();
     }

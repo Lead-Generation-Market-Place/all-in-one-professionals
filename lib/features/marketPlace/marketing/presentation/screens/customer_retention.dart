@@ -152,7 +152,6 @@ class _CustomerRetentionState extends State<CustomerRetention> {
                 controller: _customerCountController,
                 hintText: 'Enter number of customers',
                 prefixIcon: Icons.people,
-                
               ),
             ),
 
@@ -165,7 +164,6 @@ class _CustomerRetentionState extends State<CustomerRetention> {
                   controller: _discountController,
                   hintText: 'Enter discount percentage (e.g., 15)',
                   prefixIcon: Icons.percent,
-               
                 ),
               ),
             ],
@@ -201,32 +199,65 @@ class _CustomerRetentionState extends State<CustomerRetention> {
           ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _buildDatePicker(
-                label: 'Start Date',
-                selectedDate: _startDate,
-                onDateSelected: (date) {
-                  setState(() {
-                    _startDate = date;
-                  });
-                },
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildDatePicker(
-                label: 'End Date',
-                selectedDate: _endDate,
-                onDateSelected: (date) {
-                  setState(() {
-                    _endDate = date;
-                  });
-                },
-              ),
-            ),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            // Use different layouts based on screen width
+            if (constraints.maxWidth > 600) {
+              // Wide layout: dates side by side
+              return Row(
+                children: [
+                  Expanded(
+                    child: _buildDatePicker(
+                      label: 'Start Date',
+                      selectedDate: _startDate,
+                      onDateSelected: (date) {
+                        setState(() {
+                          _startDate = date;
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildDatePicker(
+                      label: 'End Date',
+                      selectedDate: _endDate,
+                      onDateSelected: (date) {
+                        setState(() {
+                          _endDate = date;
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              // Narrow layout: dates stacked vertically
+              return Column(
+                children: [
+                  _buildDatePicker(
+                    label: 'Start Date',
+                    selectedDate: _startDate,
+                    onDateSelected: (date) {
+                      setState(() {
+                        _startDate = date;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  _buildDatePicker(
+                    label: 'End Date',
+                    selectedDate: _endDate,
+                    onDateSelected: (date) {
+                      setState(() {
+                        _endDate = date;
+                      });
+                    },
+                  ),
+                ],
+              );
+            }
+          },
         ),
       ],
     );
@@ -258,12 +289,15 @@ class _CustomerRetentionState extends State<CustomerRetention> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              selectedDate != null
-                  ? '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}'
-                  : 'Select $label',
-              style: TextStyle(
-                color: selectedDate != null ? Colors.black : Colors.grey,
+            Expanded(
+              child: Text(
+                selectedDate != null
+                    ? '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}'
+                    : 'Select $label',
+                style: TextStyle(
+                  color: selectedDate != null ? Colors.black : Colors.grey,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             Icon(Icons.calendar_today, color: Theme.of(context).primaryColor),
@@ -274,50 +308,78 @@ class _CustomerRetentionState extends State<CustomerRetention> {
   }
 
   Widget _buildStatsSection() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final bool isWide = constraints.maxWidth > 600;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Campaign Statistics',
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 16),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            // Determine the number of columns based on available width
+            int crossAxisCount = 2;
+            if (constraints.maxWidth > 900) {
+              crossAxisCount = 4;
+            } else if (constraints.maxWidth > 600) {
+              crossAxisCount = 2;
+            } else {
+              crossAxisCount = 1;
+            }
 
-        return GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: isWide ? 4 : 2,
-          childAspectRatio: isWide ? 1.2 : 1.5,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          children: [
-            _buildStatCard(
-              title: 'Target Audience',
-              value: '\$150',
-              subtitle: 'past customers',
-              icon: Icons.attach_money,
-              color: Colors.blue,
-            ),
-            _buildStatCard(
-              title: 'Expected Reach',
-              value: '128',
-              subtitle: '85% of audience',
-              icon: Icons.people,
-              color: Colors.green,
-            ),
-            _buildStatCard(
-              title: 'Avg. Response Rate',
-              value: '12-18%',
-              subtitle: 'Industry Standard',
-              icon: Icons.trending_up,
-              color: Colors.orange,
-            ),
-            _buildStatCard(
-              title: 'Campaign Cost',
-              value: '\$$campaignCost',
-              subtitle: '\$$campaignCostPerCustomer per customer',
-              icon: Icons.account_balance_wallet,
-              color: Colors.purple,
-            ),
-          ],
-        );
-      },
+            return GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: crossAxisCount,
+              childAspectRatio: _calculateChildAspectRatio(
+                constraints.maxWidth,
+              ),
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              children: [
+                _buildStatCard(
+                  title: 'Target Audience',
+                  value: '\$150',
+                  subtitle: 'past customers',
+                  icon: Icons.attach_money,
+                  color: Colors.blue,
+                ),
+                _buildStatCard(
+                  title: 'Expected Reach',
+                  value: '128',
+                  subtitle: '85% of audience',
+                  icon: Icons.people,
+                  color: Colors.green,
+                ),
+                _buildStatCard(
+                  title: 'Avg. Response Rate',
+                  value: '12-18%',
+                  subtitle: 'Industry Standard',
+                  icon: Icons.trending_up,
+                  color: Colors.orange,
+                ),
+                _buildStatCard(
+                  title: 'Campaign Cost',
+                  value: '\$$campaignCost',
+                  subtitle: '\$$campaignCostPerCustomer per customer',
+                  icon: Icons.account_balance_wallet,
+                  color: Colors.purple,
+                ),
+              ],
+            );
+          },
+        ),
+      ],
     );
+  }
+
+  double _calculateChildAspectRatio(double width) {
+    if (width > 900) return 1.2;
+    if (width > 600) return 1.5;
+    return 1.8;
   }
 
   Widget _buildStatCard({
@@ -374,6 +436,8 @@ class _CustomerRetentionState extends State<CustomerRetention> {
                 Text(
                   subtitle,
                   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
                 ),
               ],
             ),
@@ -384,27 +448,54 @@ class _CustomerRetentionState extends State<CustomerRetention> {
   }
 
   Widget _buildActionButtons() {
-    return Row(
-      children: [
-        Expanded(
-          child: CustomButton(
-            text: 'Launch Campaign',
-            onPressed: () {
-              // Handle campaign launch
-            },
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: CustomButton(
-            text: 'Save Draft',
-            type: CustomButtonType.outline,
-            onPressed: () {
-              // Handle save draft
-            },
-          ),
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth > 400) {
+          // Wide layout: buttons side by side
+          return Row(
+            children: [
+              Expanded(
+                child: CustomButton(
+                  text: 'Launch Campaign',
+                  onPressed: () {
+                    // Handle campaign launch
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: CustomButton(
+                  text: 'Save Draft',
+                  type: CustomButtonType.outline,
+                  onPressed: () {
+                    // Handle save draft
+                  },
+                ),
+              ),
+            ],
+          );
+        } else {
+          // Narrow layout: buttons stacked
+          return Column(
+            children: [
+              CustomButton(
+                text: 'Launch Campaign',
+                onPressed: () {
+                  // Handle campaign launch
+                },
+              ),
+              const SizedBox(height: 12),
+              CustomButton(
+                text: 'Save Draft',
+                type: CustomButtonType.outline,
+                onPressed: () {
+                  // Handle save draft
+                },
+              ),
+            ],
+          );
+        }
+      },
     );
   }
 }
