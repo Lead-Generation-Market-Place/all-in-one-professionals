@@ -15,11 +15,11 @@ class BottomNavbar extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).bottomAppBarTheme.color,
-      ),
+      // decoration: BoxDecoration(
+      //   color: Co,
+      // ),
       child: BottomNavigationBar(
-
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         type: BottomNavigationBarType.fixed,
         currentIndex: navProvider.selectedIndex,

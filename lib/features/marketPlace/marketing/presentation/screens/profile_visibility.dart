@@ -40,11 +40,11 @@ class _ProfileVisibilityState extends State<ProfileVisibility> {
                     });
                   },
                   selectedColor: Theme.of(context).colorScheme.primary,
-                  backgroundColor: Colors.grey[200],
+                  // backgroundColor: Theme.of(context).dividerColor,
                   labelStyle: TextStyle(
                     color: _selectedChipIndex == index
                         ? Colors.white
-                        : Colors.black,
+                        : Theme.of(context).primaryColorDark,
                   ),
                 );
               }),
@@ -152,7 +152,7 @@ class _ProfileVisibilityState extends State<ProfileVisibility> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.blue[50],
+                  
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: const Text(
@@ -169,7 +169,7 @@ class _ProfileVisibilityState extends State<ProfileVisibility> {
                 const SizedBox(height: 8),
                 Text(
                   'Show your total number of hires to increase trust.',
-                  style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                  style: TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 12),
 
@@ -216,7 +216,7 @@ class _ProfileVisibilityState extends State<ProfileVisibility> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.blue[50],
+                        
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: const Text(
@@ -233,7 +233,7 @@ class _ProfileVisibilityState extends State<ProfileVisibility> {
                 const SizedBox(height: 8),
                 Text(
                   'Display your completed projects to showcase experience.',
-                  style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                  style: TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 12),
 
@@ -287,13 +287,13 @@ class _ProfileVisibilityState extends State<ProfileVisibility> {
         const SizedBox(height: 8),
         Text(
           "This is how your profile appears to others:",
-          style: TextStyle(color: Colors.grey[700]),
+      
         ),
         const SizedBox(height: 24),
 
         /// Profile Card
         Card(
-          elevation: 2,
+          
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -315,7 +315,7 @@ class _ProfileVisibilityState extends State<ProfileVisibility> {
                 const SizedBox(height: 4),
                 const Text(
                   "Professional Stylist",
-                  style: TextStyle(color: Colors.grey),
+                  
                 ),
                 const SizedBox(height: 20),
 

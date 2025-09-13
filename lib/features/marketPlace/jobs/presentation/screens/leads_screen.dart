@@ -118,6 +118,7 @@ class _JobsScreenState extends State<JobsScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text('Leads'),
+       
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications),
@@ -139,12 +140,10 @@ class _JobsScreenState extends State<JobsScreen>
           ),
         ],
       ),
-      backgroundColor: Theme.of(
-        context,
-      ).colorScheme.surfaceVariant.withOpacity(0.2),
+    
       body: Column(
         children: [
-          // Profile completion banner (if needed)
+            
           if (!isSetupFinished)
             ProfileCompletionBanner(
               stepNumber: 3,
@@ -171,18 +170,8 @@ class _JobsScreenState extends State<JobsScreen>
                 ),
                 const SizedBox(width: 8),
                 // Map button
-                Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
+                Card(
+                
                   child: IconButton(
                     icon: Icon(
                       Icons.map_outlined,
@@ -195,18 +184,9 @@ class _JobsScreenState extends State<JobsScreen>
                 ),
                 const SizedBox(width: 8),
                 // Settings button
-                Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
+                Card(
+               
+             
                   child: IconButton(
                     icon: Icon(
                       Icons.filter_list_rounded,
@@ -278,6 +258,7 @@ class _JobsScreenState extends State<JobsScreen>
     }
 
     return ListView.builder(
+   
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       itemCount: leads.length,
       itemBuilder: (context, index) {
@@ -325,13 +306,12 @@ class _JobsScreenState extends State<JobsScreen>
             ),
           ],
         ),
-        child: Container(
+        child: Card(
           margin: const EdgeInsets.only(bottom: 16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Theme.of(context).colorScheme.outline),
-          ),
+          // decoration: BoxDecoration(
+          //   borderRadius: BorderRadius.circular(16),
+          //   border: Border.all(color: Theme.of(context).colorScheme.outline),
+          // ),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
@@ -529,12 +509,7 @@ class _JobsScreenState extends State<JobsScreen>
                       const SizedBox(height: 16),
                       Container(
                         padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.surfaceVariant.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                        
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -584,12 +559,7 @@ class _JobsScreenState extends State<JobsScreen>
                             horizontal: 12,
                             vertical: 6,
                           ),
-                          decoration: BoxDecoration(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.primary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
+                         
                           child: Text(lead['responseStatus']),
                         ),
                       ],
@@ -633,67 +603,40 @@ class _JobsScreenState extends State<JobsScreen>
   Widget _buildSimpleTag({
     required String label,
     IconData? icon,
-    Color? backgroundColor,
-    Color? textColor,
+   
     bool isInteractive = false,
     VoidCallback? onTap,
   }) {
     final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark;
-
-    // // Default colors based on context
-    // final defaultBgColor = isDarkMode
-    //     ? theme.colorScheme.primary.withOpacity(0.15)
-    //     : theme.colorScheme.primary.withOpacity(0.08);
-
-    // final defaultTextColor = isDarkMode
-    //     ? theme.colorScheme.primary.withOpacity(0.9)
-    //     : theme.colorScheme.primary;
+    
 
     return GestureDetector(
       onTap: isInteractive ? onTap : null,
-      child: MouseRegion(
-        cursor: isInteractive
-            ? SystemMouseCursors.click
-            : SystemMouseCursors.basic,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            // color: backgroundColor ?? defaultBgColor,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              // color: (backgroundColor ?? defaultBgColor).withOpacity(0.3),
-              width: 1,
-            ),
-            boxShadow: isInteractive
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 4,
-                      offset: const Offset(0, 1),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (icon != null) ...[
-                Icon(icon, size: 14),
-                const SizedBox(width: 4),
-              ],
-              Text(
-                label,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  // color: textColor ?? defaultTextColor,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12,
-                  letterSpacing: -0.1,
-                ),
-              ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all( 
+            width: 0.2),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 14, color: AppColors.primary),
+              const SizedBox(width: 4),
             ],
-          ),
+            Text(
+              label,
+              style: theme.textTheme.bodySmall?.copyWith(
+              
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+                letterSpacing: -0.1,
+              ),
+            ),
+          ],
         ),
       ),
     );

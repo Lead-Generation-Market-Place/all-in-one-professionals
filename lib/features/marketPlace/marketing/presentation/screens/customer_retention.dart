@@ -90,7 +90,7 @@ class _CustomerRetentionState extends State<CustomerRetention> {
           'Re-engage past customers with offers and reminders to boost repeat business.',
           style: Theme.of(
             context,
-          ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+          ).textTheme.bodySmall,
         ),
       ],
     );
@@ -101,7 +101,7 @@ class _CustomerRetentionState extends State<CustomerRetention> {
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -115,6 +115,7 @@ class _CustomerRetentionState extends State<CustomerRetention> {
 
             // Service Type
             _buildFormField(
+              
               label: 'Service Type',
               child: AdvancedDropdown(
                 hintText: 'Select your service',
@@ -283,7 +284,7 @@ class _CustomerRetentionState extends State<CustomerRetention> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
+          
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -294,13 +295,11 @@ class _CustomerRetentionState extends State<CustomerRetention> {
                 selectedDate != null
                     ? '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}'
                     : 'Select $label',
-                style: TextStyle(
-                  color: selectedDate != null ? Colors.black : Colors.grey,
-                ),
+               
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            Icon(Icons.calendar_today, color: Theme.of(context).primaryColor),
+            Icon(Icons.calendar_today),
           ],
         ),
       ),
@@ -402,7 +401,7 @@ class _CustomerRetentionState extends State<CustomerRetention> {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    
                     shape: BoxShape.circle,
                   ),
                   child: Icon(icon, size: 18, color: color),
@@ -414,7 +413,7 @@ class _CustomerRetentionState extends State<CustomerRetention> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: color,
+                     
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -429,13 +428,13 @@ class _CustomerRetentionState extends State<CustomerRetention> {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: color,
+                    
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 12),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                 ),

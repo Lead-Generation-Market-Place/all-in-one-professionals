@@ -216,10 +216,10 @@ class _LeadsDetailsPageState extends State<LeadsDetailsPage> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: colorScheme.surface,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: colorScheme.primary.withOpacity(0.25),
+                  width: 0.5, color: colorScheme.primary,
                 ),
               ),
               child: Row(

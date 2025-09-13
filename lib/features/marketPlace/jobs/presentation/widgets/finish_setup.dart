@@ -13,11 +13,13 @@ class ProfileCompletionBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
+      duration: Durations.medium4,
+
       margin: EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: Theme.of(context).unselectedWidgetColor,
-        border: Border.all(width: 1, color: Colors.white30),
+        color: Colors.black,
+        border: Border.all(width: 0.2, color: Colors.white30),
         borderRadius: BorderRadius.circular(16), // Rounded rectangle
       ),
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),

@@ -161,7 +161,7 @@ class _GuaranteeState extends State<Guarantee> {
           'Build trust and win more customers with our comprehensive satisfaction guarantee program.',
           style: Theme.of(
             context,
-          ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+          ).textTheme.bodySmall,
         ),
       ],
     );
@@ -180,7 +180,7 @@ class _GuaranteeState extends State<Guarantee> {
               'Enable ProShield Guarantee',
               style: Theme.of(
                 context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+              ).textTheme.bodyMedium,
             ),
             Switch(
               value: _isProShieldEnabled,
@@ -262,7 +262,9 @@ class _GuaranteeState extends State<Guarantee> {
               Text(
                 'You will have $remainingCredits credits remaining',
                 style: TextStyle(
-                  color: remainingCredits < 0 ? Colors.red : Colors.black,
+                  color: remainingCredits < 0
+                      ? Colors.red
+                      : Theme.of(context).primaryColorLight,
                   fontWeight: FontWeight.w500,
                 ),
               ),

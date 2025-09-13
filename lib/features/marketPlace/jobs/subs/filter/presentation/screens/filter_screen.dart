@@ -142,14 +142,14 @@ class _FilterScreenState extends State<FilterScreen> {
     );
   }
 
-  Widget _buildKeywordSearch() {
-    return const TextField(
-      decoration: InputDecoration(
-        labelText: 'Keyword search',
-        border: OutlineInputBorder(),
-      ),
-    );
-  }
+  // Widget _buildKeywordSearch() {
+  //   return const TextField(
+  //     decoration: InputDecoration(
+  //       labelText: 'Keyword search',
+  //       border: OutlineInputBorder(),
+  //     ),
+  //   );
+  // }
 
   Widget _buildViewSection() {
     return Column(

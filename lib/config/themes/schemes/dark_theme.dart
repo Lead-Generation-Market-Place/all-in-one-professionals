@@ -4,7 +4,7 @@ import 'package:yelpax_pro/core/constants/app_colors.dart';
 final darkTheme = ThemeData(
   brightness: Brightness.dark,
   // Changed to dark
-  scaffoldBackgroundColor: Colors.grey[900],
+  scaffoldBackgroundColor: Colors.black,
   // Dark background
   iconTheme: IconThemeData(color: Colors.grey[800]),
   useMaterial3: true,
@@ -19,9 +19,10 @@ final darkTheme = ThemeData(
     // Text on background
     onSurface: Colors.white, // Text on surfaces (cards)
   ),
+  
   cardTheme: CardThemeData(
     color: AppColors.textPrimary,
-    elevation: 1,
+
     margin: const EdgeInsets.all(8),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     surfaceTintColor: Colors.transparent,
@@ -29,7 +30,7 @@ final darkTheme = ThemeData(
   ),
   cardColor: Colors.grey[800],
   bottomSheetTheme: BottomSheetThemeData(
-    backgroundColor: Colors.grey[800]!, // or your preferred dark color
+    backgroundColor: AppColors.textPrimary, // or your preferred dark color
     modalBackgroundColor: Colors.grey[800]!, // for modal bottom sheets
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -140,7 +141,7 @@ final darkTheme = ThemeData(
   ),
 
   appBarTheme: AppBarTheme(
-    backgroundColor: Colors.grey[800], // Dark app bar
+    backgroundColor: Colors.black, // Dark app bar
     scrolledUnderElevation: 0,
     titleTextStyle: const TextStyle(
       color: Colors.white,

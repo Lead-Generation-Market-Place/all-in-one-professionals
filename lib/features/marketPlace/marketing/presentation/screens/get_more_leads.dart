@@ -33,7 +33,7 @@ class _GetMoreLeadsContentState extends State<GetMoreLeadsContent> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: Colors.blue,
+         
             ),
           ),
           const SizedBox(height: 8),
@@ -41,7 +41,7 @@ class _GetMoreLeadsContentState extends State<GetMoreLeadsContent> {
             'Get featured at the top of search results and receive qualified leads directly.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[600],
+           
               height: 1.4,
             ),
           ),
@@ -95,6 +95,7 @@ class _GetMoreLeadsContentState extends State<GetMoreLeadsContent> {
 
               CustomButton(
                 text: 'Save Draft',
+             
                 type: CustomButtonType.outline,
                 onPressed: () {},
               ),
@@ -115,9 +116,9 @@ class _GetMoreLeadsContentState extends State<GetMoreLeadsContent> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        // color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(width: 0.5, color: Theme.of(context).disabledColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,7 +148,7 @@ class _GetMoreLeadsContentState extends State<GetMoreLeadsContent> {
           ),
           Text(
             subtitle,
-            style: TextStyle(fontSize: 12, color: color.withOpacity(0.7)),
+            style: TextStyle(fontSize: 12),
           ),
         ],
       ),
@@ -171,7 +172,7 @@ class _GetMoreLeadsContentState extends State<GetMoreLeadsContent> {
               'Learn more',
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.blue,
+           
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -252,6 +253,7 @@ class _GetMoreLeadsContentState extends State<GetMoreLeadsContent> {
         ),
         const SizedBox(height: 6),
         AdvancedDropdown(
+         
           hintText: 'Select your service',
           items: _services,
           itemToString: (item) => item,

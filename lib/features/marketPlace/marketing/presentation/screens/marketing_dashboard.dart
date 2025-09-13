@@ -30,135 +30,6 @@ class MarketingContent {
 
 // Content classes for each category
 
-Widget _buildStrategyItem(IconData icon, String title, String description) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 12),
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: Colors.grey[50],
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, color: Colors.blue, size: 24),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-              const SizedBox(height: 4),
-              Text(
-                description,
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-Widget _buildTipItem(String title, String description) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 12),
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: Colors.grey[50],
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Icon(Icons.check_circle, color: Colors.green, size: 20),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-              const SizedBox(height: 4),
-              Text(
-                description,
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-Widget _buildRetentionStrategy(String title, String description) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 12),
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: Colors.grey[50],
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Icon(Icons.star, color: Colors.amber, size: 20),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-              const SizedBox(height: 4),
-              Text(
-                description,
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-
-
-  Widget _buildGuaranteeOption(String title, String description) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.verified, color: Colors.purple, size: 20),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
 
 class MarketingDashboard extends StatefulWidget {
   const MarketingDashboard({super.key});
@@ -253,7 +124,7 @@ class _MarketingDashboardState extends State<MarketingDashboard> {
         const SizedBox(height: 12),
         Text(
           'Turn your satisfied customers into your best sales tool. Share reviews as ready-made posts on Instagram/TikTok or directly to Shootak, and increase your visibility in search results.',
-          style: TextStyle(fontSize: 14, color: Colors.grey[700], height: 1.5),
+          style: TextStyle(fontSize: 14, height: 1.5),
         ),
         const SizedBox(height: 24),
 
@@ -282,14 +153,12 @@ class _MarketingDashboardState extends State<MarketingDashboard> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: marketingItems.asMap().entries.map((entry) {
                 return Container(
-                  width: 8.0,
-                  height: 8.0,
+                  width: 12.0,
+                  height: 12.0,
                   margin: const EdgeInsets.symmetric(horizontal: 4.0),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Theme.of(context).colorScheme.primary.withOpacity(
-                      _currentCarouselIndex == entry.key ? 0.9 : 0.4,
-                    ),
+                 
                   ),
                 );
               }).toList(),
@@ -356,7 +225,10 @@ class _MarketingDashboardState extends State<MarketingDashboard> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.blue[50],
+            border: Border.all(
+              width: 0.5,
+              color: Theme.of(context).disabledColor,
+            ),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -375,7 +247,7 @@ class _MarketingDashboardState extends State<MarketingDashboard> {
               const SizedBox(height: 8),
               Text(
                 'Share customer reviews within 24 hours of receiving them for maximum impact. Tag your location and use relevant hashtags to increase visibility.',
-                style: TextStyle(color: Colors.grey[700], height: 1.4),
+                style: TextStyle(height: 1.4),
               ),
             ],
           ),
@@ -390,7 +262,7 @@ class _MarketingDashboardState extends State<MarketingDashboard> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+            // color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
           child: Text(
@@ -398,14 +270,14 @@ class _MarketingDashboardState extends State<MarketingDashboard> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
+              // color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ),
         const SizedBox(height: 8),
         Text(
           label,
-          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          style: TextStyle(fontSize: 12),
           textAlign: TextAlign.center,
         ),
       ],
@@ -424,8 +296,8 @@ class _MarketingDashboardState extends State<MarketingDashboard> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              elevation: 4,
-              shadowColor: Colors.grey.withOpacity(0.3),
+            
+             
               margin: const EdgeInsets.symmetric(vertical: 8),
               child: Padding(
                 padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
@@ -442,15 +314,8 @@ class _MarketingDashboardState extends State<MarketingDashboard> {
                           height: isSmallScreen ? 56 : 64,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.3),
-                                spreadRadius: 1,
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                            border: Border.all(width: 0.2),
+                           
                           ),
                           child: CircleAvatar(
                             backgroundImage: NetworkImage(
@@ -494,7 +359,7 @@ class _MarketingDashboardState extends State<MarketingDashboard> {
                                   Text(
                                     '${item.rating ?? 0}/5',
                                     style: TextStyle(
-                                      color: Colors.grey[600],
+                                    
                                       fontSize: isSmallScreen ? 11 : 12,
                                     ),
                                   ),
@@ -513,7 +378,7 @@ class _MarketingDashboardState extends State<MarketingDashboard> {
                         item.description!,
                         style: TextStyle(
                           fontSize: isSmallScreen ? 13 : 14,
-                          color: Colors.grey[700],
+                        
                           height: 1.4,
                         ),
                       ),
@@ -600,13 +465,7 @@ class _MarketingDashboardState extends State<MarketingDashboard> {
                     color: Colors.white,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black.withOpacity(0.8),
-                        blurRadius: 6,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
+                  
                   ),
                 ),
               ),
@@ -635,7 +494,7 @@ class _MarketingDashboardState extends State<MarketingDashboard> {
             vertical: isSmallScreen ? 4.0 : 6.0,
           ),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+            color: Theme.of(context).colorScheme.primary,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Text(
@@ -643,7 +502,7 @@ class _MarketingDashboardState extends State<MarketingDashboard> {
             style: TextStyle(
               fontSize: isSmallScreen ? 11 : 12,
               fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.inversePrimary
             ),
           ),
         );
@@ -665,17 +524,19 @@ class _MarketingDashboardState extends State<MarketingDashboard> {
                   padding: const EdgeInsets.only(right: 8),
                   child: ChoiceChip(
                     label: Text(marketingCategories[index]),
+                    
                     selected: _selectedCategoryIndex == index,
                     onSelected: (selected) {
                       setState(() {
                         _selectedCategoryIndex = index;
                       });
                     },
+            
                     selectedColor: Theme.of(context).colorScheme.primary,
                     labelStyle: TextStyle(
                       color: _selectedCategoryIndex == index
                           ? Colors.white
-                          : Colors.black,
+                          : Theme.of(context).primaryColorDark,
                     ),
                   ),
                 );

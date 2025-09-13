@@ -149,25 +149,26 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
           child: CompositedTransformFollower(
             link: _layerLink,
             showWhenUnlinked: false,
-            offset: const Offset(0, 5),
+            // offset: const Offset(0, 5),
             child: Material(
-              elevation: 4,
+        
               borderRadius: BorderRadius.circular(12),
               child: Container(
                 constraints: const BoxConstraints(maxHeight: 300),
                 decoration: BoxDecoration(
-                  color: currentColorScheme.surface,
+                  // color: currentColorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: currentColorScheme.outline.withOpacity(0.3),
+                    width: 0.5,
+                    // color: currentColorScheme.outline.withOpacity(0.3),
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: currentColorScheme.shadow.withOpacity(0.1),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //     color: currentColorScheme.shadow.withOpacity(0.1),
+                  //     blurRadius: 12,
+                  //     offset: const Offset(0, 4),
+                  //   ),
+                  // ],
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -184,7 +185,7 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
                           decoration: InputDecoration(
                             hintText: widget.searchHintText,
                             hintStyle: currentTextTheme.bodyMedium?.copyWith(
-                              color: currentColorScheme.onSurfaceVariant,
+                              // color: currentColorScheme.onSurfaceVariant,
                             ),
                             prefixIcon: Icon(
                               Icons.search,
@@ -193,23 +194,23 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                               borderSide: BorderSide(
-                                color: currentColorScheme.outline.withOpacity(
-                                  0.5,
-                                ),
+                                // color: currentColorScheme.outline.withOpacity(
+                                //   0.5,
+                                // ),
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                               borderSide: BorderSide(
-                                color: currentColorScheme.outline.withOpacity(
-                                  0.3,
-                                ),
+                                // color: currentColorScheme.outline.withOpacity(
+                                //   0.3,
+                                // ),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                               borderSide: BorderSide(
-                                color: currentColorScheme.primary,
+                                // color: currentColorScheme.primary,
                                 width: 2,
                               ),
                             ),
@@ -217,9 +218,9 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
                               horizontal: 16,
                               vertical: 12,
                             ),
-                            fillColor: currentColorScheme
-                                .surfaceContainerHighest
-                                .withOpacity(0.3),
+                            // fillColor: currentColorScheme
+                            //     .surfaceContainerHighest
+                            //     .withOpacity(0.3),
                             filled: true,
                           ),
                         ),
@@ -244,10 +245,10 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
                                     _closeDropdown();
                                   },
                                   child: Container(
-                                    color: isSelected
-                                        ? currentColorScheme.primary
-                                              .withOpacity(0.1)
-                                        : Colors.transparent,
+                                    // color: isSelected
+                                    //     ? currentColorScheme.primary
+                                    //           .withOpacity(0.1)
+                                    //     : Colors.transparent,
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 12,
                                       horizontal: 16,
@@ -277,7 +278,7 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
                               child: Text(
                                 'No items found',
                                 style: currentTextTheme.bodyMedium?.copyWith(
-                                  color: currentColorScheme.onSurfaceVariant,
+                                  // color: currentColorScheme.onSurfaceVariant,
                                 ),
                               ),
                             ),
@@ -317,19 +318,19 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
               BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: _isDropdownOpen
-                      ? colorScheme.primary
-                      : colorScheme.outline.withOpacity(0.4),
+                  // color: _isDropdownOpen
+                  //     ? colorScheme.primary
+                  //     : colorScheme.outline.withOpacity(0.4),
                 ),
                 color: colorScheme.surface,
-                boxShadow: [
-                  if (_isDropdownOpen)
-                    BoxShadow(
-                      color: colorScheme.primary.withOpacity(0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                ],
+                // boxShadow: [
+                //   if (_isDropdownOpen)
+                //     BoxShadow(
+                //       color: colorScheme.primary.withOpacity(0.1),
+                //       blurRadius: 8,
+                //       offset: const Offset(0, 2),
+                //     ),
+                // ],
               ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
