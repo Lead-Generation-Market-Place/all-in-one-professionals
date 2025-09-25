@@ -4,7 +4,7 @@ import 'package:yelpax_pro/core/constants/app_colors.dart';
 
 import '../../../../../shared/widgets/custom_appbar.dart';
 import '../../../jobs/presentation/widgets/finish_setup.dart';
-import '../../data/service_model.dart';
+import '../../data/model/service_model.dart';
 
 class ServiceScreen extends StatefulWidget {
   const ServiceScreen({super.key});
@@ -17,62 +17,46 @@ class _ServiceDashboardState extends State<ServiceScreen> {
   bool isSetupFinished = false;
   int? expandedServiceId;
 
-  late List<Service> services = [
-    Service(
-      id: 1,
-      name: "Basement Finishing or Remodeling",
-      active: true,
-      completed: false,
-      description:
-          "Transform your basement into a functional living space with our remodeling services.",
-      metrics: ServiceMetrics(spent: "\$0", leads: 0, views: 0),
-      setupProgress: SetupProgress(
-        questions: true,
-        pricing: false,
-        availability: false,
-        serviceArea: true,
-      ),
-    ),
-    Service(
-      id: 2,
-      name: "Kitchen Remodeling",
-      active: true,
-      completed: true,
-      description:
-          "Modern kitchen remodeling services to upgrade your cooking space.",
-      metrics: ServiceMetrics(spent: "\$120", leads: 3, views: 24),
-    ),
-  ];
+  // late List<Service> services = [
+  //   Service(
+  //     id: 1,
+  //     service_name: "Basement Finishing or Remodeling",
+  //     active: true,
+  //     completed: false,
+  //     description:
+  //         "Transform your basement into a functional living space with our remodeling services.",
+  //     // metrics: ServiceMetrics(spent: "\$0", leads: 0, views: 0),
+  //     // setupProgress: SetupProgress(
+  //     //   questions: true,
+  //     //   pricing: false,
+  //     //   availability: false,
+  //     //   serviceArea: true,
+  //     // ),
+  //   ),
+  //   Service(
+  //     id: 2,
+  //     service_name: "Kitchen Remodeling",
+  //     active: true,
+  //     completed: true,
+  //     description:
+  //         "Modern kitchen remodeling services to upgrade your cooking space.",
+  //     // metrics: ServiceMetrics(spent: "\$120", leads: 3, views: 24),
+  //   ),
+  // ];
 
-  void toggleService(int id) {
-    setState(() {
-      services = services.map((service) {
-        if (service.id == id) {
-          // return service.copyWith(active: !service.active);
-        }
-        return service;
-      }).toList();
-    });
-  }
 
-  void toggleExpand(int id) {
-    setState(() {
-      expandedServiceId = expandedServiceId == id ? null : id;
-    });
-  }
+  // double calculateCompletion(Service service) {
+  //   if (service.completed) return 100;
+  //   if (service.setupProgress == null) return 0;
 
-  double calculateCompletion(Service service) {
-    if (service.completed) return 100;
-    if (service.setupProgress == null) return 0;
-
-    final totalSteps = service.setupProgress!.toJson().length;
-    final completedSteps = service.setupProgress!
-        .toJson()
-        .values
-        .where((v) => v)
-        .length;
-    return (completedSteps / totalSteps) * 100;
-  }
+  //   final totalSteps = service.setupProgress!.toJson().length;
+  //   final completedSteps = service.setupProgress!
+  //       .toJson()
+  //       .values
+  //       .where((v) => v)
+  //       .length;
+  //   return (completedSteps / totalSteps) * 100;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -208,15 +192,15 @@ class _ServiceDashboardState extends State<ServiceScreen> {
                           const SizedBox(height: 16),
 
                           // Service list
-                          ...services.map(
-                            (service) => ServiceCard(
-                              service: service,
-                              isExpanded: expandedServiceId == service.id,
-                              completion: calculateCompletion(service),
-                              onToggle: () => toggleService(service.id),
-                              onExpand: () => toggleExpand(service.id),
-                            ),
-                          ),
+                          // ...services.map(
+                          //   (service) => ServiceCard(
+                          //     service: service,
+                          //     isExpanded: expandedServiceId == service.id,
+                          //     completion: calculateCompletion(service),
+                          //     onToggle: () => toggleService(service.id),
+                          //     onExpand: () => toggleExpand(service.id),
+                          //   ),
+                          // ),
 
                           const SizedBox(height: 16),
                           ElevatedButton.icon(
@@ -256,14 +240,14 @@ class _ServiceDashboardState extends State<ServiceScreen> {
 }
 
 class ServiceCard extends StatelessWidget {
-  final Service service;
+  // final Service service;
   final bool isExpanded;
   final double completion;
   final VoidCallback onToggle;
   final VoidCallback onExpand;
 
   const ServiceCard({
-    required this.service,
+    // required this.service,
     required this.isExpanded,
     required this.completion,
     required this.onToggle,
@@ -273,8 +257,8 @@ class ServiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasSetupProgress = service.setupProgress != null;
-    final bool isCompleted = service.completed;
+    // final bool hasSetupProgress = service.setupProgress != null;
+    // final bool isCompleted = service.completed;
 
     final scheme = Theme.of(context).colorScheme;
     return Container(
@@ -297,16 +281,16 @@ class ServiceCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Expanded(
-                        child: Text(
-                          service.name,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                      Switch(
-                        value: service.active,
-                        onChanged: (_) => onToggle(),
-                      ),
+                      // Expanded(
+                      // child: Text(
+                      //   service.service_name,
+                      //   style: Theme.of(context).textTheme.titleMedium,
+                      // ),
+                      // ),
+                      // Switch(
+                      //   value: service.active,
+                      //   onChanged: (_) => onToggle(),
+                      // ),
                       IconButton(
                         icon: Icon(
                           isExpanded ? Icons.expand_less : Icons.expand_more,
@@ -315,41 +299,41 @@ class ServiceCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  if (service.description.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Text(
-                        service.description,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ),
-                  if (hasSetupProgress && !isCompleted)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Setup progress: ${completion.toStringAsFixed(0)}%",
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                            Text(
-                              "${service.setupProgress!.toJson().values.where((v) => v).length}/"
-                              "${service.setupProgress!.toJson().length} steps",
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        LinearProgressIndicator(
-                          value: completion / 100,
-                          backgroundColor: scheme.surfaceContainerHighest,
-                          color: scheme.primary,
-                        ),
-                      ],
-                    ),
+                  // if (service.description.isNotEmpty)
+                  //   Padding(
+                  //     padding: const EdgeInsets.only(top: 4),
+                  //     child: Text(
+                  //       service.description,
+                  //       style: Theme.of(context).textTheme.bodySmall,
+                  //     ),
+                  // ),
+                  // if (hasSetupProgress && !isCompleted)
+                  //   Column(
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: [
+                  //       const SizedBox(height: 16),
+                  //       Row(
+                  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //         children: [
+                  //           Text(
+                  //             "Setup progress: ${completion.toStringAsFixed(0)}%",
+                  //             style: Theme.of(context).textTheme.bodySmall,
+                  //           ),
+                  //           Text(
+                  //             "${service.setupProgress!.toJson().values.where((v) => v).length}/"
+                  //             "${service.setupProgress!.toJson().length} steps",
+                  //             style: Theme.of(context).textTheme.bodySmall,
+                  //           ),
+                  //         ],
+                  //       ),
+                  //       const SizedBox(height: 8),
+                  //       LinearProgressIndicator(
+                  //         value: completion / 100,
+                  //         backgroundColor: scheme.surfaceContainerHighest,
+                  //         color: scheme.primary,
+                  //       ),
+                  //     ],
+                  //   ),
                 ],
               ),
             ),
@@ -362,58 +346,58 @@ class ServiceCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Setup incomplete section
-                    if (hasSetupProgress && !isCompleted)
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: scheme.error.withOpacity(0.08),
-                          border: Border(
-                            left: BorderSide(color: scheme.error, width: 4),
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(Icons.warning, color: scheme.error),
-                                const SizedBox(width: 8),
-                                Text(
-                                  "Setup incomplete",
-                                  style: Theme.of(context).textTheme.titleSmall
-                                      ?.copyWith(color: scheme.error),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              "Complete your service setup to start receiving leads.",
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            const SizedBox(height: 16),
-                            ...service.setupProgress!.toJson().entries.map(
-                              (e) => ListTile(
-                                leading: Icon(
-                                  e.value ? Icons.check : Icons.close,
-                                  color: e.value
-                                      ? scheme.tertiary
-                                      : scheme.error,
-                                ),
-                                title: Text(e.key),
-                                trailing: TextButton(
-                                  onPressed: () {},
-                                  child: const Text("Set up"),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            ElevatedButton(
-                              onPressed: () {},
-                              child: const Text("Complete Setup"),
-                            ),
-                          ],
-                        ),
-                      ),
+                    // if (hasSetupProgress && !isCompleted)
+                    //   Container(
+                    //     padding: const EdgeInsets.all(16),
+                    //     decoration: BoxDecoration(
+                    //       color: scheme.error.withOpacity(0.08),
+                    //       border: Border(
+                    //         left: BorderSide(color: scheme.error, width: 4),
+                    //       ),
+                    //     ),
+                    //     child: Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         Row(
+                    //           children: [
+                    //             Icon(Icons.warning, color: scheme.error),
+                    //             const SizedBox(width: 8),
+                    //             Text(
+                    //               "Setup incomplete",
+                    //               style: Theme.of(context).textTheme.titleSmall
+                    //                   ?.copyWith(color: scheme.error),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //         const SizedBox(height: 8),
+                    //         Text(
+                    //           "Complete your service setup to start receiving leads.",
+                    //           style: Theme.of(context).textTheme.bodyMedium,
+                    //         ),
+                    //         const SizedBox(height: 16),
+                    // ...service.setupProgress!.toJson().entries.map(
+                    //   (e) => ListTile(
+                    //     leading: Icon(
+                    //       e.value ? Icons.check : Icons.close,
+                    //       color: e.value
+                    //           ? scheme.tertiary
+                    //           : scheme.error,
+                    //     ),
+                    //     title: Text(e.key),
+                    //     trailing: TextButton(
+                    //       onPressed: () {},
+                    //       child: const Text("Set up"),
+                    //     ),
+                    //   ),
+                    // ),
+                    //       const SizedBox(height: 8),
+                    //       ElevatedButton(
+                    //         onPressed: () {},
+                    //         child: const Text("Complete Setup"),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
 
                     // Metrics section
                     const SizedBox(height: 16),
@@ -424,24 +408,24 @@ class ServiceCard extends StatelessWidget {
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        MetricCard(
-                          icon: Icons.attach_money,
-                          title: "Spent",
-                          value: service.metrics.spent,
-                          color: scheme.primary,
-                        ),
-                        MetricCard(
-                          icon: Icons.abc_outlined,
-                          title: "Leads",
-                          value: service.metrics.leads.toString(),
-                          color: scheme.tertiary,
-                        ),
-                        MetricCard(
-                          icon: Icons.remove_red_eye,
-                          title: "Views",
-                          value: service.metrics.views.toString(),
-                          color: scheme.secondary,
-                        ),
+                        // MetricCard(
+                        //   icon: Icons.attach_money,
+                        //   title: "Spent",
+                        //   value: service.metrics!.spent,
+                        //   color: scheme.primary,
+                        // ),
+                        // MetricCard(
+                        //   icon: Icons.abc_outlined,
+                        //   title: "Leads",
+                        //   value: service.metrics!.leads.toString(),
+                        //   color: scheme.tertiary,
+                        // ),
+                        // MetricCard(
+                        //   icon: Icons.remove_red_eye,
+                        //   title: "Views",
+                        //   value: service.metrics!.views.toString(),
+                        //   color: scheme.secondary,
+                        // ),
                       ],
                     ),
 

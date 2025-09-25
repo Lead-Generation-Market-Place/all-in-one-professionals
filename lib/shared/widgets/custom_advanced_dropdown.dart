@@ -13,7 +13,7 @@ class AdvancedDropdown<T> extends StatefulWidget {
   final BoxDecoration? decoration;
   final String hintText;
   final TextStyle? textStyle;
-
+final Widget? suffix;
   const AdvancedDropdown({
     Key? key,
     required this.items,
@@ -26,6 +26,7 @@ class AdvancedDropdown<T> extends StatefulWidget {
     this.decoration,
     this.hintText = 'Select an item',
     this.textStyle,
+    this.suffix,  
   }) : super(key: key);
 
   @override
@@ -351,11 +352,20 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Icon(
-                _isDropdownOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                color: colorScheme.onSurfaceVariant,
-                size: 24,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (widget.suffix != null) widget.suffix!,
+                  Icon(
+                    _isDropdownOpen
+                        ? Icons.arrow_drop_up
+                        : Icons.arrow_drop_down,
+                    color: colorScheme.onSurfaceVariant,
+                    size: 24,
+                  ),
+                ],
               ),
+
             ],
           ),
         ),
