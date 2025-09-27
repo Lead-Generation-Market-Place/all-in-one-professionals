@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:logger/web.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entitiies/question_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/controllers/service_controller.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
-
-import '../../data/service_questions.dart';
-import '../controllers/m_professional_signup_controller.dart';
 
 class ServiceQuestionForm extends StatefulWidget {
   const ServiceQuestionForm({super.key});
@@ -15,10 +15,22 @@ class ServiceQuestionForm extends StatefulWidget {
 
 class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
   @override
-  Widget build(BuildContext context) {
-    final controller = Provider.of<ProfessionalSignUpProvider>(context);
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final controller = context.read<ServiceController>();
+      if (controller.selectedService != null) {
+      Logger().d('Selected service: ${controller.selectedService}');
+        controller.fetchQuestionsForSelectedService();
+      }
+    });
+  }
 
-    if (controller.isLoading) {
+  @override
+  Widget build(BuildContext context) {
+final controller = context.read<ServiceController>();
+
+    if (controller.isQuestionsLoading && controller.questions.isEmpty) {
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Center(
@@ -66,21 +78,26 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
-          "Service Questions",
-          style: TextStyle(fontWeight: FontWeight.w600),
+        title: Text(
+          controller.selectedService?.serviceName ?? "Service Questions",
+          style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
         elevation: 0,
-
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: SafeArea(
         child: Column(
           children: [
+
+            Text('${controller.selectedService?.serviceName} Questions',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(fontWeight: FontWeight.bold)),
             /// --- Enhanced Progress Bar ---
             Container(
               margin: const EdgeInsets.all(20),
@@ -119,12 +136,12 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
                   const SizedBox(height: 12),
                   LinearProgressIndicator(
                     value: controller.questions.isNotEmpty
-                        ? controller.answers.length /
+                        ? controller.completedAnswersCount /
                               controller.questions.length
                         : 0.0,
                     backgroundColor: Theme.of(
                       context,
-                    ).colorScheme.surfaceVariant,
+                    ).colorScheme.surfaceContainerHighest,
                     valueColor: AlwaysStoppedAnimation<Color>(
                       Theme.of(context).colorScheme.primary,
                     ),
@@ -133,7 +150,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '${controller.answers.length} of ${controller.questions.length} completed',
+                    '${controller.completedAnswersCount} of ${controller.questions.length} completed',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Theme.of(
                         context,
@@ -151,52 +168,54 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Theme.of(
+                    if (controller.questions.isNotEmpty) ...[
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Theme.of(
+                                context,
+                              ).colorScheme.primary.withOpacity(0.1),
+                              Theme.of(
+                                context,
+                              ).colorScheme.secondary.withOpacity(0.05),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Theme.of(
                               context,
-                            ).colorScheme.primary.withOpacity(0.1),
-                            Theme.of(
-                              context,
-                            ).colorScheme.secondary.withOpacity(0.05),
+                            ).colorScheme.primary.withOpacity(0.2),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.quiz_outlined,
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                "Please answer the following questions about your service",
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
+                                    ),
+                              ),
+                            ),
                           ],
                         ),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.primary.withOpacity(0.2),
-                        ),
                       ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.quiz_outlined,
-                            color: Theme.of(context).colorScheme.primary,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              "Please review and confirm your selections",
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurface,
-                                  ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
+                      const SizedBox(height: 24),
+                    ],
 
                     if (controller.questions.isEmpty)
                       Container(
@@ -212,13 +231,24 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              "No questions available",
+                              "No questions available for this service",
                               style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(
                                     color: Theme.of(
                                       context,
                                     ).colorScheme.onSurface.withOpacity(0.7),
                                   ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              "Please select a different service or check back later",
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface.withOpacity(0.5),
+                                  ),
+                              textAlign: TextAlign.center,
                             ),
                           ],
                         ),
@@ -245,83 +275,87 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
             ),
 
             /// --- Enhanced Bottom Sticky Buttons ---
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 15,
-                    offset: const Offset(0, -4),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+            if (controller.questions.isNotEmpty)
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 15,
+                      offset: const Offset(0, -4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          side: BorderSide(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.outline.withOpacity(0.5),
+                          ),
                         ),
-                        side: BorderSide(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.outline.withOpacity(0.5),
-                        ),
-                      ),
-                      child: Text(
-                        "Back",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          fontWeight: FontWeight.w500,
+                        child: Text(
+                          "Back",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: CustomButton(
-                      text: controller.isSubmitting ? 'Submitting...' : 'Next',
-                      onPressed: controller.isSubmitting
-                          ? null
-                          : () async {
-                              final success = await controller.submitAnswers();
-                              if (success && mounted) {
-                                Navigator.pushNamed(
-                                  context,
-                                  AppRouter.location,
-                                );
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.check_circle,
-                                          color: Colors.white,
-                                          size: 20,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        const Text('Submitted successfully'),
-                                      ],
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: CustomButton(
+                        text: controller.isSubmitting
+                            ? 'Submitting...'
+                            : 'Next',
+                        onPressed: controller.isSubmitting
+                            ? null
+                            : () async {
+                                final success = await controller
+                                    .submitAnswers();
+                                if (success && mounted) {
+                                  Navigator.pushNamed(
+                                    context,
+                                    AppRouter.location,
+                                  );
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Row(
+                                        children: const [
+                                          Icon(
+                                            Icons.check_circle,
+                                            color: Colors.white,
+                                            size: 20,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text('Submitted successfully'),
+                                        ],
+                                      ),
+                                      behavior: SnackBarBehavior.floating,
+                                      backgroundColor: Colors.green,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
                                     ),
-                                    behavior: SnackBarBehavior.floating,
-                                    backgroundColor: Colors.green,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
+                                  );
+                                }
+                              },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),
@@ -330,12 +364,10 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
 
   /// --- Enhanced Question Card ---
   Widget _buildQuestionCard(
-    ProfessionalSignUpProvider controller,
-    ServiceQuestion question,
+    ServiceController controller,
+    QuestionEntity question,
     int index,
   ) {
-    final formId = question.formId.toString();
-
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -384,7 +416,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Question ${index + 1}',
+                      'Question ${index + 1}${question.required ? ' *' : ''}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -403,15 +435,25 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    question.question,
+                    question.questionName,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.onSurface,
                       height: 1.4,
                     ),
                   ),
+                  if (question.required) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      'Required',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.red,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 20),
-                  _buildQuestionInput(controller, question, formId),
+                  _buildQuestionInput(controller, question),
                 ],
               ),
             ),
@@ -423,11 +465,10 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
 
   /// --- Enhanced Input Types ---
   Widget _buildQuestionInput(
-    ProfessionalSignUpProvider controller,
-    ServiceQuestion question,
-    String formId,
+    ServiceController controller,
+    QuestionEntity question,
   ) {
-    final currentAnswer = controller.answers[formId];
+    final currentAnswer = controller.answers[question.id];
 
     switch (question.formType) {
       case 'checkbox':
@@ -435,7 +476,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
           decoration: BoxDecoration(
             color: Theme.of(
               context,
-            ).colorScheme.surfaceVariant.withOpacity(0.3),
+            ).colorScheme.surfaceContainerHighest.withOpacity(0.3),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -461,7 +502,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
                       } else {
                         newValue.add(option);
                       }
-                      controller.updateAnswer(formId, newValue);
+                      controller.updateAnswer(question.id, newValue);
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -488,7 +529,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
                               ),
                             ),
                             child: isSelected
-                                ? Icon(
+                                ? const Icon(
                                     Icons.check,
                                     size: 14,
                                     color: Colors.white,
@@ -525,7 +566,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
           decoration: BoxDecoration(
             color: Theme.of(
               context,
-            ).colorScheme.surfaceVariant.withOpacity(0.3),
+            ).colorScheme.surfaceContainerHighest.withOpacity(0.3),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -544,7 +585,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(12),
                     onTap: () {
-                      controller.updateAnswer(formId, option);
+                      controller.updateAnswer(question.id, option);
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -613,19 +654,19 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
           decoration: BoxDecoration(
             color: Theme.of(
               context,
-            ).colorScheme.surfaceVariant.withOpacity(0.3),
+            ).colorScheme.surfaceContainerHighest.withOpacity(0.3),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
             ),
           ),
           child: DropdownButtonFormField<String>(
-            value: currentAnswer as String?,
+            initialValue: currentAnswer as String?,
             items: question.options.map((option) {
               return DropdownMenuItem(value: option, child: Text(option));
             }).toList(),
             onChanged: (value) {
-              controller.updateAnswer(formId, value);
+              controller.updateAnswer(question.id, value);
             },
             decoration: const InputDecoration(
               border: InputBorder.none,
@@ -643,12 +684,12 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
           ),
         );
 
-      default:
+      default: // text input
         return Container(
           decoration: BoxDecoration(
             color: Theme.of(
               context,
-            ).colorScheme.surfaceVariant.withOpacity(0.3),
+            ).colorScheme.surfaceContainerHighest.withOpacity(0.3),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
@@ -657,15 +698,22 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
           child: TextFormField(
             initialValue: currentAnswer as String?,
             onChanged: (value) {
-              controller.updateAnswer(formId, value);
+              controller.updateAnswer(question.id, value);
             },
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               border: InputBorder.none,
               hintText: "Enter your answer...",
-              contentPadding: EdgeInsets.symmetric(
+              contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 16,
               ),
+              suffixIcon: question.required
+                  ? Icon(
+                      Icons.flag,
+                      color: Colors.red.withOpacity(0.7),
+                      size: 16,
+                    )
+                  : null,
             ),
             maxLines: 3,
             style: Theme.of(context).textTheme.bodyMedium,

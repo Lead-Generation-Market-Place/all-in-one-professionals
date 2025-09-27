@@ -16,6 +16,7 @@ class ServiceRemoteDataSourceImpl implements ServiceDataSource {
   Future<List<ServiceEntity>> fetchServices() async{
   try {
       final response = await apiService.get('/services');
+      
       if (response.statusCode == 200) {
         Logger().d(response.data);
         return (response.data['data'] as List)

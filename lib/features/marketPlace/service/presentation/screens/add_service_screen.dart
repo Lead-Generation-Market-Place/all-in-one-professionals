@@ -8,22 +8,24 @@ import 'package:yelpax_pro/features/marketPlace/service/service_d_i.dart';
 import 'package:yelpax_pro/shared/widgets/custom_advanced_dropdown.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 
-
-
-class AddServiceScreen extends StatelessWidget {
+class AddServiceScreen extends StatefulWidget {
   const AddServiceScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    // Provide the ServiceController using ChangeNotifierProvider and factory function
-    return ChangeNotifierProvider<ServiceController>(
-      create: (_) => createServiceController()..fetchInitialData(),
-      child: const _AddServiceScreenBody(),
-    );
-  }
+  State<AddServiceScreen> createState() => _AddServiceScreenState();
 }
-class _AddServiceScreenBody extends StatelessWidget {
-  const _AddServiceScreenBody({Key? key}) : super(key: key);
+
+class _AddServiceScreenState extends State<AddServiceScreen> {
+  _AddServiceScreenState();
+
+  @override
+  void initState() {
+    Future.microtask(() async {
+      final controller = context.read<ServiceController>();
+      await controller.fetchInitialData();
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,10 +112,9 @@ class _AddServiceScreenBody extends StatelessWidget {
               duration: const Duration(milliseconds: 300),
               opacity: controller.selectedService != null ? 1.0 : 0.5,
               child: CustomButton(
-                text: 'Save Service',
+                text: 'Next',
                 onPressed: controller.selectedService != null
                     ? () {
-                        
                         Navigator.pushNamed(
                           context,
                           AppRouter.businessAvailability,

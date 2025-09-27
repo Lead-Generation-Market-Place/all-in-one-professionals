@@ -1,4 +1,5 @@
 import 'package:yelpax_pro/features/marketPlace/service/data/datasource/category_data_source.dart';
+import 'package:yelpax_pro/features/marketPlace/service/data/datasource/question_data_source.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/datasource/service_data_source.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/datasource/subcategory_data_source.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/repositoryImpl/category_repository_impl.dart';
@@ -32,10 +33,11 @@ ServiceController createServiceController() {
   final servicesDataSource = ServiceRemoteDataSourceImpl(apiService);
   final servicesRepository = ServicesRepositoryImpl(servicesDataSource);
   final serviceUsecase = ServicesUsecase(servicesRepository);
-
+  final questionDataSource = QuestionDataSourceImpl(apiService: apiService);
   return ServiceController(
     subCategoryUsecase: subCategoryUsecase,
     categoryUsecase: categoryUsecase,
     serviceUsecase: serviceUsecase,
+    questionDataSource: questionDataSource,
   );
 }

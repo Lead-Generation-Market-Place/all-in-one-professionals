@@ -24,7 +24,7 @@ import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentati
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/location.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/m_services_categories.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/rating.dart';
-import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/service_question_form.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_question_form.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/signup_process_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/marketing/presentation/screens/marketing_dashboard.dart';
 import 'package:yelpax_pro/features/marketPlace/marketing/presentation/screens/subscription_plan.dart';

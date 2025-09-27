@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
+import 'package:yelpax_pro/config/routes/router.dart';
+import 'package:yelpax_pro/features/marketPlace/service/data/model/business_availability_model.dart';
+import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 
 class BusinessAvailability extends StatefulWidget {
   const BusinessAvailability({super.key});
@@ -8,52 +12,69 @@ class BusinessAvailability extends StatefulWidget {
 }
 
 class _BusinessAvailabilityState extends State<BusinessAvailability> {
-  bool _isAvailable = true;
+  bool _availableAnytime = false;
   final List<Map<String, dynamic>> _workingHours = [
     {
       'day': 'Monday',
       'open': true,
-      'start': TimeOfDay(hour: 9, minute: 0),
-      'end': TimeOfDay(hour: 17, minute: 0),
+      'start': TimeOfDay(hour: 8, minute: 0),
+      'end': TimeOfDay(hour: 16, minute: 0), // Fixed: 4 PM should be 16:00
     },
     {
       'day': 'Tuesday',
       'open': true,
-      'start': TimeOfDay(hour: 9, minute: 0),
-      'end': TimeOfDay(hour: 17, minute: 0),
+      'start': TimeOfDay(hour: 8, minute: 0),
+      'end': TimeOfDay(hour: 16, minute: 0),
     },
     {
       'day': 'Wednesday',
       'open': true,
-      'start': TimeOfDay(hour: 9, minute: 0),
-      'end': TimeOfDay(hour: 17, minute: 0),
+      'start': TimeOfDay(hour: 8, minute: 0),
+      'end': TimeOfDay(hour: 16, minute: 0),
     },
     {
       'day': 'Thursday',
       'open': true,
-      'start': TimeOfDay(hour: 9, minute: 0),
-      'end': TimeOfDay(hour: 17, minute: 0),
+      'start': TimeOfDay(hour: 8, minute: 0),
+      'end': TimeOfDay(hour: 16, minute: 0),
     },
     {
       'day': 'Friday',
       'open': true,
-      'start': TimeOfDay(hour: 9, minute: 0),
-      'end': TimeOfDay(hour: 17, minute: 0),
+      'start': TimeOfDay(hour: 8, minute: 0),
+      'end': TimeOfDay(hour: 16, minute: 0),
     },
     {
       'day': 'Saturday',
       'open': false,
-      'start': TimeOfDay(hour: 9, minute: 0),
-      'end': TimeOfDay(hour: 17, minute: 0),
+      'start': TimeOfDay(hour: 8, minute: 0),
+      'end': TimeOfDay(hour: 16, minute: 0),
     },
     {
       'day': 'Sunday',
       'open': false,
-      'start': TimeOfDay(hour: 9, minute: 0),
-      'end': TimeOfDay(hour: 17, minute: 0),
+      'start': TimeOfDay(hour: 8, minute: 0),
+      'end': TimeOfDay(hour: 16, minute: 0),
     },
   ];
 
+  int _getDayNumber(String dayName) {
+    final days = {
+      'sunday': 0,
+      'monday': 1,
+      'tuesday': 2,
+      'wednesday': 3,
+      'thursday': 4,
+      'friday': 5,
+      'saturday': 6,
+    };
+    return days[dayName.toLowerCase()] ?? 0;
+  }
+
+  DateTime _createDateTime(TimeOfDay time) {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day, time.hour, time.minute);
+  }
   Future<void> _selectTime(
     BuildContext context,
     bool isStart,
@@ -73,7 +94,9 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
               surface: Theme.of(context).colorScheme.surface,
               onSurface: Theme.of(context).colorScheme.onSurface,
             ),
-            dialogBackgroundColor: Theme.of(context).colorScheme.surface,
+            dialogTheme: DialogThemeData(
+              backgroundColor: Theme.of(context).colorScheme.surface,
+            ),
           ),
           child: MediaQuery(
             data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
@@ -91,77 +114,17 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
           _workingHours[index]['end'] = picked;
         }
       });
-
-      // Show apply to all dialog
-      _showApplyToAllDialog(context, isStart, picked, index);
     }
   }
 
-  void _showApplyToAllDialog(
-    BuildContext context,
-    bool isStart,
-    TimeOfDay time,
-    int index,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(
-            'Apply to all days?',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          content: Text(
-            'Do you want to apply this ${isStart ? 'start' : 'end'} time to all days?',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                _applyTimeToAll(isStart, time);
-                Navigator.pop(context);
-              },
-              child: Text('Apply to All'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _applyTimeToAll(bool isStart, TimeOfDay time) {
-    setState(() {
-      for (int i = 0; i < _workingHours.length; i++) {
-        if (_workingHours[i]['open']) {
-          if (isStart) {
-            _workingHours[i]['start'] = time;
-          } else {
-            _workingHours[i]['end'] = time;
-          }
-        }
-      }
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Time applied to all days'),
-        duration: Duration(seconds: 2),
-      ),
-    );
-  }
-
-  void _applyAllSettings() {
+  void _applyDaySettingsToAll(int index) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text('Apply to all days?'),
           content: Text(
-            'This will apply the first day\'s settings to all other days.',
+            'This will apply ${_workingHours[index]['day']}\'s settings to all other days.',
           ),
           actions: [
             TextButton(
@@ -171,7 +134,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                _applyAllDaysSettings();
+                _applyAllDaysSettings(index);
               },
               child: Text('Apply to All'),
             ),
@@ -181,13 +144,15 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
     );
   }
 
-  void _applyAllDaysSettings() {
+  void _applyAllDaysSettings(int index) {
     setState(() {
-      final referenceDay = _workingHours[0];
-      for (int i = 1; i < _workingHours.length; i++) {
-        _workingHours[i]['open'] = referenceDay['open'];
-        _workingHours[i]['start'] = referenceDay['start'];
-        _workingHours[i]['end'] = referenceDay['end'];
+      final referenceDay = _workingHours[index];
+      for (int i = 0; i < _workingHours.length; i++) {
+        if (i != index) {
+          _workingHours[i]['open'] = referenceDay['open'];
+          _workingHours[i]['start'] = referenceDay['start'];
+          _workingHours[i]['end'] = referenceDay['end'];
+        }
       }
     });
 
@@ -197,6 +162,67 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
         duration: Duration(seconds: 2),
       ),
     );
+  }
+
+  // Method to prepare data for backend
+  BusinessAvailabilityModel _prepareDataForBackend() {
+    if (_availableAnytime) {
+      // If available anytime, business_hours should be null
+      return BusinessAvailabilityModel(
+        availableAnytime: true,
+        businessHours: null,
+      );
+    } else {
+      // If specific working hours, create business_hours array
+      List<BusinessHoursModel> businessHours = [];
+
+      for (var day in _workingHours) {
+        final dayNumber = _getDayNumber(day['day']);
+        final isOpen = day['open'];
+
+        businessHours.add(
+          BusinessHoursModel(
+            status: isOpen ? 'open' : 'close',
+            startTime: isOpen ? _createDateTime(day['start']) : null,
+            endTime: isOpen ? _createDateTime(day['end']) : null,
+            day: dayNumber,
+          ),
+        );
+      }
+
+      return BusinessAvailabilityModel(
+        availableAnytime: false,
+        businessHours: businessHours,
+      );
+    }
+  }
+
+  
+
+  // Method to handle next button press
+  void _handleNextButtonPress() {
+    // Prepare the data for backend
+    final availabilityData = _prepareDataForBackend();
+
+    final jsonData = availabilityData.toJson();
+
+    // Print the data to console (for testing)
+    print('Business Availability Data to send to backend:');
+
+    // TODO: Send data to your backend API here
+    // Example:
+    // await _sendDataToBackend(availabilityData);
+
+    // Show success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Availability data prepared successfully!'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+
+    // Navigate to next screen
+    Navigator.pushNamed(context, AppRouter.professionalServiceQuestionForm);
   }
 
   @override
@@ -214,14 +240,6 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         foregroundColor: scheme.onSurface,
-        // actions: [
-        //   if (!isVerySmallScreen)
-        //     IconButton(
-        //       icon: Icon(Icons.copy),
-        //       onPressed: _applyAllSettings,
-        //       tooltip: 'Apply to all days',
-        //     ),
-        // ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(
@@ -237,7 +255,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header with Availability Toggle
+              SizedBox(height: isSmallScreen ? 20 : 24),
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
@@ -258,7 +276,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                 child: Row(
                   children: [
                     Icon(
-                      Icons.business_center,
+                      Icons.access_time,
                       color: scheme.primary,
                       size: isSmallScreen ? 24 : 28,
                     ),
@@ -268,7 +286,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Business Status',
+                            'Available Anytime',
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w600,
                               fontSize: isSmallScreen ? 16 : 18,
@@ -276,9 +294,9 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            _isAvailable
-                                ? 'Currently accepting new jobs'
-                                : 'Not accepting new jobs',
+                            _availableAnytime
+                                ? 'Open 24/7 for all days'
+                                : 'Set specific working hours',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: scheme.onSurfaceVariant,
                               fontSize: isSmallScreen ? 14 : 16,
@@ -288,10 +306,10 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                       ),
                     ),
                     Switch.adaptive(
-                      value: _isAvailable,
+                      value: _availableAnytime,
                       onChanged: (value) {
                         setState(() {
-                          _isAvailable = value;
+                          _availableAnytime = value;
                         });
                       },
                       activeColor: scheme.primary,
@@ -300,157 +318,110 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                 ),
               ),
 
-              SizedBox(height: isSmallScreen ? 20 : 24),
+              // Only show working hours if Available Anytime is OFF
+              if (!_availableAnytime) ...[
+                SizedBox(height: isSmallScreen ? 20 : 24),
 
-              // Working Hours Header
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Working Hours',
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            fontSize: isSmallScreen ? 20 : 24,
+                // Working Hours Header
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Working Hours',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              fontSize: isSmallScreen ? 20 : 24,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'Set your weekly availability schedule',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                            fontSize: isSmallScreen ? 14 : 16,
+                          SizedBox(height: 4),
+                          Text(
+                            'Set your weekly availability schedule',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: scheme.onSurfaceVariant,
+                              fontSize: isSmallScreen ? 14 : 16,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (!isSmallScreen) SizedBox(width: 16),
-                  if (!isSmallScreen)
-                    OutlinedButton.icon(
-                      onPressed: _applyAllSettings,
-                      icon: Icon(Icons.copy, size: 18),
-                      label: Text('Apply to All'),
-                      style: OutlinedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: isSmallScreen ? 12 : 16,
-                          vertical: isSmallScreen ? 10 : 12,
-                        ),
+                        ],
                       ),
-                    ),
-                ],
-              ),
-
-              if (isSmallScreen) SizedBox(height: 12),
-              if (isSmallScreen)
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: _applyAllSettings,
-                    icon: Icon(Icons.copy, size: 18),
-                    label: Text('Apply to All Days'),
-                    style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                    ),
-                  ),
-                ),
-
-              SizedBox(height: isSmallScreen ? 16 : 20),
-
-              // Days List - Fully Responsive
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: scheme.surface,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: scheme.outlineVariant.withOpacity(0.3),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: scheme.shadow.withOpacity(0.05),
-                      blurRadius: 4,
-                      offset: Offset(0, 1),
                     ),
                   ],
                 ),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final isVeryNarrow = constraints.maxWidth < 350;
 
-                    return ListView.separated(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: _workingHours.length,
-                      separatorBuilder: (context, index) => Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: scheme.outlineVariant.withOpacity(0.2),
-                        indent: isSmallScreen ? 16 : 20,
-                        endIndent: isSmallScreen ? 16 : 20,
+                SizedBox(height: isSmallScreen ? 16 : 20),
+
+                // Days List - Fully Responsive
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: scheme.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: scheme.outlineVariant.withOpacity(0.3),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: scheme.shadow.withOpacity(0.05),
+                        blurRadius: 4,
+                        offset: Offset(0, 1),
                       ),
-                      itemBuilder: (context, index) {
-                        final day = _workingHours[index];
-                        final isWeekend = index >= 5;
+                    ],
+                  ),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isVeryNarrow = constraints.maxWidth < 350;
 
-                        return Container(
-                          color: day['open']
-                              ? (isWeekend
-                                    ? scheme.primary.withOpacity(0.05)
-                                    : Colors.transparent)
-                              : scheme.surfaceVariant.withOpacity(0.2),
-                          child: Padding(
-                            padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
-                            child: _buildResponsiveDayRow(
-                              day,
-                              index,
-                              isWeekend,
-                              isVeryNarrow,
+                      return ListView.separated(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: _workingHours.length,
+                        separatorBuilder: (context, index) => Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: scheme.outlineVariant.withOpacity(0.2),
+                          indent: isSmallScreen ? 16 : 20,
+                          endIndent: isSmallScreen ? 16 : 20,
+                        ),
+                        itemBuilder: (context, index) {
+                          final day = _workingHours[index];
+                          final isWeekend = index >= 5;
+
+                          return Container(
+                            color: day['open']
+                                ? (isWeekend
+                                      ? scheme.primary.withOpacity(0.05)
+                                      : Colors.transparent)
+                                : scheme.surfaceContainerHighest.withOpacity(
+                                    0.2,
+                                  ),
+                            child: Padding(
+                              padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+                              child: _buildResponsiveDayRow(
+                                day,
+                                index,
+                                isWeekend,
+                                isVeryNarrow,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  },
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
-              ),
+              ],
 
               SizedBox(height: isSmallScreen ? 24 : 32),
 
-              // Save Button
+              // Next Button
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Availability saved successfully'),
-                        duration: Duration(seconds: 2),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: scheme.primary,
-                    foregroundColor: scheme.onPrimary,
-                    padding: EdgeInsets.symmetric(
-                      vertical: isSmallScreen ? 16 : 18,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    'Save Changes',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      fontSize: isSmallScreen ? 16 : 18,
-                    ),
-                  ),
+                child: CustomButton(
+                  text: 'Next',
+                  onPressed: _handleNextButtonPress,
                 ),
               ),
             ],
@@ -528,6 +499,9 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                       onPressed: () => _selectTime(context, false, index),
                       isSmall: false,
                     ),
+                    SizedBox(width: 12),
+                    // Apply to All button for this day
+                    _buildApplyToAllButton(index),
                     Spacer(),
                   ],
                 )
@@ -539,7 +513,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: scheme.surfaceVariant.withOpacity(0.3),
+                        color: scheme.surfaceContainerHighest.withOpacity(0.3),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -550,6 +524,9 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                         ),
                       ),
                     ),
+                    SizedBox(width: 12),
+                    // Apply to All button for this day (even when closed)
+                    _buildApplyToAllButton(index),
                     Spacer(),
                   ],
                 ),
@@ -608,45 +585,59 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
 
         // Time Pickers or Closed
         day['open']
-            ? Row(
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _GoogleTimeButton(
-                    time: day['start'],
-                    onPressed: () => _selectTime(context, true, index),
-                    isSmall: true,
+                  Row(
+                    children: [
+                      _GoogleTimeButton(
+                        time: day['start'],
+                        onPressed: () => _selectTime(context, true, index),
+                        isSmall: true,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Text(
+                          '–',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                      _GoogleTimeButton(
+                        time: day['end'],
+                        onPressed: () => _selectTime(context, false, index),
+                        isSmall: true,
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                  SizedBox(height: 8),
+                  _buildApplyToAllButton(index),
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: scheme.surfaceContainerHighest.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     child: Text(
-                      '–',
-                      style: theme.textTheme.bodyMedium?.copyWith(
+                      'Closed',
+                      style: theme.textTheme.bodySmall?.copyWith(
                         color: scheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
-                  _GoogleTimeButton(
-                    time: day['end'],
-                    onPressed: () => _selectTime(context, false, index),
-                    isSmall: true,
-                  ),
+                  SizedBox(height: 8),
+                  _buildApplyToAllButton(index),
                 ],
-              )
-            : Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: scheme.surfaceVariant.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Text(
-                  'Closed',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
               ),
       ],
     );
@@ -704,34 +695,77 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                     onPressed: () => _selectTime(context, false, index),
                     isSmall: true,
                   ),
+                  SizedBox(height: 8),
+                  _buildApplyToAllButton(index),
                 ],
               )
-            : Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: scheme.surfaceVariant.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Text(
-                  'Closed',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: scheme.surfaceContainerHighest.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      'Closed',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
-                ),
+                  SizedBox(height: 8),
+                  _buildApplyToAllButton(index),
+                ],
               ),
       ],
     );
   }
 
-  String _formatTimeOfDay(TimeOfDay tod) {
-    final hour = tod.hourOfPeriod == 0 ? 12 : tod.hourOfPeriod;
-    final minute = tod.minute.toString().padLeft(2, '0');
-    final period = tod.period == DayPeriod.am ? 'AM' : 'PM';
-    return '$hour:$minute $period';
+  Widget _buildApplyToAllButton(int index) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final size = MediaQuery.of(context).size;
+    final isSmallScreen = size.width < 600;
+
+    return GestureDetector(
+      onTap: () => _applyDaySettingsToAll(index),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: isSmallScreen ? 8 : 10,
+          vertical: isSmallScreen ? 4 : 6,
+        ),
+        decoration: BoxDecoration(
+          color: scheme.primary.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: scheme.primary.withOpacity(0.3), width: 1),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.copy,
+              size: isSmallScreen ? 12 : 14,
+              color: scheme.primary,
+            ),
+            SizedBox(width: isSmallScreen ? 4 : 6),
+            Text(
+              'Apply to All',
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w500,
+                color: scheme.primary,
+                fontSize: isSmallScreen ? 11 : 12,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -766,7 +800,7 @@ class _GoogleTimeButton extends StatelessWidget {
           vertical: isSmall ? 6 : 8,
         ),
         decoration: BoxDecoration(
-          color: scheme.surfaceVariant.withOpacity(0.2),
+          color: scheme.surfaceContainerHighest.withOpacity(0.2),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: scheme.outlineVariant.withOpacity(0.4),
