@@ -4,7 +4,7 @@ import 'package:yelpax_pro/core/constants/app_colors.dart';
 
 import '../../../../../shared/widgets/custom_appbar.dart';
 import '../../../jobs/presentation/widgets/finish_setup.dart';
-import '../../data/model/service_model.dart';
+
 
 class ServiceScreen extends StatefulWidget {
   const ServiceScreen({super.key});

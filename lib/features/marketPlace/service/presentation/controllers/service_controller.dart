@@ -1,125 +1,164 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
-import 'package:yelpax_pro/features/marketPlace/service/data/datasource/question_data_source.dart';
-import 'package:yelpax_pro/features/marketPlace/service/data/model/category_model.dart';
-import 'package:yelpax_pro/features/marketPlace/service/data/model/service_model.dart';
-import 'package:yelpax_pro/features/marketPlace/service/data/model/subCategory.dart';
-import 'package:yelpax_pro/features/marketPlace/service/domain/entitiies/question_entity.dart';
-import 'package:yelpax_pro/features/marketPlace/service/domain/entitiies/service_entity.dart';
-import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/category_use_case.dart';
-import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/services_usecase.dart';
-import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/sub_category_usecase.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/models/question_model.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/models/service_model.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/models/subcategory_model.dart';
+import 'package:yelpax_pro/shared/services/api_service.dart';
 
 class ServiceController extends ChangeNotifier {
-  final SubCategoryUsecase subCategoryUsecase;
-  final CategoryUsecase categoryUsecase;
-  final ServicesUsecase serviceUsecase;
-  final QuestionDataSource questionDataSource;
+  final ApiService apiService;
+
+  ServiceController({required this.apiService});
+
+  /// Subcategories
+  List<SubCategory> _subCategories = [];
+  List<SubCategory> get subCategories => _subCategories;
+
+  SubCategory? _selectedSubCategory;
+  SubCategory? get selectedSubCategory => _selectedSubCategory;
+
   bool isSubCategoriesLoading = false;
-  bool isServicesLoading = false;
-  bool isQuestionsLoading = false;
-  List<SubCategory> subCategories = [];
-  List<Category> categories = [];
-  List<Services> services = [];
-  List<QuestionEntity> questions = [];
 
-  SubCategory? selectedSubCategory;
-  Category? selectedCategory;
-  Services? selectedService;
-
-  bool isLoading = true;
-  final Map<String, dynamic> answers = {};
-  bool isSubmitting = false;
-  ServiceController({
-    required this.subCategoryUsecase,
-    required this.categoryUsecase,
-    required this.serviceUsecase,
-    required this.questionDataSource,
-  });
-
-  Future<void> fetchInitialData() async {
-    try {
-      isLoading = true;
-      isSubCategoriesLoading = true;
-      notifyListeners();
-
-      final servicesEntities = await serviceUsecase({});
-      services = servicesEntities.map((e) => Services.fromEntity(e)).toList();
-
-      final subcategoryEntities = await subCategoryUsecase({});
-      subCategories = subcategoryEntities
-          .map((e) => SubCategory.fromEntity(e))
-          .toList();
-
-      final categoryEntities = await categoryUsecase();
-      categories = categoryEntities.map((e) => Category.fromEntity(e)).toList();
-
-      isLoading = false;
-      isSubCategoriesLoading = false;
-      notifyListeners();
-    } catch (e) {
-      isLoading = false;
-      // handle error
-      notifyListeners();
-    }
-  }
-
-  void selectCategory(Category category) {
-    selectedCategory = category;
+  Future<void> fetchAllSubCategories() async {
+    isSubCategoriesLoading = true;
     notifyListeners();
-    // Optionally filter subcategories here if you want
+
+    try {
+      final response = await apiService.get('/subcategories');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data']; // ✅ Fix here
+        _subCategories = data
+            .map((json) => SubCategory.fromJson(json))
+            .toList();
+      }
+    } catch (e) {
+      print('Error fetching subcategories: $e');
+    }
+
+    isSubCategoriesLoading = false;
+    notifyListeners();
   }
 
   void selectSubCategory(SubCategory subCategory) {
-    selectedSubCategory = subCategory;
-    selectedService = null; // Reset selected service when subcategory changes
+    _selectedSubCategory = subCategory;
+    _selectedService = null; // Reset selected service
     notifyListeners();
   }
 
-  void selectService(Services service) {
-    selectedService = service;
-    Logger().d('Selected service: ${service.id}');
+  /// Services
+  List<ServiceModel> _services = [];
+  List<ServiceModel> get services => _services;
+
+  ServiceModel? _selectedService;
+  ServiceModel? get selectedService => _selectedService;
+
+  bool isServicesLoading = false;
+
+  Future<void> fetchAllServices() async {
+    isServicesLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await apiService.get('/services');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        _services = data
+            .map((json) => ServiceModel.fromJson(json as Map<String, dynamic>))
+            .toList();
+      } else {
+        print("Failed to fetch services. Status: ${response.statusCode}");
+      }
+    } catch (e) {
+      print('Error fetching services: $e');
+    }
+
+    isServicesLoading = false;
     notifyListeners();
   }
 
-  // Filter services by selectedSubCategory id
-  List<Services> get filteredServices {
-    if (selectedSubCategory == null) return [];
-    return services
-        .where((s) => s.subCategoryId == selectedSubCategory!.id)
+  void selectService(ServiceModel service) {
+    _selectedService = service;
+    notifyListeners();
+  }
+
+  /// Filter services by selected subcategory
+  List<ServiceModel> get filteredServices {
+    if (_selectedSubCategory == null) return [];
+    return _services
+        .where((s) => s.subcategoryId == _selectedSubCategory!.id)
         .toList();
   }
 
-  Future<void> fetchQuestionsForSelectedService() async {
-    if (selectedService == null) {
-      log('No service selected');
-      questions.clear();
-      notifyListeners();
-      return;
-    }
+  /// Questions
+  List<QuestionEntity> _questions = [];
+  List<QuestionEntity> get questions => _questions;
 
-    try {
-      isQuestionsLoading = true;
-      notifyListeners();
-      Logger().d('Fetching questions for service ID: ${selectedService!.id}');
-      questions = await questionDataSource.getQuestions(selectedService!.id);
-      Logger().d('Fetched questions: $questions');
-      // Initialize answers map
-      answers.clear();
-      for (var question in questions) {
-        answers[question.id] = _getDefaultAnswer(question);
+  final Map<String, dynamic> _answers = {};
+  Map<String, dynamic> get answers => _answers;
+
+  bool isQuestionsLoading = false;
+  bool isSubmitting = false;
+
+  int get completedAnswersCount {
+    return _answers.entries.where((entry) {
+      final question = _questions.firstWhere(
+        (q) => q.id == entry.key,
+        orElse: () => QuestionEntity(
+          id: '',
+          serviceId: '',
+          questionName: '',
+          formType: 'text',
+          options: [],
+          required: false,
+          order: 0,
+          active: true,
+        ),
+      );
+
+      if (entry.value == null) return false;
+
+      if (entry.value is List) {
+        return (entry.value as List).isNotEmpty;
+      } else if (entry.value is String) {
+        return (entry.value as String).trim().isNotEmpty;
       }
 
-      isQuestionsLoading = false;
-      notifyListeners();
+      return true;
+    }).length;
+  }
+
+  Future<void> fetchQuestionsForSelectedService() async {
+    if (_selectedService == null) return;
+
+    isQuestionsLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await apiService.get(
+        '/questions/service/${_selectedService!.id}',
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        _questions = data
+            .map((json) => QuestionModel.fromJson(json).toEntity())
+            .toList();
+
+        // Initialize answers map
+        _answers.clear();
+        for (final question in _questions) {
+          _answers[question.id] = _getDefaultAnswer(question);
+        }
+      } else {
+        print("Failed to fetch questions. Status: ${response.statusCode}");
+        _questions = [];
+      }
     } catch (e) {
-      isQuestionsLoading = false;
-      questions.clear();
-      log('Error fetching questions: $e');
-      notifyListeners();
+      print('Error fetching questions: $e');
+      _questions = [];
     }
+
+    isQuestionsLoading = false;
+    notifyListeners();
   }
 
   dynamic _getDefaultAnswer(QuestionEntity question) {
@@ -128,47 +167,74 @@ class ServiceController extends ChangeNotifier {
         return [];
       case 'radio':
       case 'select':
-        return question.options.isNotEmpty ? question.options.first : '';
-      default:
+        return null;
+      default: // text, number, date
         return '';
     }
   }
 
-  void updateAnswer(String questionId, dynamic value) {
-    answers[questionId] = value;
+  void updateAnswer(String questionId, dynamic answer) {
+    _answers[questionId] = answer;
     notifyListeners();
   }
 
   Future<bool> submitAnswers() async {
+    if (_selectedService == null) return false;
+
+    isSubmitting = true;
+    notifyListeners();
+
     try {
-      isSubmitting = true;
-      notifyListeners();
+      // // Prepare answers data
+      // final List<Map<String, dynamic>> answersData = [];
 
-      // Here you would typically send the answers to your backend
-      log('Submitting answers: $answers');
+      // for (final question in _questions) {
+      //   final answer = _answers[question.id];
 
-      // Simulate API call delay
-      await Future.delayed(const Duration(seconds: 2));
+      //   // Skip if required question is not answered
+      //   if (question.required && _isEmptyAnswer(answer)) {
+      //     isSubmitting = false;
+      //     notifyListeners();
+      //     return false;
+      //   }
 
+      //   if (!_isEmptyAnswer(answer)) {
+      //     answersData.add({'question_id': question.id, 'answer': answer});
+      //   }
+      // }
+
+      // Submit to backend
+      // final response = await apiService.post(
+      //   '/answers/${_selectedService!.id}',
+      //   data: {'answers': answersData},
+      // );
+      // final response = await apiService.post(
+      //   '/answers/${_selectedService!.id}',
+
+      // );
       isSubmitting = false;
       notifyListeners();
+
+      // return response.statusCode == 200 || response.statusCode == 201;
       return true;
     } catch (e) {
+      print('Error submitting answers: $e');
       isSubmitting = false;
       notifyListeners();
       return false;
     }
   }
 
-  // Helper getters for the UI
-  bool get _isLoading =>
-      isSubCategoriesLoading || isServicesLoading || isQuestionsLoading;
+  bool _isEmptyAnswer(dynamic answer) {
+    if (answer == null) return true;
+    if (answer is String) return answer.trim().isEmpty;
+    if (answer is List) return answer.isEmpty;
+    return false;
+  }
 
-  int get completedAnswersCount {
-    return answers.values.where((answer) {
-      if (answer is List) return answer.isNotEmpty;
-      if (answer is String) return answer.isNotEmpty;
-      return answer != null;
-    }).length;
+  void clearAnswers() {
+    _answers.clear();
+    _questions.clear();
+    notifyListeners();
   }
 }

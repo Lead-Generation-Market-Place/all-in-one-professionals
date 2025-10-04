@@ -21,7 +21,8 @@ import 'package:yelpax_pro/features/marketPlace/jobs/subs/reponses/presentation/
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/availability.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/business_name_logo.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/card_details.dart';
-import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/location.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/budget_screen.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/location.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/m_services_categories.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/rating.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_question_form.dart';
@@ -113,7 +114,7 @@ class AppRouter {
   static const String nationwide = '/homeServices/location/nationwide';
   static const String marketing_dashboard = '/homeServices/marketing_dashboard';
   static const String subscription_plan = '/homeServices/subscription_plan';
-
+  static const String budget = '/homeServices/budget';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -207,6 +208,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => MarketingDashboard());
       case subscription_plan:
         return MaterialPageRoute(builder: (_) => SubscriptionPlan());
+      case budget:
+        return MaterialPageRoute(builder: (_) => BudgetScreen());
       case unknownRouteScreen:
         return MaterialPageRoute(
           builder: (_) =>

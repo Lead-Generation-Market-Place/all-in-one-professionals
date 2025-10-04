@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
-import 'package:yelpax_pro/features/marketPlace/service/data/model/service_model.dart';
-import 'package:yelpax_pro/features/marketPlace/service/data/model/subCategory.dart';
+
 import 'package:yelpax_pro/features/marketPlace/service/presentation/controllers/service_controller.dart';
-import 'package:yelpax_pro/features/marketPlace/service/service_d_i.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/models/service_model.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/models/subcategory_model.dart';
 import 'package:yelpax_pro/shared/widgets/custom_advanced_dropdown.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 
@@ -16,16 +16,18 @@ class AddServiceScreen extends StatefulWidget {
 }
 
 class _AddServiceScreenState extends State<AddServiceScreen> {
-  _AddServiceScreenState();
-
   @override
   void initState() {
-    Future.microtask(() async {
-      final controller = context.read<ServiceController>();
-      await controller.fetchInitialData();
-    });
     super.initState();
+
+    // Schedule the fetch after the first build
+    Future.microtask(() {
+      final controller = context.read<ServiceController>();
+      controller.fetchAllSubCategories();
+      controller.fetchAllServices();
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +41,9 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Subcategory Dropdown
+            /// Subcategory Dropdown
             Text('Subcategory', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
-
-            // Show loader or dropdown for subcategories
             AdvancedDropdown<SubCategory>(
               items: controller.subCategories,
               selectedItem: controller.selectedSubCategory,
@@ -55,7 +55,6 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                   controller.selectSubCategory(subCategory);
                 }
               },
-              // pass a custom decoration with a suffix icon loader when loading
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
@@ -65,11 +64,11 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                 color: Theme.of(context).colorScheme.surface,
               ),
               suffix: controller.isSubCategoriesLoading
-                  ? SizedBox(
+                  ? const SizedBox(
                       width: 24,
                       height: 24,
                       child: Padding(
-                        padding: const EdgeInsets.only(right: 8),
+                        padding: EdgeInsets.only(right: 8),
                         child: CircularProgressIndicator.adaptive(
                           strokeWidth: 1,
                         ),
@@ -80,18 +79,16 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
 
             const SizedBox(height: 24),
 
-            // Services Dropdown: show only if subcategory selected
+            /// Service Dropdown - Only show when subcategory is selected
             if (controller.selectedSubCategory != null) ...[
               Text('Service', style: theme.textTheme.titleMedium),
               const SizedBox(height: 8),
-
-              // Show loader or dropdown for services
               controller.isServicesLoading
-                  ? SizedBox(
+                  ? const SizedBox(
                       height: 56,
                       child: Center(child: CircularProgressIndicator()),
                     )
-                  : AdvancedDropdown<Services>(
+                  : AdvancedDropdown<ServiceModel>(
                       items: controller.filteredServices,
                       selectedItem: controller.selectedService,
                       hintText: 'Select Service',
@@ -107,7 +104,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
 
             const Spacer(),
 
-            // Save Button enabled only if a service is selected
+            /// Submit Button (Next)
             AnimatedOpacity(
               duration: const Duration(milliseconds: 300),
               opacity: controller.selectedService != null ? 1.0 : 0.5,

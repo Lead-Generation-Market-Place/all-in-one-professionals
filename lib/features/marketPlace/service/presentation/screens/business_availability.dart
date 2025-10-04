@@ -1,8 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
-import 'package:yelpax_pro/features/marketPlace/service/data/model/business_availability_model.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/models/business_availability.dart';
+
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
+
+// Reactive state holder for business availability
+class BusinessAvailabilityState {
+  final ValueNotifier<BusinessAvailabilityModel?> availabilityData;
+
+  BusinessAvailabilityState()
+    : availabilityData = ValueNotifier<BusinessAvailabilityModel?>(null);
+
+  void setAvailabilityData(BusinessAvailabilityModel data) {
+    availabilityData.value = data;
+  }
+
+  BusinessAvailabilityModel? get currentData => availabilityData.value;
+
+  void dispose() {
+    availabilityData.dispose();
+  }
+}
+
+// Global instance that can be accessed throughout the app
+final businessAvailabilityState = BusinessAvailabilityState();
 
 class BusinessAvailability extends StatefulWidget {
   const BusinessAvailability({super.key});
@@ -18,7 +40,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
       'day': 'Monday',
       'open': true,
       'start': TimeOfDay(hour: 8, minute: 0),
-      'end': TimeOfDay(hour: 16, minute: 0), // Fixed: 4 PM should be 16:00
+      'end': TimeOfDay(hour: 16, minute: 0),
     },
     {
       'day': 'Tuesday',
@@ -75,6 +97,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
     final now = DateTime.now();
     return DateTime(now.year, now.month, now.day, time.hour, time.minute);
   }
+
   Future<void> _selectTime(
     BuildContext context,
     bool isStart,
@@ -122,21 +145,21 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Apply to all days?'),
+          title: const Text('Apply to all days?'),
           content: Text(
             'This will apply ${_workingHours[index]['day']}\'s settings to all other days.',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 _applyAllDaysSettings(index);
               },
-              child: Text('Apply to All'),
+              child: const Text('Apply to All'),
             ),
           ],
         );
@@ -157,7 +180,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Settings applied to all days'),
         duration: Duration(seconds: 2),
       ),
@@ -197,26 +220,27 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
     }
   }
 
-  
-
   // Method to handle next button press
   void _handleNextButtonPress() {
     // Prepare the data for backend
     final availabilityData = _prepareDataForBackend();
 
-    final jsonData = availabilityData.toJson();
+    // Store data in reactive variable
+    businessAvailabilityState.setAvailabilityData(availabilityData);
 
     // Print the data to console (for testing)
-    print('Business Availability Data to send to backend:');
+    final jsonData = availabilityData.toJson();
+    print('Business Availability Data stored in reactive variable:');
+    print(jsonData);
 
-    // TODO: Send data to your backend API here
-    // Example:
-    // await _sendDataToBackend(availabilityData);
+    // Verify the data is stored in reactive variable
+    print('Reactive variable current value:');
+    print(businessAvailabilityState.currentData?.toJson());
 
     // Show success message
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Availability data prepared successfully!'),
+      const SnackBar(
+        content: Text('Availability data saved successfully!'),
         duration: Duration(seconds: 2),
       ),
     );
@@ -269,7 +293,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                     BoxShadow(
                       color: scheme.shadow.withOpacity(0.1),
                       blurRadius: 8,
-                      offset: Offset(0, 2),
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
@@ -292,7 +316,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                               fontSize: isSmallScreen ? 16 : 18,
                             ),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             _availableAnytime
                                 ? 'Open 24/7 for all days'
@@ -337,7 +361,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                               fontSize: isSmallScreen ? 20 : 24,
                             ),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             'Set your weekly availability schedule',
                             style: theme.textTheme.bodyMedium?.copyWith(
@@ -366,7 +390,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                       BoxShadow(
                         color: scheme.shadow.withOpacity(0.05),
                         blurRadius: 4,
-                        offset: Offset(0, 1),
+                        offset: const Offset(0, 1),
                       ),
                     ],
                   ),
@@ -473,7 +497,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
           ),
         ),
 
-        SizedBox(width: 20),
+        const SizedBox(width: 20),
 
         // Time Pickers or Closed
         Expanded(
@@ -485,24 +509,19 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                       onPressed: () => _selectTime(context, true, index),
                       isSmall: false,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Text(
-                        '–',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: scheme.onSurfaceVariant,
-                        ),
-                      ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Text('–', style: TextStyle(color: Colors.grey)),
                     ),
                     _GoogleTimeButton(
                       time: day['end'],
                       onPressed: () => _selectTime(context, false, index),
                       isSmall: false,
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     // Apply to All button for this day
                     _buildApplyToAllButton(index),
-                    Spacer(),
+                    const Spacer(),
                   ],
                 )
               : Row(
@@ -524,10 +543,10 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     // Apply to All button for this day (even when closed)
                     _buildApplyToAllButton(index),
-                    Spacer(),
+                    const Spacer(),
                   ],
                 ),
         ),
@@ -567,7 +586,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                 color: isWeekend ? scheme.primary : scheme.onSurface,
               ),
             ),
-            Spacer(),
+            const Spacer(),
             // Toggle Switch
             Switch.adaptive(
               value: day['open'],
@@ -581,7 +600,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
           ],
         ),
 
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
 
         // Time Pickers or Closed
         day['open']
@@ -595,14 +614,9 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                         onPressed: () => _selectTime(context, true, index),
                         isSmall: true,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          '–',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                          ),
-                        ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Text('–', style: TextStyle(color: Colors.grey)),
                       ),
                       _GoogleTimeButton(
                         time: day['end'],
@@ -611,7 +625,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   _buildApplyToAllButton(index),
                 ],
               )
@@ -635,7 +649,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   _buildApplyToAllButton(index),
                 ],
               ),
@@ -678,7 +692,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
           ],
         ),
 
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
 
         day['open']
             ? Column(
@@ -689,13 +703,13 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                     onPressed: () => _selectTime(context, true, index),
                     isSmall: true,
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   _GoogleTimeButton(
                     time: day['end'],
                     onPressed: () => _selectTime(context, false, index),
                     isSmall: true,
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   _buildApplyToAllButton(index),
                 ],
               )
@@ -719,7 +733,7 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   _buildApplyToAllButton(index),
                 ],
               ),

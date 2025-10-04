@@ -1,9 +1,11 @@
+// features/marketPlace/service/presentation/views/service_question_form.dart
 import 'package:flutter/material.dart';
-import 'package:logger/web.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
-import 'package:yelpax_pro/features/marketPlace/service/domain/entitiies/question_entity.dart';
+
 import 'package:yelpax_pro/features/marketPlace/service/presentation/controllers/service_controller.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/models/question_model.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 
 class ServiceQuestionForm extends StatefulWidget {
@@ -20,7 +22,9 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final controller = context.read<ServiceController>();
       if (controller.selectedService != null) {
-      Logger().d('Selected service: ${controller.selectedService}');
+        Logger().d(
+          'Selected service: ${controller.selectedService?.serviceName}',
+        );
         controller.fetchQuestionsForSelectedService();
       }
     });
@@ -28,7 +32,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
 
   @override
   Widget build(BuildContext context) {
-final controller = context.read<ServiceController>();
+    final controller = context.watch<ServiceController>();
 
     if (controller.isQuestionsLoading && controller.questions.isEmpty) {
       return Scaffold(
@@ -92,15 +96,21 @@ final controller = context.read<ServiceController>();
       body: SafeArea(
         child: Column(
           children: [
-
-            Text('${controller.selectedService?.serviceName} Questions',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(fontWeight: FontWeight.bold)),
-            /// --- Enhanced Progress Bar ---
+            /// Service Name Header
             Container(
-              margin: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                '${controller.selectedService?.serviceName} Questions',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ),
+
+            /// Enhanced Progress Bar
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
@@ -161,7 +171,9 @@ final controller = context.read<ServiceController>();
               ),
             ),
 
-            /// --- Enhanced Questions ---
+            const SizedBox(height: 20),
+
+            /// Enhanced Questions
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -274,7 +286,7 @@ final controller = context.read<ServiceController>();
               ),
             ),
 
-            /// --- Enhanced Bottom Sticky Buttons ---
+            /// Enhanced Bottom Sticky Buttons
             if (controller.questions.isNotEmpty)
               Container(
                 padding: const EdgeInsets.all(20),
@@ -349,7 +361,17 @@ final controller = context.read<ServiceController>();
                                       ),
                                     ),
                                   );
-                                }
+                                } 
+                                // else if (mounted) {
+                                //   ScaffoldMessenger.of(context).showSnackBar(
+                                //     const SnackBar(
+                                //       content: Text(
+                                //         'Please answer all required questions',
+                                //       ),
+                                //       backgroundColor: Colors.red,
+                                //     ),
+                                //   );
+                                // }
                               },
                       ),
                     ),
@@ -362,7 +384,7 @@ final controller = context.read<ServiceController>();
     );
   }
 
-  /// --- Enhanced Question Card ---
+  /// Enhanced Question Card
   Widget _buildQuestionCard(
     ServiceController controller,
     QuestionEntity question,
@@ -463,7 +485,7 @@ final controller = context.read<ServiceController>();
     );
   }
 
-  /// --- Enhanced Input Types ---
+  /// Enhanced Input Types
   Widget _buildQuestionInput(
     ServiceController controller,
     QuestionEntity question,
@@ -662,9 +684,15 @@ final controller = context.read<ServiceController>();
           ),
           child: DropdownButtonFormField<String>(
             initialValue: currentAnswer as String?,
-            items: question.options.map((option) {
-              return DropdownMenuItem(value: option, child: Text(option));
-            }).toList(),
+            items: [
+              const DropdownMenuItem(
+                value: null,
+                child: Text('Select an option...'),
+              ),
+              ...question.options.map((option) {
+                return DropdownMenuItem(value: option, child: Text(option));
+              }).toList(),
+            ],
             onChanged: (value) {
               controller.updateAnswer(question.id, value);
             },
@@ -674,7 +702,6 @@ final controller = context.read<ServiceController>();
                 horizontal: 16,
                 vertical: 16,
               ),
-              hintText: "Select an option...",
             ),
             dropdownColor: Theme.of(context).colorScheme.surface,
             icon: Icon(

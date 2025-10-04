@@ -37,6 +37,7 @@ dependencies:
   image_cropper: ^9.1.0
   geocoding: ^4.0.0
   carousel_slider: ^5.1.1
+  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -60,6 +61,7 @@ flutter:
     - assets/images/
     - assets/images/splash_1.jpg
     - assets/images/y_logo.png
+    - .env
 
 
   # example:
