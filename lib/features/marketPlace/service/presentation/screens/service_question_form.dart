@@ -334,34 +334,19 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
                         onPressed: controller.isSubmitting
                             ? null
                             : () async {
+                                // After submitting answers
                                 final success = await controller
                                     .submitAnswers();
                                 if (success && mounted) {
+                                  // Update controller with question answers
+                                  controller.updateQuestionAnswers(
+                                    controller.answers,
+                                  );
                                   Navigator.pushNamed(
                                     context,
                                     AppRouter.location,
                                   );
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Row(
-                                        children: const [
-                                          Icon(
-                                            Icons.check_circle,
-                                            color: Colors.white,
-                                            size: 20,
-                                          ),
-                                          SizedBox(width: 8),
-                                          Text('Submitted successfully'),
-                                        ],
-                                      ),
-                                      behavior: SnackBarBehavior.floating,
-                                      backgroundColor: Colors.green,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                  );
-                                } 
+                                }
                                 // else if (mounted) {
                                 //   ScaffoldMessenger.of(context).showSnackBar(
                                 //     const SnackBar(

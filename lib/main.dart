@@ -22,6 +22,7 @@ import 'package:yelpax_pro/providers/providers.dart';
 import 'package:yelpax_pro/shared/onboarding_screen/onboarding_screen.dart';
 import 'package:yelpax_pro/shared/screens/unexpected_error_screen.dart';
 import 'package:yelpax_pro/shared/screens/unexpected_release_mode_error.dart';
+import 'package:yelpax_pro/shared/services/api_service.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -29,6 +30,14 @@ void main() {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      final apiService = ApiService();
+
+      // Initialize AuthController with ApiService
+      final authController = AuthUserController(apiService);
+
+      // Check auth status on app start
+      await authController.checkAuthStatus();
+  
       await dotenv.load();
       ErrorWidget.builder = (FlutterErrorDetails details) {
         if (kReleaseMode) {

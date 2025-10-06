@@ -2,8 +2,9 @@ import 'dart:async';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:logger/web.dart';
 import 'package:yelpax_pro/core/error/exceptions/exceptions.dart';
-import 'package:yelpax_pro/features/authentication/data/model/refresh_token_response.dart';
+import 'package:yelpax_pro/features/authentication/models/token_response.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
@@ -22,6 +23,12 @@ class ApiService {
     _refreshToken = refreshToken;
     if (expiresIn != null) {
       _tokenExpiry = DateTime.now().add(Duration(seconds: expiresIn));
+    }
+
+    // Update Dio instance with new token
+    if (accessToken != null) {
+      dio.options.headers[HttpHeaders.authorizationHeader] =
+          "Bearer $accessToken";
     }
   }
 
@@ -80,85 +87,98 @@ class ApiService {
       receiveTimeout: const Duration(seconds: 30),
       contentType: "application/json",
       validateStatus: (status) => status! < 500,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
     );
 
     dio = Dio(options);
+
+    // Add interceptors
+    _addInterceptors();
+  }
+
+  void _addInterceptors() {
+    // Request interceptor
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          // Skip for refresh token request
-          if (options.path == 'auth/refresh') {
-            return handler.next(options);
-          }
-
-          // Check if token is expired or about to expire (within 30 seconds)
-          if (_tokenExpiry != null &&
-              _tokenExpiry!.isBefore(
-                DateTime.now().add(Duration(seconds: 30)),
-              )) {
-            if (!_isRefreshing) {
-              _isRefreshing = true;
-              try {
-                await refreshToken();
-              } catch (e) {
-                handler.reject(
-                  DioException(
-                    requestOptions: options,
-                    error: 'Token refresh failed',
-                  ),
-                );
-                return;
-              } finally {
-                _isRefreshing = false;
-              }
-            } else {
-              // Queue the request while refreshing
-              final completer = Completer<Response>();
-              _requestQueue.add((options: options, completer: completer));
-              return completer.future
-                  .then(handler.resolve)
-                  .catchError(handler.reject);
-            }
-          }
-
-          if (_authToken != null) {
+          // Always try to add the token if available
+          if (_authToken != null && _authToken!.isNotEmpty) {
             options.headers[HttpHeaders.authorizationHeader] =
                 "Bearer $_authToken";
           }
+
+          Logger().d('''
+🌐 API Request:
+- URL: ${options.method} ${options.baseUrl}${options.path}
+- Headers: ${options.headers}
+- Data: ${options.data}
+''');
+
           return handler.next(options);
         },
+        onResponse: (response, handler) {
+          Logger().d('''
+✅ API Response:
+- URL: ${response.requestOptions.method} ${response.requestOptions.baseUrl}${response.requestOptions.path}
+- Status: ${response.statusCode}
+- Data: ${response.data}
+''');
+          return handler.next(response);
+        },
         onError: (error, handler) async {
-          if (error.response?.statusCode == 401 &&
-              error.requestOptions.path != 'auth/refresh' &&
-              _refreshToken != null) {
-            try {
-              await refreshToken();
+          Logger().e('''
+❌ API Error:
+- URL: ${error.requestOptions.method} ${error.requestOptions.baseUrl}${error.requestOptions.path}
+- Status: ${error.response?.statusCode}
+- Error: ${error.message}
+- Response: ${error.response?.data}
+''');
 
-              // Retry the original request
-              final retryOptions = error.requestOptions
-                ..headers[HttpHeaders.authorizationHeader] =
+          // Handle token refresh for 401 errors
+          if (error.response?.statusCode == 401) {
+            if (!_isRefreshing && _refreshToken != null) {
+              try {
+                _isRefreshing = true;
+                await refreshToken();
+
+                // Retry the original request with new token
+                error.requestOptions.headers[HttpHeaders.authorizationHeader] =
                     'Bearer $_authToken';
-
-              return handler.resolve(await dio.fetch(retryOptions));
-            } catch (e) {
-              return handler.next(error);
+                final response = await dio.fetch(error.requestOptions);
+                return handler.resolve(response);
+              } catch (refreshError) {
+                // If refresh fails, clear tokens and throw error
+                clearTokens();
+                return handler.reject(error);
+              } finally {
+                _isRefreshing = false;
+              }
             }
           }
+
           return handler.next(error);
         },
       ),
     );
 
+    // Add debug logging in development
     if (kDebugMode) {
       dio.interceptors.add(
         LogInterceptor(
+          request: true,
+          requestHeader: true,
           requestBody: true,
+          responseHeader: true,
           responseBody: true,
           logPrint: (obj) => debugPrint(obj.toString()),
         ),
       );
     }
   }
+
 
   void setToken(String token) {
     _authToken = token;
@@ -168,6 +188,7 @@ class ApiService {
     _authToken = null;
     _refreshToken = null;
     _tokenExpiry = null;
+    dio.options.headers.remove(HttpHeaders.authorizationHeader);
   }
 
   Future<Response> get(

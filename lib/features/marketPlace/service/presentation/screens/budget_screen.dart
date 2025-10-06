@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/controllers/service_controller.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/models/budget_model.dart';
 import 'package:yelpax_pro/shared/widgets/custom_input.dart';
 
 class BudgetScreen extends StatefulWidget {
@@ -8,8 +11,7 @@ class BudgetScreen extends StatefulWidget {
   State<BudgetScreen> createState() => _BudgetScreenState();
 }
 
-class _BudgetScreenState extends State<BudgetScreen>
-    with SingleTickerProviderStateMixin {
+class _BudgetScreenState extends State<BudgetScreen> {
   final TextEditingController creditController = TextEditingController(
     text: '20',
   );
@@ -33,33 +35,113 @@ class _BudgetScreenState extends State<BudgetScreen>
 
   void _onDoNotLimitPressed() {
     setState(() {
-      limitBudget = false; // Hide payment inputs and credit input
+      limitBudget = false;
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Proceeding without budget limit')),
+
+    // Create budget data without limits
+    final budgetData = BudgetModel(
+      limitBudget: false,
+      weeklyBudget: null,
+      paymentInfo: null,
     );
+
+    // Update controller FIRST
+    final controller = context.read<ServiceController>();
+    controller.updateBudgetData(budgetData);
+
+    // THEN submit
+    _submitRegistration(controller);
   }
 
   void _onLimitPressed() {
     setState(() {
-      limitBudget = true; // Show payment inputs and credit input
+      limitBudget = true;
     });
   }
 
   void _onConfirmPayment() {
-    // Implement your validation and payment logic here
+    if (!_validatePaymentInfo()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill all payment fields correctly'),
+        ),
+      );
+      return;
+    }
+
+    // Create payment info
+    final paymentInfo = PaymentInfo(
+      fullName: fullNameController.text.trim(),
+      cardNumber: cardNumberController.text.trim(),
+      expiryDate: expiryDateController.text.trim(),
+      cvv: cvvController.text.trim(),
+    );
+
+    // Create budget data with limits
+    final budgetData = BudgetModel(
+      limitBudget: true,
+      weeklyBudget: double.tryParse(creditController.text) ?? 20.0,
+      paymentInfo: paymentInfo,
+    );
+
+    // Update controller FIRST
+    final controller = context.read<ServiceController>();
+    controller.updateBudgetData(budgetData);
+
+    // THEN submit
+    _submitRegistration(controller);
+  }
+
+  bool _validatePaymentInfo() {
+    return fullNameController.text.trim().isNotEmpty &&
+        cardNumberController.text.trim().isNotEmpty &&
+        expiryDateController.text.trim().isNotEmpty &&
+        cvvController.text.trim().isNotEmpty;
+  }
+
+  Future<void> _submitRegistration(ServiceController controller) async {
     setState(() {
       isNextLoading = true;
     });
 
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        isNextLoading = false;
-      });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Payment info submitted')));
-    });
+    try {
+      final success = await controller.submitCompleteRegistration();
+
+      if (success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Service registered successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // Navigate to success screen or dashboard
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/success', // Replace with your success route
+          (route) => false,
+        );
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to register service. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isNextLoading = false;
+        });
+      }
+    }
   }
 
   Widget _buildPaymentCard() {
@@ -72,7 +154,6 @@ class _BudgetScreenState extends State<BudgetScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with security info
             Text(
               'Payment Information',
               style: Theme.of(
@@ -81,8 +162,8 @@ class _BudgetScreenState extends State<BudgetScreen>
             ),
             const SizedBox(height: 8),
 
-            Column(
-              children: const [
+            Row(
+              children: [
                 Icon(Icons.lock, color: Colors.green, size: 18),
                 SizedBox(width: 6),
                 Text(
@@ -90,6 +171,7 @@ class _BudgetScreenState extends State<BudgetScreen>
                   style: TextStyle(
                     color: Colors.green,
                     fontWeight: FontWeight.w500,
+                    fontSize: 12,
                   ),
                 ),
                 SizedBox(width: 12),
@@ -98,6 +180,7 @@ class _BudgetScreenState extends State<BudgetScreen>
                   style: TextStyle(
                     color: Colors.green,
                     fontWeight: FontWeight.w500,
+                    fontSize: 12,
                   ),
                 ),
               ],
@@ -105,9 +188,9 @@ class _BudgetScreenState extends State<BudgetScreen>
 
             const SizedBox(height: 8),
 
-            const Text(
+            Text(
               'Your payment information is processed securely. We do not store your credit card details.',
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: Colors.grey, fontSize: 12),
             ),
 
             const SizedBox(height: 20),
@@ -171,7 +254,57 @@ class _BudgetScreenState extends State<BudgetScreen>
                           strokeWidth: 2,
                         ),
                       )
-                    : const Text('Confirm Payment'),
+                    : const Text('Complete Registration'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNoLimitConfirmation() {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Icon(Icons.credit_card_off, size: 48, color: Colors.green),
+            const SizedBox(height: 16),
+            Text(
+              'No Budget Limit Set',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'You will receive all leads that match your service criteria without spending limits.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: isNextLoading ? null : _onDoNotLimitPressed,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: isNextLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text('Complete Registration'),
               ),
             ),
           ],
@@ -183,9 +316,13 @@ class _BudgetScreenState extends State<BudgetScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final controller = context.watch<ServiceController>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Payment'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Complete Registration'),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         child: Column(
@@ -204,18 +341,22 @@ class _BudgetScreenState extends State<BudgetScreen>
             ),
             const SizedBox(height: 30),
 
+            // Do Not Limit Budget Button
             ElevatedButton(
               onPressed: _onDoNotLimitPressed,
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 48),
                 backgroundColor: limitBudget
                     ? Colors.grey[400]
-                    : Colors.blueGrey[700], // Visual toggle
+                    : Colors.blueGrey[700],
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('Do not limit my budget'),
+              child: const Text(
+                'Do not limit my budget',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
 
             const SizedBox(height: 8),
@@ -228,6 +369,7 @@ class _BudgetScreenState extends State<BudgetScreen>
 
             const SizedBox(height: 32),
 
+            // Limit Budget Button
             ElevatedButton(
               onPressed: _onLimitPressed,
               style: ElevatedButton.styleFrom(
@@ -239,7 +381,12 @@ class _BudgetScreenState extends State<BudgetScreen>
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('Limit my budget'),
+              child: Text(
+                'Limit my budget',
+                style: TextStyle(
+                  color: limitBudget ? Colors.white : Colors.grey[600],
+                ),
+              ),
             ),
 
             const SizedBox(height: 8),
@@ -259,10 +406,18 @@ class _BudgetScreenState extends State<BudgetScreen>
                   hintText: 'Credits (weekly budget)',
                   inputType: TextInputType.number,
                   textInputAction: TextInputAction.next,
+      
                 ),
               ),
-              _buildPaymentCard(),
             ],
+
+            const SizedBox(height: 20),
+
+            // Show appropriate confirmation card
+            if (limitBudget)
+              _buildPaymentCard()
+            else
+              _buildNoLimitConfirmation(),
           ],
         ),
       ),

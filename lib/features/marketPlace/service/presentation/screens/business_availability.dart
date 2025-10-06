@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/controllers/service_controller.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/models/business_availability.dart';
 
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
@@ -222,33 +224,15 @@ class _BusinessAvailabilityState extends State<BusinessAvailability> {
 
   // Method to handle next button press
   void _handleNextButtonPress() {
-    // Prepare the data for backend
     final availabilityData = _prepareDataForBackend();
 
-    // Store data in reactive variable
-    businessAvailabilityState.setAvailabilityData(availabilityData);
-
-    // Print the data to console (for testing)
-    final jsonData = availabilityData.toJson();
-    print('Business Availability Data stored in reactive variable:');
-    print(jsonData);
-
-    // Verify the data is stored in reactive variable
-    print('Reactive variable current value:');
-    print(businessAvailabilityState.currentData?.toJson());
-
-    // Show success message
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Availability data saved successfully!'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+    // Update controller instead of global variable
+    final controller = context.read<ServiceController>();
+    controller.updateAvailabilityData(availabilityData);
 
     // Navigate to next screen
     Navigator.pushNamed(context, AppRouter.professionalServiceQuestionForm);
   }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

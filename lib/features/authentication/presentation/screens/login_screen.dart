@@ -1,6 +1,8 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
+import 'package:yelpax_pro/features/authentication/presentation/controllers/auth_user_controller.dart';
 import 'package:yelpax_pro/features/authentication/presentation/widgets/forgot_password.dart';
 import 'package:yelpax_pro/shared/widgets/custom_advanced_dropdown.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
@@ -124,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your password';
                           }
-                          if (value.length < 8) {
+                          if (value.length < 6) {
                             return 'Password must be at least 8 characters';
                           }
                           return null;
@@ -172,18 +174,47 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: double.infinity,
                         child: CustomButton(
                           text: 'Log In',
-                          onPressed: () async {
+                          onPressed: _isLoading
+                              ? null
+                              : () async {
                                   if (_formKey.currentState!.validate()) {
+                                    final controller =
+                                        Provider.of<AuthUserController>(
+                                          context,
+                                          listen: false,
+                                        );
+
                                     setState(() => _isLoading = true);
-                                    await Future.delayed(
-                                      const Duration(seconds: 1),
-                                    );
-                                    setState(() => _isLoading = false);
-                                    Navigator.of(context).pushReplacementNamed(
-                                      AppRouter.businessCategorySelectionScreen,
+
+                                    await controller.login(
+                                      email: _emailController.text.trim(),
+                                      password: _passwordController.text.trim(),
+                                      onSuccess: () {
+                                        setState(() => _isLoading = false);
+                                        Navigator.of(
+                                          context,
+                                        ).pushReplacementNamed(
+                                          AppRouter
+                                              .businessCategorySelectionScreen,
+                                        );
+                                      },
+                                      onFailure: () {
+                                        setState(() => _isLoading = false);
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              controller.errorMessage ??
+                                                  'Login failed',
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     );
                                   }
-                                }
+                                },
+
                         
          
                         ),

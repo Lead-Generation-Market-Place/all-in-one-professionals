@@ -16,4 +16,12 @@ class TokenResponse {
       expiresIn: json['expires_in'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'access_token': accessToken,
+      'refresh_token': refreshToken,
+      'expires_in': expiresIn,
+    };
+  }
 }

@@ -5,9 +5,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:location/location.dart' as loc;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'dart:convert';
 
 import 'package:yelpax_pro/config/routes/router.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/controllers/service_controller.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/models/location_model.dart';
 
 class LocationScreen extends StatefulWidget {
@@ -494,34 +496,7 @@ void _showLocationConfirmation(LocationModel locationData) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Location Confirmed'),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                '📍 Location Details:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              if (locationData.addressLine != null)
-                Text('Address: ${locationData.addressLine}'),
-              if (locationData.city != null) Text('City: ${locationData.city}'),
-              if (locationData.state != null)
-                Text('State: ${locationData.state}'),
-              if (locationData.country != null)
-                Text('Country: ${locationData.country}'),
-              if (locationData.zipcode != null)
-                Text('Zipcode: ${locationData.zipcode}'),
-              Text(
-                'Coordinates: ${locationData.coordinates.latitude.toStringAsFixed(6)}, ${locationData.coordinates.longitude.toStringAsFixed(6)}',
-              ),
-              const SizedBox(height: 16),
-              const Text('This data is ready to be saved to the database.'),
-            ],
-          ),
-        ),
+        // ... existing dialog content ...
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -529,6 +504,10 @@ void _showLocationConfirmation(LocationModel locationData) {
           ),
           ElevatedButton(
             onPressed: () {
+              // Update controller with location data
+              final controller = context.read<ServiceController>();
+              controller.updateLocationData(locationData);
+
               Navigator.pop(context);
               Navigator.pushNamed(context, AppRouter.budget);
             },
