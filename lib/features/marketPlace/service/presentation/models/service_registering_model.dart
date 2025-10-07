@@ -4,7 +4,8 @@ import 'package:yelpax_pro/features/marketPlace/service/presentation/models/loca
 import 'package:yelpax_pro/features/marketPlace/service/presentation/models/service_model.dart';
 
 class ServiceRegistrationModel {
-  ServiceModel? selectedService;
+  String? selectedService;
+  ServiceModel? selectedServiceDetails;
   BusinessAvailabilityModel? availability;
   Map<String, dynamic>? questionAnswers;
   LocationModel? location;
@@ -13,6 +14,7 @@ class ServiceRegistrationModel {
 
   ServiceRegistrationModel({
     this.selectedService,
+    this.selectedServiceDetails,
     this.availability,
     this.questionAnswers,
     this.location,
@@ -24,7 +26,7 @@ class ServiceRegistrationModel {
     // Transform to match backend professional_services schema
     return {
       'professional_id': professionalId, // You need to set this from auth
-      'service_id': selectedService?.id,
+      'service_id': selectedService,
 
       // Location data - backend will save this first
       'location': _transformLocationForService(),
@@ -43,7 +45,7 @@ class ServiceRegistrationModel {
       'maximum_price': budget?.weeklyBudget,
       'minimum_price': 0, // You can set a minimum or calculate
       // Optional fields
-      'description': 'Professional service for ${selectedService?.serviceName}',
+      'description': 'Professional service for ${selectedService}',
 
       // Default fields
       'service_status': true,
@@ -91,21 +93,21 @@ class ServiceRegistrationModel {
     return budget!.limitBudget ? 'hourly' : 'fixed';
   }
 
-  ServiceRegistrationModel copyWith({
-    ServiceModel? selectedService,
-    BusinessAvailabilityModel? availability,
-    Map<String, dynamic>? questionAnswers,
-    LocationModel? location,
-    BudgetModel? budget,
-    String? professionalId,
-  }) {
-    return ServiceRegistrationModel(
-      selectedService: selectedService ?? this.selectedService,
-      availability: availability ?? this.availability,
-      questionAnswers: questionAnswers ?? this.questionAnswers,
-      location: location ?? this.location,
-      budget: budget ?? this.budget,
-      professionalId: professionalId ?? this.professionalId,
-    );
-  }
+  // ServiceRegistrationModel copyWith({
+  //   ServiceModel? selectedService,
+  //   BusinessAvailabilityModel? availability,
+  //   Map<String, dynamic>? questionAnswers,
+  //   LocationModel? location,
+  //   BudgetModel? budget,
+  //   String? professionalId,
+  // }) {
+  //   return ServiceRegistrationModel(
+  //     selectedService: selectedService?,
+  //     availability: availability ?? this.availability,
+  //     questionAnswers: questionAnswers ?? this.questionAnswers,
+  //     location: location ?? this.location,
+  //     budget: budget ?? this.budget,
+  //     professionalId: professionalId ?? this.professionalId,
+  //   );
+  // }
 }

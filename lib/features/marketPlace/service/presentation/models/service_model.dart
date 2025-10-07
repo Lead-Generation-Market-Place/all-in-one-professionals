@@ -1,5 +1,5 @@
 class ServiceModel {
-  final String id;
+  String id;
   final String serviceName;
   final String subcategoryId;
   final bool serviceStatus;
@@ -25,4 +25,16 @@ class ServiceModel {
       updatedAt: DateTime.parse(json['updatedAt']),
     );
   }
+
+  factory ServiceModel.withIdOnly(String id) {
+    return ServiceModel(
+      id: id,
+      serviceName: '',
+      subcategoryId: '',
+      serviceStatus: true,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+  }
+
 }

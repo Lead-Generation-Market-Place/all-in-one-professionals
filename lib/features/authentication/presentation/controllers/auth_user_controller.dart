@@ -6,7 +6,6 @@ import 'package:yelpax_pro/features/authentication/models/userModel.dart';
 import 'package:yelpax_pro/shared/services/api_service.dart';
 
 class AuthUserController extends ChangeNotifier {
-
   final ApiService apiService;
 
   AuthUserController(this.apiService);
@@ -44,26 +43,24 @@ class AuthUserController extends ChangeNotifier {
       if (response.statusCode == 200) {
         final responseData = response.data;
 
-        if (responseData['success'] == true) {
+        // Remove the 'success' check since your API doesn't return it
+        // Just check if we have user data and tokens
+        if (responseData['user'] != null && responseData['tokens'] != null) {
           final userJson = responseData['user'];
-          final token = responseData['token'];
-          final refreshToken =
-              responseData['refreshToken']; // Add this if available
-          final expiresIn = responseData['expiresIn']; // Add this if available
+          final tokens = responseData['tokens'];
+          final token = tokens['accessToken'];
+          final refreshToken = tokens['refreshToken'];
 
           // Store token and auth state securely
           await _storage.write(key: 'auth_token', value: token);
-          await _storage.write(
-            key: 'refresh_token',
-            value: refreshToken,
-          ); // Add this
+          await _storage.write(key: 'refresh_token', value: refreshToken);
           await _storage.write(key: 'isAuthenticated', value: 'true');
 
-          // Set tokens in ApiService - IMPORTANT!
+          // Set tokens in ApiService
           apiService.setTokens(
             accessToken: token,
             refreshToken: refreshToken,
-            expiresIn: expiresIn,
+            // expiresIn: expiresIn, // Remove if not available
           );
 
           // Parse user
@@ -77,7 +74,7 @@ class AuthUserController extends ChangeNotifier {
           onSuccess();
           return;
         } else {
-          errorMessage = responseData['message'] ?? 'Login failed.';
+          errorMessage = 'Invalid response format from server.';
         }
       } else {
         errorMessage = 'Login failed with status code ${response.statusCode}.';
@@ -123,6 +120,9 @@ class AuthUserController extends ChangeNotifier {
       } catch (e) {
         Logger().e('Failed to restore user: $e');
       }
+
+      // Ensure professional ID is loaded after restoring auth
+      await getProfessionalIdByUserId();
     } else {
       isAuthenticated.value = false;
       currentUser.value = null;
@@ -148,7 +148,7 @@ class AuthUserController extends ChangeNotifier {
     notifyListeners();
   }
 
-final professionalId = ValueNotifier<String?>(null);
+  final professionalId = ValueNotifier<String?>(null);
 
   Future<void> getProfessionalIdByUserId() async {
     try {

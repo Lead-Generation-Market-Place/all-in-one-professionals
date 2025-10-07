@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:yelpax_pro/features/authentication/presentation/controllers/auth_user_controller.dart';
+import 'package:logger/web.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/models/budget_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/models/business_availability.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/models/location_model.dart';
@@ -13,7 +12,13 @@ import 'package:yelpax_pro/shared/services/api_service.dart';
 class ServiceController extends ChangeNotifier {
   final String professionalId;
   final ApiService apiService;
-  ServiceController({required this.professionalId, required this.apiService});
+  late final ServiceRegistrationModel _registrationData;
+
+  ServiceController({required this.professionalId, required this.apiService}) {
+    _registrationData = ServiceRegistrationModel(
+      professionalId: professionalId,
+    );
+  }
 
   /// Subcategories
   List<SubCategory> _subCategories = [];
@@ -54,8 +59,8 @@ class ServiceController extends ChangeNotifier {
   List<ServiceModel> _services = [];
   List<ServiceModel> get services => _services;
 
-  ServiceModel? _selectedService;
-  ServiceModel? get selectedService => _selectedService;
+  ServiceModel? _selectedServices;
+  ServiceModel? get selectedService => _selectedServices;
 
   bool isServicesLoading = false;
 
@@ -106,41 +111,23 @@ class ServiceController extends ChangeNotifier {
 
   int get completedAnswersCount {
     return _answers.entries.where((entry) {
-      final question = _questions.firstWhere(
-        (q) => q.id == entry.key,
-        orElse: () => QuestionEntity(
-          id: '',
-          serviceId: '',
-          questionName: '',
-          formType: 'text',
-          options: [],
-          required: false,
-          order: 0,
-          active: true,
-        ),
-      );
-
-      if (entry.value == null) return false;
-
-      if (entry.value is List) {
-        return (entry.value as List).isNotEmpty;
-      } else if (entry.value is String) {
-        return (entry.value as String).trim().isNotEmpty;
-      }
-
+      final dynamic value = entry.value;
+      if (value == null) return false;
+      if (value is List) return value.isNotEmpty;
+      if (value is String) return value.trim().isNotEmpty;
       return true;
     }).length;
   }
 
   Future<void> fetchQuestionsForSelectedService() async {
-    if (_selectedService == null) return;
+    if (_selectedServices == null) return;
 
     isQuestionsLoading = true;
     notifyListeners();
 
     try {
       final response = await apiService.get(
-        '/questions/service/${_selectedService!.id}',
+        '/questions/service/${_selectedServices!.id}',
       );
 
       if (response.statusCode == 200) {
@@ -185,7 +172,7 @@ class ServiceController extends ChangeNotifier {
   }
 
   Future<bool> submitAnswers() async {
-    if (_selectedService == null) return false;
+    if (_selectedServices == null) return false;
 
     isSubmitting = true;
     notifyListeners();
@@ -231,12 +218,7 @@ class ServiceController extends ChangeNotifier {
     }
   }
 
-  bool _isEmptyAnswer(dynamic answer) {
-    if (answer == null) return true;
-    if (answer is String) return answer.trim().isEmpty;
-    if (answer is List) return answer.isEmpty;
-    return false;
-  }
+  // removed unused _isEmptyAnswer
 
   void clearAnswers() {
     _answers.clear();
@@ -244,21 +226,30 @@ class ServiceController extends ChangeNotifier {
     notifyListeners();
   }
 
-  ServiceRegistrationModel get _registrationData =>
-      ServiceRegistrationModel(professionalId: professionalId);
   ServiceRegistrationModel get registrationData => _registrationData;
 
-  // Override the selectService method to also update registration data
   void selectService(ServiceModel service) {
-    _selectedService = service;
-    _registrationData.selectedService = selectedService; // Add this line
+    Logger().d('🐛 Selected ServiceModel: ${service.id}');
+    _selectedServices = service;
+    Logger().d('--------------=-=-${_selectedServices!.id}');
+    // Persist selected service id and details on registration data
+    _registrationData.selectedService = _selectedServices!.id;
+    _registrationData.selectedServiceDetails = _selectedServices;
+    // Debug to verify
+    Logger().d(
+      '✅ Set in registrationData: ${_registrationData.selectedService}',
+    );
+    Logger().d('✅ Service ID: ${service.id}');
+    Logger().d('✅ Service Name: ${service.serviceName}');
+
     notifyListeners();
   }
 
+  void setSelectedServiceId(String id) {}
   // Override selectSubCategory if needed
   void selectSubCategory(SubCategory subCategory) {
     _selectedSubCategory = subCategory;
-    _selectedService = null; // Reset selected service
+    _selectedServices = null; // Reset selected service
     _registrationData.selectedService = null; // Also reset in registration data
     notifyListeners();
   }
@@ -285,7 +276,7 @@ class ServiceController extends ChangeNotifier {
   }
 
   void setProfessionalId(String proId) {
-    _registrationData.professionalId = professionalId; // ✅ Use the parameter
+    _registrationData.professionalId = proId; // set from parameter
     notifyListeners();
     print(
       '✅ Professional ID set in ServiceController:  got from service controler $professionalId',
@@ -299,6 +290,22 @@ class ServiceController extends ChangeNotifier {
     print('🔄 Starting complete registration submission...');
     debugPrint("Professsssssssssssssssssssssssssssssional ID $professionalId");
     // Debug: Print current registration data
+
+    // Apply sensible defaults for optional steps if missing
+    if (_registrationData.availability == null) {
+      print('ℹ️ No availability set. Defaulting to availableAnytime=true');
+      _registrationData.availability = BusinessAvailabilityModel(
+        availableAnytime: true,
+      );
+    }
+    if (_registrationData.budget == null) {
+      print('ℹ️ No budget set. Defaulting to unlimited (no weekly limit)');
+      _registrationData.budget = BudgetModel(
+        limitBudget: false,
+        weeklyBudget: null,
+        paymentInfo: null,
+      );
+    }
 
     if (!_validateRegistrationData()) {
       print('❌ Registration validation failed');
@@ -380,7 +387,7 @@ class ServiceController extends ChangeNotifier {
   }
 
   void _clearRegistrationData() {
-    _selectedService = null;
+    _selectedServices = null;
     _selectedSubCategory = null;
     _answers.clear();
     _questions.clear();
