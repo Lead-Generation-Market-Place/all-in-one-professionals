@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/core/constants/app_colors.dart';
 
-import '../../../../../shared/widgets/custom_appbar.dart';
 import '../../../jobs/presentation/widgets/finish_setup.dart';
 
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 typedef DropdownItemBuilder<T> = Widget Function(BuildContext context, T item);
 
@@ -13,7 +14,8 @@ class AdvancedDropdown<T> extends StatefulWidget {
   final BoxDecoration? decoration;
   final String hintText;
   final TextStyle? textStyle;
-final Widget? suffix;
+  final Widget? suffix;
+
   const AdvancedDropdown({
     Key? key,
     required this.items,
@@ -26,7 +28,7 @@ final Widget? suffix;
     this.decoration,
     this.hintText = 'Select an item',
     this.textStyle,
-    this.suffix,  
+    this.suffix,
   }) : super(key: key);
 
   @override
@@ -121,8 +123,6 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
       _overlayEntry = null;
     }
 
-    // _searchController.clear();
-
     if (!fromDispose && mounted) {
       setState(() {
         _isDropdownOpen = false;
@@ -135,157 +135,194 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
   }
 
   OverlayEntry _createOverlayEntry() {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
-
     return OverlayEntry(
       builder: (context) {
         final currentTheme = Theme.of(context);
         final currentColorScheme = currentTheme.colorScheme;
         final currentTextTheme = currentTheme.textTheme;
+final renderBox = context.findRenderObject() as RenderBox;
+        final size = renderBox.size;
 
-        return Positioned(
-          width: MediaQuery.of(context).size.width - 32,
-          child: CompositedTransformFollower(
-            link: _layerLink,
-            showWhenUnlinked: false,
-            // offset: const Offset(0, 5),
-            child: Material(
-        
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                constraints: const BoxConstraints(maxHeight: 300),
-                decoration: BoxDecoration(
-                  // color: currentColorScheme.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    width: 0.5,
-                    // color: currentColorScheme.outline.withOpacity(0.3),
+        return GestureDetector(
+          onTap: () {
+            // Close dropdown when tapping outside
+            _closeDropdown();
+          },
+          child: Material(
+            color: Colors.transparent,
+            child: FocusScope(
+              onKeyEvent: (node, event) {
+                if (event is KeyDownEvent &&
+                    event.logicalKey == LogicalKeyboardKey.escape) {
+                  _closeDropdown();
+                  return KeyEventResult.handled;
+                }
+                return KeyEventResult.ignored;
+              },
+              child: Stack(
+                children: [
+                  // Invisible overlay to catch taps outside
+                  Positioned.fill(
+                    child: GestureDetector(
+                      onTap: () {
+                        _closeDropdown();
+                      },
+                      child: Container(color: Colors.transparent),
+                    ),
                   ),
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //     color: currentColorScheme.shadow.withOpacity(0.1),
-                  //     blurRadius: 12,
-                  //     offset: const Offset(0, 4),
-                  //   ),
-                  // ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (widget.enableSearch)
-                      Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: TextField(
-                          controller: _searchController,
-                          autofocus: true,
-                          style: currentTextTheme.bodyMedium?.copyWith(
-                            color: currentColorScheme.onSurface,
+                  // Dropdown content
+                  Positioned(
+                    width: MediaQuery.of(context).size.width - 32,
+                    child: CompositedTransformFollower(
+                      link: _layerLink,
+                      showWhenUnlinked: false,
+                      offset: const Offset(0, 5),
+                      child: Material(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          constraints: const BoxConstraints(maxHeight: 300),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(width: 0.5),
                           ),
-                          decoration: InputDecoration(
-                            hintText: widget.searchHintText,
-                            hintStyle: currentTextTheme.bodyMedium?.copyWith(
-                              // color: currentColorScheme.onSurfaceVariant,
-                            ),
-                            prefixIcon: Icon(
-                              Icons.search,
-                              color: currentColorScheme.onSurfaceVariant,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
-                                // color: currentColorScheme.outline.withOpacity(
-                                //   0.5,
-                                // ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (widget.enableSearch)
+                                Padding(
+                                  padding: const EdgeInsets.all(12),
+                                  child: TextField(
+                                    controller: _searchController,
+                                    autofocus: true,
+                                    style: currentTextTheme.bodyMedium
+                                        ?.copyWith(
+                                          color: currentColorScheme.onSurface,
+                                        ),
+                                    onSubmitted: (value) {
+                                      // Close dropdown when Enter is pressed
+                                      _closeDropdown();
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: widget.searchHintText,
+                                      hintStyle: currentTextTheme.bodyMedium
+                                          ?.copyWith(
+                                            // color: currentColorScheme.onSurfaceVariant,
+                                          ),
+                                      prefixIcon: Icon(
+                                        Icons.search,
+                                        color:
+                                            currentColorScheme.onSurfaceVariant,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide(
+                                          // color: currentColorScheme.outline.withOpacity(
+                                          //   0.5,
+                                          // ),
+                                        ),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide(
+                                          // color: currentColorScheme.outline.withOpacity(
+                                          //   0.3,
+                                          // ),
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide(
+                                          // color: currentColorScheme.primary,
+                                          width: 2,
+                                        ),
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 12,
+                                          ),
+                                      // fillColor: currentColorScheme
+                                      //     .surfaceContainerHighest
+                                      //     .withOpacity(0.3),
+                                      filled: true,
+                                    ),
+                                  ),
+                                ),
+                              Expanded(
+                                child: _filteredItems.isNotEmpty
+                                    ? ListView.builder(
+                                        padding: EdgeInsets.zero,
+                                        shrinkWrap: true,
+                                        itemCount: _filteredItems.length,
+                                        itemBuilder: (context, index) {
+                                          final item = _filteredItems[index];
+                                          final isSelected =
+                                              item == _selectedItem;
+                                          return InkWell(
+                                            onTap: () {
+                                              if (_isDisposed) return;
+
+                                              setState(() {
+                                                _selectedItem = item;
+                                              });
+                                              widget.onChanged?.call(item);
+                                              _closeDropdown();
+                                            },
+                                            child: Container(
+                                              // color: isSelected
+                                              //     ? currentColorScheme.primary
+                                              //           .withOpacity(0.1)
+                                              //     : Colors.transparent,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 12,
+                                                    horizontal: 16,
+                                                  ),
+                                              child: widget.itemBuilder != null
+                                                  ? widget.itemBuilder!(
+                                                      context,
+                                                      item,
+                                                    )
+                                                  : Text(
+                                                      widget.itemToString(item),
+                                                      style: currentTextTheme
+                                                          .bodyMedium
+                                                          ?.copyWith(
+                                                            color: isSelected
+                                                                ? currentColorScheme
+                                                                      .primary
+                                                                : currentColorScheme
+                                                                      .onSurface,
+                                                            fontWeight:
+                                                                isSelected
+                                                                ? FontWeight
+                                                                      .w600
+                                                                : FontWeight
+                                                                      .normal,
+                                                          ),
+                                                    ),
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    : Padding(
+                                        padding: const EdgeInsets.all(16),
+                                        child: Text(
+                                          'No items found',
+                                          style: currentTextTheme.bodyMedium
+                                              ?.copyWith(
+                                                // color: currentColorScheme.onSurfaceVariant,
+                                              ),
+                                        ),
+                                      ),
                               ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
-                                // color: currentColorScheme.outline.withOpacity(
-                                //   0.3,
-                                // ),
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
-                                // color: currentColorScheme.primary,
-                                width: 2,
-                              ),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            // fillColor: currentColorScheme
-                            //     .surfaceContainerHighest
-                            //     .withOpacity(0.3),
-                            filled: true,
+                            ],
                           ),
                         ),
                       ),
-                    Expanded(
-                      child: _filteredItems.isNotEmpty
-                          ? ListView.builder(
-                              padding: EdgeInsets.zero,
-                              shrinkWrap: true,
-                              itemCount: _filteredItems.length,
-                              itemBuilder: (context, index) {
-                                final item = _filteredItems[index];
-                                final isSelected = item == _selectedItem;
-                                return InkWell(
-                                  onTap: () {
-                                    if (_isDisposed) return;
-
-                                    setState(() {
-                                      _selectedItem = item;
-                                    });
-                                    widget.onChanged?.call(item);
-                                    _closeDropdown();
-                                  },
-                                  child: Container(
-                                    // color: isSelected
-                                    //     ? currentColorScheme.primary
-                                    //           .withOpacity(0.1)
-                                    //     : Colors.transparent,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 12,
-                                      horizontal: 16,
-                                    ),
-                                    child: widget.itemBuilder != null
-                                        ? widget.itemBuilder!(context, item)
-                                        : Text(
-                                            widget.itemToString(item),
-                                            style: currentTextTheme.bodyMedium
-                                                ?.copyWith(
-                                                  color: isSelected
-                                                      ? currentColorScheme
-                                                            .primary
-                                                      : currentColorScheme
-                                                            .onSurface,
-                                                  fontWeight: isSelected
-                                                      ? FontWeight.w600
-                                                      : FontWeight.normal,
-                                                ),
-                                          ),
-                                  ),
-                                );
-                              },
-                            )
-                          : Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Text(
-                                'No items found',
-                                style: currentTextTheme.bodyMedium?.copyWith(
-                                  // color: currentColorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -365,7 +402,6 @@ class _AdvancedDropdownState<T> extends State<AdvancedDropdown<T>> {
                   ),
                 ],
               ),
-
             ],
           ),
         ),

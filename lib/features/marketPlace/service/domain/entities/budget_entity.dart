@@ -1,38 +1,41 @@
-// features/marketPlace/service/presentation/models/budget_model.dart
-class BudgetModel {
+class BudgetEntity {
   final bool limitBudget;
   final double? weeklyBudget;
-  final PaymentInfo? paymentInfo;
+  final PaymentInfoEntity? paymentInfo;
   final String pricingType;
 
-  BudgetModel({required this.limitBudget, this.weeklyBudget, this.paymentInfo})
-    : pricingType = limitBudget ? 'limited' : 'fixed';
+  BudgetEntity({
+    required this.limitBudget,
+    this.weeklyBudget,
+    this.paymentInfo,
+  }) : pricingType = limitBudget ? 'limited' : 'fixed';
 
-  Map<String, dynamic> toJson() {
-    return {
-      'limit_budget': limitBudget,
-      'weekly_budget': weeklyBudget,
-      'pricing_type': pricingType,
-      'payment_info': paymentInfo?.toJson(),
-    };
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is BudgetEntity &&
+        other.limitBudget == limitBudget &&
+        other.weeklyBudget == weeklyBudget &&
+        other.paymentInfo == paymentInfo &&
+        other.pricingType == pricingType;
   }
 
-  factory BudgetModel.fromJson(Map<String, dynamic> json) {
-    return BudgetModel(
-      limitBudget: json['limit_budget'] ?? false,
-      weeklyBudget: json['weekly_budget']?.toDouble(),
-      paymentInfo: json['payment_info'] != null
-          ? PaymentInfo.fromJson(json['payment_info'])
-          : null,
+  @override
+  int get hashCode {
+    return Object.hash(
+      limitBudget,
+      weeklyBudget,
+      paymentInfo,
+      pricingType,
     );
   }
 
-  BudgetModel copyWith({
+  BudgetEntity copyWith({
     bool? limitBudget,
     double? weeklyBudget,
-    PaymentInfo? paymentInfo,
+    PaymentInfoEntity? paymentInfo,
   }) {
-    return BudgetModel(
+    return BudgetEntity(
       limitBudget: limitBudget ?? this.limitBudget,
       weeklyBudget: weeklyBudget ?? this.weeklyBudget,
       paymentInfo: paymentInfo ?? this.paymentInfo,
@@ -40,44 +43,46 @@ class BudgetModel {
   }
 }
 
-class PaymentInfo {
+class PaymentInfoEntity {
   final String fullName;
   final String cardNumber;
   final String expiryDate;
   final String cvv;
 
-  PaymentInfo({
+  PaymentInfoEntity({
     required this.fullName,
     required this.cardNumber,
     required this.expiryDate,
     required this.cvv,
   });
 
-  Map<String, dynamic> toJson() {
-    return {
-      'full_name': fullName,
-      'card_number': cardNumber,
-      'expiry_date': expiryDate,
-      'cvv': cvv,
-    };
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is PaymentInfoEntity &&
+        other.fullName == fullName &&
+        other.cardNumber == cardNumber &&
+        other.expiryDate == expiryDate &&
+        other.cvv == cvv;
   }
 
-  factory PaymentInfo.fromJson(Map<String, dynamic> json) {
-    return PaymentInfo(
-      fullName: json['full_name'] ?? '',
-      cardNumber: json['card_number'] ?? '',
-      expiryDate: json['expiry_date'] ?? '',
-      cvv: json['cvv'] ?? '',
+  @override
+  int get hashCode {
+    return Object.hash(
+      fullName,
+      cardNumber,
+      expiryDate,
+      cvv,
     );
   }
 
-  PaymentInfo copyWith({
+  PaymentInfoEntity copyWith({
     String? fullName,
     String? cardNumber,
     String? expiryDate,
     String? cvv,
   }) {
-    return PaymentInfo(
+    return PaymentInfoEntity(
       fullName: fullName ?? this.fullName,
       cardNumber: cardNumber ?? this.cardNumber,
       expiryDate: expiryDate ?? this.expiryDate,

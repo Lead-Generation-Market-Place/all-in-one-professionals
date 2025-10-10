@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/controllers/service_controller.dart';
-import 'package:yelpax_pro/features/marketPlace/service/presentation/models/budget_model.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/budget_entity.dart';
 import 'package:yelpax_pro/shared/widgets/custom_input.dart';
 
 class BudgetScreen extends StatefulWidget {
@@ -39,7 +39,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
     });
 
     // Create budget data without limits
-    final budgetData = BudgetModel(
+    final budgetData = BudgetEntity(
       limitBudget: false,
       weeklyBudget: null,
       paymentInfo: null,
@@ -70,7 +70,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
     }
 
     // Create payment info
-    final paymentInfo = PaymentInfo(
+    final paymentInfo = PaymentInfoEntity(
       fullName: fullNameController.text.trim(),
       cardNumber: cardNumberController.text.trim(),
       expiryDate: expiryDateController.text.trim(),
@@ -78,7 +78,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
     );
 
     // Create budget data with limits
-    final budgetData = BudgetModel(
+    final budgetData = BudgetEntity(
       limitBudget: true,
       weeklyBudget: double.tryParse(creditController.text) ?? 20.0,
       paymentInfo: paymentInfo,
@@ -316,7 +316,6 @@ class _BudgetScreenState extends State<BudgetScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final controller = context.watch<ServiceController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -406,7 +405,6 @@ class _BudgetScreenState extends State<BudgetScreen> {
                   hintText: 'Credits (weekly budget)',
                   inputType: TextInputType.number,
                   textInputAction: TextInputAction.next,
-      
                 ),
               ),
             ],

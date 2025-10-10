@@ -10,10 +10,10 @@ import 'package:yelpax_pro/features/marketPlace/jobs/subs/google_map_leads/prese
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/leads_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/leads_setting/presentation/screens/lead_setting.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/leads_setting/presentation/screens/leads_details_page.dart';
-import 'package:yelpax_pro/features/marketPlace/jobs/subs/location/presentation/screens/add_location.dart';
-import 'package:yelpax_pro/features/marketPlace/jobs/subs/location/presentation/screens/distance.dart';
-import 'package:yelpax_pro/features/marketPlace/jobs/subs/location/presentation/screens/nationwide.dart';
-import 'package:yelpax_pro/features/marketPlace/jobs/subs/location/presentation/screens/travel_time.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/add_location.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/distance.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/nationwide.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/travel_time.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/reminders/presentation/reminders_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/reponses/presentation/screens/response_credits.dart';
 
@@ -21,6 +21,7 @@ import 'package:yelpax_pro/features/marketPlace/jobs/subs/reponses/presentation/
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/availability.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/business_name_logo.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/card_details.dart';
+import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/location.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/budget_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/location.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/m_services_categories.dart';
@@ -176,8 +177,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => LocationScreen());
       case cardDetails:
         return MaterialPageRoute(builder: (_) => CardDetails());
-      case businessAvailability:
-        return MaterialPageRoute(builder: (_) => BusinessAvailability());
+      // case businessAvailability:
+      //   return MaterialPageRoute(builder: (_) => BusinessAvailability());
       case filterScreen:
         return MaterialPageRoute(builder: (_) => FilterScreen());
       case leadDetailsPage:

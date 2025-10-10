@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 
 import 'package:yelpax_pro/features/marketPlace/service/presentation/controllers/service_controller.dart';
-import 'package:yelpax_pro/features/marketPlace/service/presentation/models/question_model.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/question_entity.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 
 class ServiceQuestionForm extends StatefulWidget {
@@ -23,7 +23,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
       final controller = context.read<ServiceController>();
       if (controller.selectedService != null) {
         Logger().d(
-          'Selected service: ${controller.selectedService?.serviceName}',
+          'Selected service: ${controller.selectedService?.name}',
         );
         controller.fetchQuestionsForSelectedService();
       }
@@ -83,7 +83,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
-          controller.selectedService?.serviceName ?? "Service Questions",
+          controller.selectedService?.name ?? "Service Questions",
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
@@ -100,7 +100,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
             Container(
               padding: const EdgeInsets.all(20),
               child: Text(
-                '${controller.selectedService?.serviceName} Questions',
+                '${controller.selectedService?.name} Questions',
                 style: Theme.of(
                   context,
                 ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),

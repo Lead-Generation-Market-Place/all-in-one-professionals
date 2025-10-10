@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:logger/web.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
-
 import 'package:yelpax_pro/features/marketPlace/service/presentation/controllers/service_controller.dart';
-import 'package:yelpax_pro/features/marketPlace/service/presentation/models/service_model.dart';
-import 'package:yelpax_pro/features/marketPlace/service/presentation/models/subcategory_model.dart';
-import 'package:yelpax_pro/shared/widgets/custom_advanced_dropdown.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/service_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/subcategory_entity.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 
 class AddServiceScreen extends StatefulWidget {
@@ -16,19 +15,25 @@ class AddServiceScreen extends StatefulWidget {
 }
 
 class _AddServiceScreenState extends State<AddServiceScreen> {
-  
+  late final ServiceController controller;
   @override
   void initState() {
     super.initState();
 
     // Schedule the fetch after the first build
-    Future.microtask(() {
-      final controller = context.read<ServiceController>();
-      controller.fetchAllSubCategories();
-      controller.fetchAllServices();
-    });
+
+    controller = context.read<ServiceController>();
+    init();
   }
 
+  Future<void> init() async {
+    try {
+      await controller.fetchAllSubCategories();
+      await controller.fetchAllServices();
+    } catch (e) {
+      Logger().e('Error initiazing service screen.');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,42 +45,40 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             /// Subcategory Dropdown
             Text('Subcategory', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
-            AdvancedDropdown<SubCategory>(
-              items: controller.subCategories,
-              selectedItem: controller.selectedSubCategory,
-              hintText: 'Select Subcategory',
-              enableSearch: true,
-              itemToString: (sub) => sub.name,
+
+            // Fixed: Remove initialValue and use value instead
+            DropdownButtonFormField<SubCategoryEntity>(
+              // REMOVED: initialValue: controller.selectedSubCategory,
+              initialValue: controller
+                  .selectedSubCategory, // Use value instead of initialValue
+              isExpanded: true,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+              ),
+              hint: const Text('Select Subcategory'),
+              items: controller.subCategories.map((subCategory) {
+                return DropdownMenuItem<SubCategoryEntity>(
+                  value: subCategory,
+                  child: Text(subCategory.name),
+                );
+              }).toList(),
               onChanged: (subCategory) {
                 if (subCategory != null) {
                   controller.selectSubCategory(subCategory);
                 }
               },
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.outline.withOpacity(0.8),
-                  width: 1.5,
-                ),
-                color: Theme.of(context).colorScheme.surface,
-              ),
-              suffix: controller.isSubCategoriesLoading
-                  ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 8),
-                        child: CircularProgressIndicator.adaptive(
-                          strokeWidth: 1,
-                        ),
-                      ),
-                    )
-                  : null,
             ),
 
             const SizedBox(height: 24),
@@ -89,37 +92,47 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                       height: 56,
                       child: Center(child: CircularProgressIndicator()),
                     )
-                  : AdvancedDropdown<ServiceModel>(
-                      items: controller.filteredServices,
-                      selectedItem: controller.selectedService,
-                      hintText: 'Select Service',
-                      enableSearch: true,
-                      itemToString: (service) => service.serviceName,
+                  :
+                    // Fixed: Remove initialValue and use value instead
+                    DropdownButtonFormField<ServiceEntity>(
+                      // REMOVED: initialValue: controller.selectedService,
+                      initialValue: controller
+                          .selectedService, // Use value instead of initialValue
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        filled: true,
+                      ),
+                      hint: const Text('Select Service'),
+                      items: controller.filteredServices.map((service) {
+                        return DropdownMenuItem<ServiceEntity>(
+                          value: service,
+                          child: Text(service.name),
+                        );
+                      }).toList(),
                       onChanged: (service) {
                         if (service != null) {
                           controller.selectService(service);
                         }
                       },
                     ),
+              const Spacer(),
             ],
 
-            const Spacer(),
-
             /// Submit Button (Next)
-            AnimatedOpacity(
-              duration: const Duration(milliseconds: 300),
-              opacity: controller.selectedService != null ? 1.0 : 0.5,
-              child: CustomButton(
-                text: 'Next',
-                onPressed: controller.selectedService != null
-                    ? () {
-                        Navigator.pushNamed(
-                          context,
-                          AppRouter.businessAvailability,
-                        );
-                      }
-                    : null,
-              ),
+            CustomButton(
+              text: 'Next',
+              onPressed: controller.selectedService != null
+                  ? () {
+                      Navigator.pushNamed(context, AppRouter.add_location);
+                    }
+                  : null,
             ),
           ],
         ),

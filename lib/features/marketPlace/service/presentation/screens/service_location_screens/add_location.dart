@@ -26,6 +26,11 @@ class _AddLocationState extends State<AddLocation> {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          TextButton(onPressed: () {
+                Navigator.pushNamed(context, AppRouter.distance);
+              }, child: Text('Add Location'))
+        ],
         elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         foregroundColor: Colors.black,
@@ -35,58 +40,7 @@ class _AddLocationState extends State<AddLocation> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Select Location Type',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Choose how you want to define your service area',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-            const SizedBox(height: 24),
-
-            // Distance Card
-            // Inside your build method
-            LocationCard(
-              icon: Icons.place_rounded,
-              title: 'Distance',
-              subtitle:
-                  'Enter a postcode or city and then choose how far from there - as the crow flies.',
-              color: Colors.blue,
-              onTap: () {
-                Navigator.pushNamed(context, AppRouter.distance);
-              },
-            ),
-
-            const SizedBox(height: 16),
-
-            LocationCard(
-              icon: Icons.directions_car_rounded,
-              title: 'Travel Time',
-              subtitle:
-                  'Enter a postcode or city and tell us how long you want your maximum drive to be.',
-              color: Colors.green,
-              onTap: () {
-                Navigator.pushNamed(context, AppRouter.travel_time);
-              },
-            ),
-
-            const SizedBox(height: 16),
-
-            LocationCard(
-              icon: Icons.public_rounded,
-              title: 'Nationwide',
-              subtitle:
-                  'Choose the nationwide location if you provide services across the whole country.',
-              color: Colors.purple,
-              onTap: () {
-                Navigator.pushNamed(context, AppRouter.nationwide);
-              },
-            ),
-
-            const SizedBox(height: 32),
-
+          
             // Additional Info
             Container(
               padding: const EdgeInsets.all(16),
