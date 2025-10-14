@@ -10,8 +10,10 @@ import 'package:yelpax_pro/features/marketPlace/jobs/subs/google_map_leads/prese
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/leads_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/leads_setting/presentation/screens/lead_setting.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/leads_setting/presentation/screens/leads_details_page.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/add_location.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/distance.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/edit_distance.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/nationwide.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/travel_time.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/reminders/presentation/reminders_screen.dart';
@@ -116,7 +118,7 @@ class AppRouter {
   static const String marketing_dashboard = '/homeServices/marketing_dashboard';
   static const String subscription_plan = '/homeServices/subscription_plan';
   static const String budget = '/homeServices/budget';
-
+static const String edit_distance = '/homeServices/edit_distance';
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
@@ -201,6 +203,12 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => AddLocation());
       case distance:
         return MaterialPageRoute(builder: (_) => Distance());
+case edit_distance:
+        // Get the location from the arguments
+        final location = settings.arguments as LocationDataEntity;
+        return MaterialPageRoute(
+          builder: (_) => EditDistance(location: location),
+        );
       case travel_time:
         return MaterialPageRoute(builder: (_) => TravelTime());
       case nationwide:

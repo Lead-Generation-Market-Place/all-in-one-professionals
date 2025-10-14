@@ -286,7 +286,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   style: linkStyle,
                                   onPressed: () {
                                     CustomFlutterToast.showInfoToast(
-                                      context,
+                            
                                       'Coming Soon..',
                                     );
                                   },
@@ -309,7 +309,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   style: linkStyle,
                                   onPressed: () {
                                     CustomFlutterToast.showInfoToast(
-                                      context,
+                      
                                       'Coming Soon..',
                                     );
                                   },

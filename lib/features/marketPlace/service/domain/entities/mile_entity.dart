@@ -1,25 +1,19 @@
-// mile_entity.dart
 class MileEntity {
-  final int id;
-  final String name;
-  final int miles;
+  final String id;
+  final int mile;
 
-  const MileEntity({required this.id, required this.name, required this.miles});
+  const MileEntity({required this.id, required this.mile});
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is MileEntity &&
-        other.id == id &&
-        other.name == name &&
-        other.miles == miles;
+
+    return other is MileEntity && other.id == id && other.mile == mile;
   }
 
   @override
-  int get hashCode => Object.hash(id, name, miles);
+  int get hashCode => id.hashCode ^ mile.hashCode;
 
   @override
-  String toString() {
-    return 'MileEntity(id: $id, name: $name, miles: $miles)';
-  }
+  String toString() => 'MileEntity(id: $id, mile: $mile)';
 }

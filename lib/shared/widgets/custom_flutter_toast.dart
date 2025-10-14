@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:yelpax_pro/core/constants/app_colors.dart';
+import 'package:yelpax_pro/main.dart';
 
 class CustomFlutterToast {
   static OverlayEntry? _currentToast;
 
   static void showToast({
-    required BuildContext context,
     required String message,
     ToastType type = ToastType.info,
     Duration duration = const Duration(seconds: 3),
-    int? seconds,
   }) {
     _currentToast?.remove();
     _currentToast = null;
 
-    final overlay = Overlay.of(context);
+    final overlay = navigatorKey.currentState?.overlay;
+    if (overlay == null) return;
 
     Color backgroundColor;
     Color textColor = Colors.white;
@@ -86,73 +86,41 @@ class CustomFlutterToast {
 
     overlay.insert(_currentToast!);
 
-    final toastDuration = seconds != null
-        ? Duration(seconds: seconds)
-        : duration;
-
-    Future.delayed(toastDuration, () {
+    Future.delayed(duration, () {
       _currentToast?.remove();
       _currentToast = null;
     });
   }
 
-  static void showSuccessToast(
-    BuildContext context,
-    String message, {
-    int? seconds,
-    Duration? duration,
-  }) {
+  static void showSuccessToast(String message, {Duration? duration}) {
     showToast(
-      context: context,
       message: message,
       type: ToastType.success,
-      seconds: seconds,
-      duration: duration ?? const Duration(seconds: 3),
+      duration: duration ?? Duration(seconds: 3),
     );
   }
 
-  static void showErrorToast(
-    BuildContext context,
-    String message, {
-    int? seconds,
-    Duration? duration,
-  }) {
+  static void showErrorToast(String message, {Duration? duration}) {
     showToast(
-      context: context,
       message: message,
       type: ToastType.error,
-      seconds: seconds,
-      duration: duration ?? const Duration(seconds: 3),
+      duration: duration ?? Duration(seconds: 3),
     );
   }
 
-  static void showWarningToast(
-    BuildContext context,
-    String message, {
-    int? seconds,
-    Duration? duration,
-  }) {
+  static void showWarningToast(String message, {Duration? duration}) {
     showToast(
-      context: context,
       message: message,
       type: ToastType.warning,
-      seconds: seconds,
-      duration: duration ?? const Duration(seconds: 3),
+      duration: duration ?? Duration(seconds: 3),
     );
   }
 
-  static void showInfoToast(
-    BuildContext context,
-    String message, {
-    int? seconds,
-    Duration? duration,
-  }) {
+  static void showInfoToast(String message, {Duration? duration}) {
     showToast(
-      context: context,
       message: message,
       type: ToastType.info,
-      seconds: seconds,
-      duration: duration ?? const Duration(seconds: 3),
+      duration: duration ?? Duration(seconds: 3),
     );
   }
 }

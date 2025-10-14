@@ -1,6 +1,5 @@
-// lib/features/marketPlace/service/data/models/location_model.dart
-
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
 
 class LocationDataModel {
   final String id;
@@ -17,6 +16,8 @@ class LocationDataModel {
   final String? addressLine;
   final LocationCoordinates coordinates;
   final ServiceArea? serviceArea;
+  final String mileId;
+  final int? mileValue; // Add this field to store the actual mile value
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -35,6 +36,8 @@ class LocationDataModel {
     this.addressLine,
     required this.coordinates,
     this.serviceArea,
+    required this.mileId,
+    this.mileValue, // Initialize this
     required this.createdAt,
     required this.updatedAt,
   });
@@ -60,18 +63,19 @@ class LocationDataModel {
       ),
       serviceArea: json['service_area'] != null
           ? ServiceArea(
-              radiusMiles: json['service_area']['radius_miles'],
-              radiusMeters: json['service_area']['radius_meters'].toDouble(),
-              radiusKilometers: json['service_area']['radius_kilometers']
-                  .toDouble(),
-            )
+        radiusMiles: json['service_area']['radius_miles'],
+        radiusMeters: json['service_area']['radius_meters'].toDouble(),
+        radiusKilometers: json['service_area']['radius_kilometers']
+            .toDouble(),
+      )
           : null,
+      mileId: json['mile_id'] ?? '',
+      mileValue: json['mile'] is int ? json['mile'] : (json['mile'] as num?)?.toInt(),
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
     );
   }
 
-  // Convert to JSON
   Map<String, dynamic> toJson() {
     return {
       'type': type,
@@ -80,6 +84,7 @@ class LocationDataModel {
       if (serviceId != null) 'service_id': serviceId,
       if (leadId != null) 'lead_id': leadId,
       if (projectId != null) 'project_id': projectId,
+      'mile_id': mileId,
       'country': country,
       if (state != null) 'state': state,
       if (city != null) 'city': city,
@@ -91,7 +96,10 @@ class LocationDataModel {
   }
 
   // Convert from Entity to Model
-  factory LocationDataModel.fromEntity(LocationDataEntity entity, {String? id}) {
+  factory LocationDataModel.fromEntity(
+      LocationDataEntity entity, {
+        String? id,
+      }) {
     return LocationDataModel(
       id: id ?? '',
       type: entity.type,
@@ -100,6 +108,8 @@ class LocationDataModel {
       serviceId: entity.serviceId,
       leadId: entity.leadId,
       projectId: entity.projectId,
+      mileId: entity.mileEntity.id,
+      mileValue: entity.mileEntity.mile,
       country: entity.country,
       state: entity.state,
       city: entity.city,
@@ -112,9 +122,9 @@ class LocationDataModel {
     );
   }
 
-  // Convert to Entity
-  LocationDataEntity toEntity() {
+  LocationDataEntity toEntity({required MileEntity mileEntity}) {
     return LocationDataEntity(
+      id: id,
       type: type,
       userId: userId,
       professionalId: professionalId,
@@ -128,6 +138,17 @@ class LocationDataModel {
       addressLine: addressLine,
       coordinates: coordinates,
       serviceArea: serviceArea,
+      mileEntity: mileEntity,
     );
+  }
+
+  // Alternative method that uses the stored mileValue if available
+  LocationDataEntity toEntityWithStoredMile() {
+    final mileEntity = MileEntity(
+      id: mileId,
+      mile: mileValue ?? 0,
+    );
+
+    return toEntity(mileEntity: mileEntity);
   }
 }

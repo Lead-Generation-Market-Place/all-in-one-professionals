@@ -1,4 +1,5 @@
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
 
 import '../../domain/entities/question_entity.dart';
 import '../../domain/entities/service_entity.dart';
@@ -41,10 +42,34 @@ class ServiceRepositoryImpl implements ServiceRepository {
     return await remoteDataSource.submitServiceRegistration(registration);
   }
 
- 
-  
   @override
-  Future<String> addLocation(LocationDataEntity locationDataEntity)async {
-  return await remoteDataSource.addLocationData(locationDataEntity);
+  Future<String> addLocation(LocationDataEntity locationDataEntity) async {
+    return await remoteDataSource.addLocationData(locationDataEntity);
+  }
+
+  @override
+  Future<List<LocationDataEntity>> getServiceLocationsOfAuthenticatedUser(
+    String professionalId,
+    String serviceId,
+  ) async {
+    return await remoteDataSource.getServiceLocationsOfAuthenticatedUser(
+      professionalId,
+      serviceId,
+    );
+  }
+
+  @override
+  Future<String> updateLocation(LocationDataEntity locationDataEntity) async {
+    return await remoteDataSource.updateLocation(locationDataEntity);
+  }
+
+  @override
+  Future<List<MileEntity>> getAllMiles() async {
+    return await remoteDataSource.getAllMiles();
+  }
+
+  @override
+  Future<void> deleteServiceLocation(String? id) async{
+      return await remoteDataSource.deleteServiceLocation(id);
   }
 }

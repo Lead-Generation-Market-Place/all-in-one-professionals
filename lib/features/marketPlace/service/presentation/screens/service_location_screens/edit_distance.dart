@@ -15,57 +15,198 @@ import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_ent
 import 'package:yelpax_pro/features/marketPlace/service/presentation/controllers/service_controller.dart';
 import 'package:yelpax_pro/shared/widgets/custom_flutter_toast.dart';
 
-class Distance extends StatefulWidget {
-  const Distance({super.key});
+class EditDistance extends StatefulWidget {
+  const EditDistance({super.key, required this.location});
+  final LocationDataEntity location;
 
   @override
-  State<Distance> createState() => _DistanceScreenState();
+  State<EditDistance> createState() => _EditDistanceScreenState();
 }
 
-class _DistanceScreenState extends State<Distance> {
+class _EditDistanceScreenState extends State<EditDistance> {
   MileEntity? _selectedMile;
-  late final AuthUserController authUserController;
-  late final ServiceController serviceController;
+  AuthUserController? authUserController;
+  ServiceController? serviceController;
   late GoogleMapController _mapController;
 
   final TextEditingController _searchController = TextEditingController();
   late String _mapsApiKey;
-  CameraPosition _initialPosition = const CameraPosition(
-    target: LatLng(37.7749, -122.4194),
-    zoom: 12,
-  );
+  late CameraPosition _initialPosition;
 
   List<Placemark> _searchResults = [];
   List<dynamic> _autocompleteResults = [];
   LatLng? _selectedLatLng;
   String _selectedAddress = '';
   bool _isNextLoading = false;
+  bool _isInitialized = false;
+  bool _milesLoaded = false;
 
   @override
   void initState() {
-    _mapsApiKey = dotenv.env['MAPS_API_KEY'] ?? '';
-    authUserController = Provider.of(context, listen: false);
-    serviceController = Provider.of(context, listen: false);
-    init();
     super.initState();
+    _mapsApiKey = dotenv.env['MAPS_API_KEY'] ?? '';
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeControllers();
+    });
   }
 
-  Future<void> init() async {
+  void _initializeControllers() {
     try {
-      await serviceController.fetchAllMiles();
+      authUserController = Provider.of<AuthUserController>(
+        context,
+        listen: false,
+      );
+      serviceController = Provider.of<ServiceController>(
+        context,
+        listen: false,
+      );
+
+      _initializeWithLocationData();
     } catch (e) {
-      CustomFlutterToast.showErrorToast('Error initializing distance class.');
+      CustomFlutterToast.showErrorToast('Error initializing controllers');
+      _initializeWithLocationData();
     }
+  }
+
+  void _initializeWithLocationData() async {
+    try {
+      List<double> coords = widget.location.coordinates.coordinates;
+      if (coords.length >= 2) {
+        _selectedLatLng = LatLng(coords[1], coords[0]);
+      } else {
+        _selectedLatLng = LatLng(51.6393693, 8.5067607);
+      }
+
+      _initialPosition = CameraPosition(target: _selectedLatLng!, zoom: 14);
+      _selectedAddress = widget.location.addressLine ?? 'Unknown Address';
+      _searchController.text = _selectedAddress;
+
+      // Wait for miles to be loaded
+      if (serviceController != null) {
+        if (serviceController!.miles.isEmpty) {
+          await serviceController!.fetchAllMiles();
+        }
+
+        // Small delay to ensure miles are loaded
+        await Future.delayed(const Duration(milliseconds: 100));
+
+        _setSelectedMile();
+        setState(() {
+          _milesLoaded = true;
+          _isInitialized = true;
+        });
+      } else {
+        setState(() {
+          _isInitialized = true;
+        });
+      }
+
+    } catch (e) {
+      print('Error initializing location data: $e');
+      _selectedLatLng = LatLng(51.6393693, 8.5067607);
+      _initialPosition = CameraPosition(target: _selectedLatLng!, zoom: 14);
+      _selectedAddress = 'Krumme G. 6, 59590 Geseke, Germany';
+      _searchController.text = _selectedAddress;
+
+      setState(() {
+        _isInitialized = true;
+      });
+    }
+  }
+
+  void _setSelectedMile() {
+    if (serviceController == null || serviceController!.miles.isEmpty) {
+      print('No miles available in service controller');
+      return;
+    }
+
+    print('Available miles: ${serviceController!.miles.map((m) => m.mile).toList()}');
+    print('Location mileEntity: ${widget.location.mileEntity}');
+
+    // Priority 1: If the location already has a valid mileEntity with mile value > 0
+    if (widget.location.mileEntity.mile > 0) {
+      try {
+        // Try to find the exact match in available miles
+        final matchingMile = serviceController!.miles.firstWhere(
+              (mile) => mile.mile == widget.location.mileEntity.mile,
+        );
+        _selectedMile = matchingMile;
+        print('Found matching mile by value: ${_selectedMile?.mile} miles');
+        return;
+      } catch (e) {
+        print('Could not find mile with value: ${widget.location.mileEntity.mile}');
+      }
+    }
+
+    // Priority 2: Use the mileEntity ID if available
+    if (widget.location.mileEntity.id.isNotEmpty) {
+      try {
+        final matchingMile = serviceController!.miles.firstWhere(
+              (mile) => mile.id == widget.location.mileEntity.id,
+        );
+        _selectedMile = matchingMile;
+        print('Found matching mile by ID: ${_selectedMile?.mile} miles');
+        return;
+      } catch (e) {
+        print('Could not find mile with ID: ${widget.location.mileEntity.id}');
+      }
+    }
+
+    // Priority 3: Calculate from serviceArea radius
+    if (widget.location.serviceArea != null) {
+      final radiusKilometers = widget.location.serviceArea!.radiusKilometers;
+      final radiusMiles = (radiusKilometers * 0.621371).round();
+      print('Calculated radius from serviceArea: $radiusMiles miles');
+
+      try {
+        final matchingMile = serviceController!.miles.firstWhere(
+              (mile) => mile.mile == radiusMiles,
+        );
+        _selectedMile = matchingMile;
+        print('Found matching mile by radius: ${_selectedMile?.mile} miles');
+        return;
+      } catch (e) {
+        print('No exact match for $radiusMiles miles, finding closest...');
+        _selectedMile = _findClosestMile(radiusMiles);
+        print('Using closest mile: ${_selectedMile?.mile} miles');
+        return;
+      }
+    }
+
+    // Priority 4: Fallback to default (first available mile)
+    _selectedMile = serviceController!.miles.first;
+    print('Using fallback mile: ${_selectedMile?.mile} miles');
+  }
+
+  MileEntity _findClosestMile(int targetMiles) {
+    if (serviceController == null || serviceController!.miles.isEmpty) {
+      return MileEntity(id: 'default', mile: 5); // Default fallback
+    }
+
+    return serviceController!.miles.reduce((a, b) {
+      final diffA = (a.mile - targetMiles).abs();
+      final diffB = (b.mile - targetMiles).abs();
+      return diffA < diffB ? a : b;
+    });
   }
 
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
+
+    if (_selectedLatLng != null) {
+      _mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(target: _selectedLatLng!, zoom: 14),
+        ),
+      );
+    }
   }
 
   // Google Maps Geocoding API - Get detailed address from coordinates
   Future<Map<String, dynamic>?> _getGoogleMapsGeocodingData(
-    LatLng coordinates,
-  ) async {
+      LatLng coordinates,
+      ) async {
     try {
       final url = Uri.parse(
         'https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinates.latitude},${coordinates.longitude}&key=$_mapsApiKey',
@@ -80,15 +221,12 @@ class _DistanceScreenState extends State<Distance> {
           Logger().d('---------------------data----${data}');
           return data;
         } else {
-          print('Google Maps Geocoding API error: ${data['status']}');
           return null;
         }
       } else {
-        print('HTTP error: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Error fetching Google Maps geocoding data: $e');
       return null;
     }
   }
@@ -109,15 +247,12 @@ class _DistanceScreenState extends State<Distance> {
         if (data['status'] == 'OK' && data['predictions'].isNotEmpty) {
           return data;
         } else {
-          print('Places Autocomplete API error: ${data['status']}');
           return null;
         }
       } else {
-        print('HTTP error: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Error fetching place autocomplete data: $e');
       return null;
     }
   }
@@ -137,23 +272,20 @@ class _DistanceScreenState extends State<Distance> {
         if (data['status'] == 'OK') {
           return data['result'];
         } else {
-          print('Place Details API error: ${data['status']}');
           return null;
         }
       } else {
-        print('HTTP error: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Error fetching place details: $e');
       return null;
     }
   }
 
   // Extract comprehensive address components
   Map<String, dynamic> _extractAddressComponents(
-    List<dynamic> addressComponents,
-  ) {
+      List<dynamic> addressComponents,
+      ) {
     final Map<String, dynamic> components = {};
 
     for (var component in addressComponents) {
@@ -212,7 +344,6 @@ class _DistanceScreenState extends State<Distance> {
     }
 
     try {
-      // Use Google Places Autocomplete for suggestions
       final autocompleteData = await _getPlaceAutocomplete(query);
 
       if (autocompleteData != null &&
@@ -227,7 +358,6 @@ class _DistanceScreenState extends State<Distance> {
         });
       }
     } catch (e) {
-      print('Error in search: $e');
       setState(() {
         _autocompleteResults = [];
         _searchResults = [];
@@ -247,7 +377,6 @@ class _DistanceScreenState extends State<Distance> {
     });
 
     try {
-      // Get detailed place information
       final placeDetails = await _getPlaceDetails(placeId);
 
       if (placeDetails != null) {
@@ -267,8 +396,6 @@ class _DistanceScreenState extends State<Distance> {
         );
       }
     } catch (e) {
-      print('Error selecting autocomplete result: $e');
-      // Fallback to regular search
       await _searchLocation(description);
     }
   }
@@ -282,14 +409,12 @@ class _DistanceScreenState extends State<Distance> {
         final Location loc = locations.first;
         final LatLng target = LatLng(loc.latitude, loc.longitude);
 
-        // Get address from coordinates using Google Maps API
         final geocodingData = await _getGoogleMapsGeocodingData(target);
 
         String formattedAddress = '';
         if (geocodingData != null && geocodingData['results'].isNotEmpty) {
           formattedAddress = geocodingData['results'][0]['formatted_address'];
         } else {
-          // Fallback to local geocoding
           List<Placemark> placemarks = await placemarkFromCoordinates(
             loc.latitude,
             loc.longitude,
@@ -311,7 +436,6 @@ class _DistanceScreenState extends State<Distance> {
         );
       }
     } catch (e) {
-      print('Error searching location: $e');
       setState(() {
         _searchResults = [];
         _autocompleteResults = [];
@@ -339,7 +463,7 @@ class _DistanceScreenState extends State<Distance> {
     await _searchLocation(query);
   }
 
-  Future<void> _addLocation() async {
+  Future<void> _updateLocation() async {
     if (_selectedLatLng == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please select a location first")),
@@ -354,12 +478,18 @@ class _DistanceScreenState extends State<Distance> {
       return;
     }
 
+    if (authUserController == null || serviceController == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Controllers not initialized")),
+      );
+      return;
+    }
+
     setState(() {
       _isNextLoading = true;
     });
 
     try {
-      // Get comprehensive data from Google Maps APIs
       final geocodingData = await _getGoogleMapsGeocodingData(_selectedLatLng!);
 
       if (geocodingData == null) {
@@ -376,11 +506,11 @@ class _DistanceScreenState extends State<Distance> {
         firstResult['address_components'],
       );
 
-      // Create the location entity with clean backend data
+      // Create the location entity with the existing ID
       final locationEntity = LocationDataEntity(
-
-        professionalId: authUserController.professionalId.value,
-        serviceId: serviceController.selectedService!.id,
+        id: widget.location.id, // Preserve the original ID
+        professionalId: authUserController?.professionalId.value,
+        serviceId: serviceController?.selectedService!.id,
         type: 'service',
         country: addressComponents['country']?['long'] ?? 'USA',
         state: addressComponents['state']?['long'],
@@ -393,27 +523,21 @@ class _DistanceScreenState extends State<Distance> {
           radiusMeters: _selectedMile!.mile * 1609.34,
           radiusKilometers: _selectedMile!.mile * 1.60934,
         ),
-        mileEntity: _selectedMile!, // Pass the full MileEntity
+        mileEntity: _selectedMile!,
       );
 
+      await serviceController!.updateLocationData(locationEntity);
 
-      final locationModel = LocationDataModel.fromEntity(locationEntity);
-      serviceController.addLocationData(locationEntity);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Location added successfully")),
-      );
+      CustomFlutterToast.showSuccessToast('Location updated successfully');
       Navigator.pushReplacementNamed(
         context,
         AppRouter.add_location,
-
       );
 
+
     } catch (e) {
-      print('Error adding location: $e');
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error adding location: $e")));
+      print('Error updating location: $e');
+      CustomFlutterToast.showErrorToast('Error updating location: $e');
     } finally {
       setState(() {
         _isNextLoading = false;
@@ -425,23 +549,52 @@ class _DistanceScreenState extends State<Distance> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Service Location'),
+        title: const Text('Edit Service Location'),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Padding(
+      body: !_isInitialized || _selectedLatLng == null
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Edit Mode Indicator
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue[100]!),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.edit, color: Colors.blue[700], size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Editing existing location - ${widget.location.addressLine ?? "Unknown"}',
+                        style: TextStyle(
+                          color: Colors.blue[700],
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+
               // Note
               Text(
                 'Note:- Please select your coverage area carefully. '
-                'This will determine where your services are available and can impact your visibility to potential customers.',
+                    'This will determine where your services are available and can impact your visibility to potential customers.',
                 style: TextStyle(
                   fontSize: 14,
                   fontStyle: FontStyle.italic,
@@ -456,10 +609,15 @@ class _DistanceScreenState extends State<Distance> {
                 onChanged: _onSearchChanged,
                 decoration: InputDecoration(
                   hintText: 'Search by name or address',
-                  prefixIcon: const Icon(Icons.search, color: Colors.black),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: Colors.black,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
+                  filled: true,
+                  fillColor: Colors.grey[50],
                 ),
               ),
 
@@ -493,7 +651,8 @@ class _DistanceScreenState extends State<Distance> {
                           description,
                           style: const TextStyle(fontSize: 14),
                         ),
-                        onTap: () => _selectAutocompleteResult(prediction),
+                        onTap: () =>
+                            _selectAutocompleteResult(prediction),
                       );
                     },
                   ),
@@ -524,6 +683,52 @@ class _DistanceScreenState extends State<Distance> {
 
               const SizedBox(height: 20),
 
+              // Selected Location Preview
+              if (_selectedAddress.isNotEmpty) ...[
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.green[50],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.green[100]!),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.check_circle,
+                        color: Colors.green[700],
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Selected Location',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.green[700],
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              _selectedAddress,
+                              style: const TextStyle(fontSize: 13),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+
               // Map
               SizedBox(
                 height: 200,
@@ -536,15 +741,18 @@ class _DistanceScreenState extends State<Distance> {
                     zoomControlsEnabled: false,
                     markers: _selectedLatLng != null
                         ? {
-                            Marker(
-                              markerId: const MarkerId("selected"),
-                              position: _selectedLatLng!,
-                              infoWindow: InfoWindow(
-                                title: 'Selected Location',
-                                snippet: _selectedAddress,
-                              ),
-                            ),
-                          }
+                      Marker(
+                        markerId: const MarkerId("selected"),
+                        position: _selectedLatLng!,
+                        infoWindow: InfoWindow(
+                          title: 'Updated Location',
+                          snippet: _selectedAddress,
+                        ),
+                        icon: BitmapDescriptor.defaultMarkerWithHue(
+                          BitmapDescriptor.hueOrange,
+                        ),
+                      ),
+                    }
                         : {},
                   ),
                 ),
@@ -554,8 +762,12 @@ class _DistanceScreenState extends State<Distance> {
               // Distance Dropdown using backend data
               Consumer<ServiceController>(
                 builder: (context, controller, child) {
+                  if (!_milesLoaded) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
                   return DropdownButtonFormField<MileEntity>(
-                    initialValue: _selectedMile,
+                    value: _selectedMile,
                     decoration: InputDecoration(
                       labelText: 'Service Radius',
                       labelStyle: const TextStyle(color: Colors.black),
@@ -583,32 +795,32 @@ class _DistanceScreenState extends State<Distance> {
                 },
               ),
 
-              const SizedBox(height: 20),
               const SizedBox(height: 30),
 
-              // Add Location Button
+              // Update Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _isNextLoading ? null : _addLocation,
+                  onPressed: _isNextLoading ? null : _updateLocation,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
+                    backgroundColor: Colors.orange,
                   ),
                   child: _isNextLoading
                       ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
-                            ),
-                          ),
-                        )
-                      : const Text('Add Location'),
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Colors.white,
+                      ),
+                    ),
+                  )
+                      : const Text('Update Location'),
                 ),
               ),
             ],

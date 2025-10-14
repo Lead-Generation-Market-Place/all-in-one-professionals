@@ -74,7 +74,7 @@ class _ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
               onPressed: isEmailValid
                   ? () {
                       CustomFlutterToast.showSuccessToast(
-                        context,
+
                         'Reset Link send successfully, check your email.',
                       );
                       Navigator.pop(context);

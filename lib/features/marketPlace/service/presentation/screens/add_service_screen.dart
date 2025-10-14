@@ -18,12 +18,9 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
   late final ServiceController controller;
   @override
   void initState() {
-    super.initState();
-
-    // Schedule the fetch after the first build
-
     controller = context.read<ServiceController>();
     init();
+    super.initState();
   }
 
   Future<void> init() async {

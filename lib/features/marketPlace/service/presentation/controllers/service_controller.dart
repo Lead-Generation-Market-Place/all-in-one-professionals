@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:logger/web.dart';
+import 'package:yelpax_pro/features/marketPlace/service/data/models/location_data_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/add_location.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_miles.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_services_location_of_authenticated_user.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/update_location.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/add_location.dart';
+import 'package:yelpax_pro/shared/widgets/custom_flutter_toast.dart';
 import '../../domain/entities/budget_entity.dart';
 
 import '../../domain/entities/question_entity.dart';
 import '../../domain/entities/service_entity.dart';
 import '../../domain/entities/service_registration_entity.dart';
 import '../../domain/entities/subcategory_entity.dart';
+import '../../domain/usecases/delete_service_location_use_case.dart';
 import '../../domain/usecases/get_all_services.dart';
 import '../../domain/usecases/get_all_subcategories.dart';
 import '../../domain/usecases/get_questions_for_service.dart';
@@ -22,6 +29,11 @@ class ServiceController extends ChangeNotifier {
   final GetQuestionsForService getQuestionsForService;
   final SubmitServiceRegistration submitServiceRegistration;
   final AddLocationUseCase addLocation;
+  final GetServicesLocationOfAuthenticatedUser
+  getServicesLocationOfAuthenticatedUser;
+  final UpdateLocationUseCase updateLocationUseCase;
+  final GetAllMilesUseCase getAllMilesUseCase;
+  final DeleteServiceLocationUseCase deleteServiceLocationUseCase;
   ServiceController({
     required this.getAllSubCategories,
     required this.getAllServices,
@@ -29,8 +41,13 @@ class ServiceController extends ChangeNotifier {
     required this.getQuestionsForService,
     required this.submitServiceRegistration,
     required this.addLocation,
+    required this.getServicesLocationOfAuthenticatedUser,
+    required this.updateLocationUseCase,
+    required this.getAllMilesUseCase,
+    required this.deleteServiceLocationUseCase
   });
-
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
   // Registration data
   late final ServiceRegistrationEntity _registrationData;
   ServiceRegistrationEntity get registrationData => _registrationData;
@@ -120,22 +137,30 @@ class ServiceController extends ChangeNotifier {
   void selectService(ServiceEntity service) {
     Logger().d('🐛 Selected Service: ${service.id}');
     _selectedService = service;
-
-    // _registrationData = _registrationData.copyWith(
-    //   selectedService: service.id,
-    //   selectedServiceDetails: service,
-    // );
-
-    // Logger().d(
-    //   '✅ Set in registrationData: ${_registrationData.selectedService}',
-    // );
-    // Logger().d('✅ Service ID: ${service.id}');
-    // Logger().d('✅ Service Name: ${service.name}');
-
     notifyListeners();
   }
 
   ///////////-Location-////////////
+
+  List<MileEntity> _miles = [];
+  List<MileEntity> get miles => _miles;
+
+  Future<void> fetchAllMiles() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await getAllMilesUseCase();
+      Logger().d('fetch Miles === $response');
+      _miles = response;
+    } catch (e) {
+      print('Error fetching miles: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<String> addLocationData(LocationDataEntity locationDataEntity) async {
     try {
       final response = await addLocation(locationDataEntity);
@@ -146,6 +171,73 @@ class ServiceController extends ChangeNotifier {
     } catch (e) {
       Logger().e('Error adding location.');
       return Future.error('Failed to add location: $e');
+    }
+  }
+
+  final List<LocationDataEntity> _serviceLocations = [];
+
+  List<LocationDataEntity> get serviceLocations =>
+      List.unmodifiable(_serviceLocations);
+
+  Future<void> getServiceLocationsOfAuthenticatedUser(
+    String professionalId,
+  ) async {
+    try {
+      final response = await getServicesLocationOfAuthenticatedUser(
+        professionalId,
+        selectedService!.id.toString(),
+      );
+
+      if (response.isEmpty) {
+        Logger().d('No service locations found.');
+      } else {
+        _serviceLocations.clear();
+        _serviceLocations.addAll(response);
+        notifyListeners(); // notify UI about changes
+      }
+    } catch (e) {
+      CustomFlutterToast.showErrorToast('Failed to fetch service locations.');
+    }
+  }
+
+  // Add this method to your ServiceController
+  Future<void> updateLocationData(LocationDataEntity locationEntity) async {
+    try {
+      _isLoading = true;
+
+      // ✅ CORRECT: Call the usecase instance that was injected in the constructor
+      final response = await updateLocationUseCase(locationEntity);
+      if (response.isEmpty) {
+        CustomFlutterToast.showErrorToast('Error updating location.');
+      }
+      Logger().d("-------------------$response");
+      notifyListeners();
+    } catch (e) {
+      Logger().e('Error updating location: $e');
+      rethrow;
+    } finally {
+      _isLoading = false;
+    }
+  }
+
+  Future<void> deleteServiceLocation(String? id) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      await deleteServiceLocationUseCase(id);
+
+      // Remove the deleted location from the local list
+      _serviceLocations.removeWhere((location) => location.id == id);
+
+      _isLoading = false;
+      notifyListeners();
+
+      CustomFlutterToast.showSuccessToast('Location deleted successfully');
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      CustomFlutterToast.showErrorToast('Error deleting service location.');
     }
   }
 
@@ -229,8 +321,6 @@ class ServiceController extends ChangeNotifier {
 
   // Registration submission
   Future<bool> submitCompleteRegistration() async {
-    print('🔄 Starting complete registration submission...');
-
     // Apply sensible defaults for optional steps if missing
 
     BudgetEntity budget =
@@ -239,7 +329,6 @@ class ServiceController extends ChangeNotifier {
     final updatedRegistration = _registrationData.copyWith(budget: budget);
 
     if (!_validateRegistrationData(updatedRegistration)) {
-      print('❌ Registration validation failed');
       return false;
     }
 
@@ -250,7 +339,6 @@ class ServiceController extends ChangeNotifier {
     try {
       final success = await submitServiceRegistration(updatedRegistration);
       if (success) {
-        print('✅ Professional service registered successfully!');
         _clearRegistrationData();
       }
       isSubmitting = false;
@@ -258,7 +346,7 @@ class ServiceController extends ChangeNotifier {
       return success;
     } catch (e) {
       submitError = e.toString();
-      print('❌ Registration failed: $e');
+
       isSubmitting = false;
       notifyListeners();
       return false;
@@ -268,16 +356,13 @@ class ServiceController extends ChangeNotifier {
   // Validation
   bool _validateRegistrationData(ServiceRegistrationEntity registration) {
     if (registration.selectedService == null) {
-      print('❌ Service validation failed: No service selected');
       return false;
     }
 
     if (registration.budget == null) {
-      print('❌ Budget validation failed: No budget set');
       return false;
     }
 
-    print('✅ All registration data validated successfully');
     return true;
   }
 

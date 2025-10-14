@@ -82,7 +82,8 @@ class ApiService {
 
   ApiService._internal() {
     BaseOptions options = BaseOptions(
-      baseUrl: "https://servicyee-backend.onrender.com/api/v1/",
+      // baseUrl: "https://servicyee-backend.onrender.com/api/v1/",
+      baseUrl: "http://192.168.0.180:4000/api/v1/",
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
       contentType: "application/json",
