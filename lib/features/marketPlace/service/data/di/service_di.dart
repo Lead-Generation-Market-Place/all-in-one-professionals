@@ -1,6 +1,8 @@
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/add_location.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/delete_service_location_use_case.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_Minute_use_case.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_miles.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_vehicle_type_use_case.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_services_location_of_authenticated_user.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/update_location.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/add_location.dart';
@@ -38,7 +40,8 @@ class ServiceDIContainer {
   late final UpdateLocationUseCase _updateLocationUseCase;
   late final GetAllMilesUseCase _allMilesUseCase;
   late final DeleteServiceLocationUseCase _deleteServiceLocationUseCase;
-
+  late final GetAllMinuteUseCase _getAllMinuteUseCase;
+  late final GetAllVehicleTypeUseCase _getAllVehicleTypesUseCase;
   void initialize() {
     if (_initialized) return;
 
@@ -56,6 +59,8 @@ class ServiceDIContainer {
     _updateLocationUseCase = UpdateLocationUseCase(_repository);
     _allMilesUseCase = GetAllMilesUseCase(_repository);
     _deleteServiceLocationUseCase = DeleteServiceLocationUseCase(_repository);
+    _getAllMinuteUseCase = GetAllMinuteUseCase(_repository);
+    _getAllVehicleTypesUseCase = GetAllVehicleTypeUseCase(_repository);
     _initialized = true;
   }
 
@@ -71,7 +76,9 @@ class ServiceDIContainer {
           _getServicesLocationOfAuthenticatedUser,
       updateLocationUseCase: _updateLocationUseCase,
       getAllMilesUseCase: _allMilesUseCase,
-      deleteServiceLocationUseCase: _deleteServiceLocationUseCase
+      deleteServiceLocationUseCase: _deleteServiceLocationUseCase,
+      getAllMinuteUseCase: _getAllMinuteUseCase,
+      getAllVehicleTypesUseCase: _getAllVehicleTypesUseCase,
     );
   }
 }

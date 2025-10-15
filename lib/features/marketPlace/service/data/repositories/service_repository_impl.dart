@@ -1,5 +1,7 @@
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/minute_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/vehicle_type_entity.dart';
 
 import '../../domain/entities/question_entity.dart';
 import '../../domain/entities/service_entity.dart';
@@ -69,7 +71,17 @@ class ServiceRepositoryImpl implements ServiceRepository {
   }
 
   @override
-  Future<void> deleteServiceLocation(String? id) async{
-      return await remoteDataSource.deleteServiceLocation(id);
+  Future<void> deleteServiceLocation(String? id) async {
+    return await remoteDataSource.deleteServiceLocation(id);
+  }
+
+  @override
+  Future<List<MinuteEntity>> getAllMinutes() async {
+    return await remoteDataSource.getAllMinutes();
+  }
+
+  @override
+  Future<List<VehicleTypeEntity>> getAllVehicleTypes() async {
+    return await remoteDataSource.getAllVehicleTypes();
   }
 }

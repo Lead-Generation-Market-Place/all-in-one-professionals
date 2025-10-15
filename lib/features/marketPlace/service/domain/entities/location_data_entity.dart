@@ -1,6 +1,7 @@
-
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/minute_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/vehicle_type_entity.dart';
 
 class LocationDataEntity {
   final String? id;
@@ -18,6 +19,8 @@ class LocationDataEntity {
   final LocationCoordinates coordinates;
   final ServiceArea? serviceArea;
   final MileEntity mileEntity;
+  final MinuteEntity minuteEntity;
+  final VehicleTypeEntity? vehicleTypeEntity;
 
   LocationDataEntity({
     this.id,
@@ -35,15 +38,16 @@ class LocationDataEntity {
     required this.coordinates,
     this.serviceArea,
     required this.mileEntity,
+    required this.minuteEntity,
+    this.vehicleTypeEntity,
   });
 
   factory LocationDataEntity.fromJson(Map<String, dynamic> json) {
-    // Get the mile value from JSON - it can be in different formats
     final mileId = json['mile_id'] ?? '';
     final mileValue = json['mile'] ?? 0;
+    final minuteId = json['minute_id'] ?? '';
+    final minuteValue = json['minute'] ?? 0;
 
-    // If mile is directly provided in JSON, use it
-    // Otherwise, we'll need to get it from the miles list later
     return LocationDataEntity(
       id: json['_id'],
       type: json['type'] ?? '',
@@ -59,8 +63,8 @@ class LocationDataEntity {
       addressLine: json['address_line'] as String?,
       coordinates: json['coordinates'] != null
           ? LocationCoordinates.fromJson(
-        json['coordinates'] as Map<String, dynamic>,
-      )
+              json['coordinates'] as Map<String, dynamic>,
+            )
           : LocationCoordinates(coordinates: [0.0, 0.0]),
       serviceArea: json['service_area'] != null
           ? ServiceArea.fromJson(json['service_area'] as Map<String, dynamic>)
@@ -69,45 +73,85 @@ class LocationDataEntity {
         id: mileId,
         mile: mileValue is int ? mileValue : (mileValue as num).toInt(),
       ),
+      minuteEntity: MinuteEntity(
+        id: minuteId,
+        minute: minuteValue is int ? minuteValue : (minuteValue as num).toInt(),
+      ),
+      vehicleTypeEntity:
+          (json['vehicle_type_id'] != null || json['vehicle_type'] != null)
+          ? VehicleTypeEntity(
+              id: (json['vehicle_type_id'] ?? '') as String,
+              vehicle_type: (json['vehicle_type'] ?? '') as String,
+            )
+          : null,
     );
   }
 
-  // Alternative factory method that accepts the full miles list
   factory LocationDataEntity.fromJsonWithMiles(
-      Map<String, dynamic> json,
-      List<MileEntity> availableMiles
-      ) {
+    Map<String, dynamic> json,
+    List<MileEntity> availableMiles,
+    List<MinuteEntity> availableMinutes,
+  ) {
     final mileId = json['mile_id'] ?? '';
     final mileValue = json['mile'];
-
     MileEntity mileEntity;
-late final mileValueInt;
-    // If we have a mile_id, try to find the matching mile from available miles
+    late final int mileValueInt;
+
     if (mileId.isNotEmpty) {
       try {
         mileEntity = availableMiles.firstWhere((mile) => mile.id == mileId);
-      } catch (e) {
-        // If not found, create a temporary one with the provided values
+      } catch (_) {
         mileEntity = MileEntity(
           id: mileId,
-          mile: mileValue is int ? mileValue : (mileValue as num?)?.toInt() ?? 0,
+          mile: mileValue is int
+              ? mileValue
+              : (mileValue as num?)?.toInt() ?? 0,
         );
       }
     } else if (mileValue != null) {
-      // If we have a mile value but no ID, try to find matching mile by value
       try {
-         mileValueInt = mileValue is int ? mileValue : (mileValue as num).toInt();
-        mileEntity = availableMiles.firstWhere((mile) => mile.mile == mileValueInt);
-      } catch (e) {
-        // If not found, create a temporary one
-        mileEntity = MileEntity(
-          id: '',
-          mile: mileValueInt,
+        mileValueInt = mileValue is int
+            ? mileValue
+            : (mileValue as num).toInt();
+        mileEntity = availableMiles.firstWhere(
+          (mile) => mile.mile == mileValueInt,
         );
+      } catch (_) {
+        mileEntity = MileEntity(id: '', mile: mileValueInt);
       }
     } else {
-      // No mile data available
       mileEntity = MileEntity(id: '', mile: 0);
+    }
+
+    final minuteId = json['minute_id'] ?? '';
+    final minuteValue = json['minute'];
+    MinuteEntity minuteEntity;
+    late final int minuteValueInt;
+
+    if (minuteId.isNotEmpty) {
+      try {
+        minuteEntity = availableMinutes.firstWhere((min) => min.id == minuteId);
+      } catch (_) {
+        minuteEntity = MinuteEntity(
+          id: minuteId,
+          minute: minuteValue is int
+              ? minuteValue
+              : (minuteValue as num?)?.toInt() ?? 0,
+        );
+      }
+    } else if (minuteValue != null) {
+      try {
+        minuteValueInt = minuteValue is int
+            ? minuteValue
+            : (minuteValue as num).toInt();
+        minuteEntity = availableMinutes.firstWhere(
+          (min) => min.minute == minuteValueInt,
+        );
+      } catch (_) {
+        minuteEntity = MinuteEntity(id: '', minute: minuteValueInt);
+      }
+    } else {
+      minuteEntity = MinuteEntity(id: '', minute: 0);
     }
 
     return LocationDataEntity(
@@ -125,13 +169,14 @@ late final mileValueInt;
       addressLine: json['address_line'] as String?,
       coordinates: json['coordinates'] != null
           ? LocationCoordinates.fromJson(
-        json['coordinates'] as Map<String, dynamic>,
-      )
+              json['coordinates'] as Map<String, dynamic>,
+            )
           : LocationCoordinates(coordinates: [0.0, 0.0]),
       serviceArea: json['service_area'] != null
           ? ServiceArea.fromJson(json['service_area'] as Map<String, dynamic>)
           : null,
       mileEntity: mileEntity,
+      minuteEntity: minuteEntity,
     );
   }
 
@@ -152,6 +197,8 @@ late final mileValueInt;
       'coordinates': coordinates.toJson(),
       if (serviceArea != null) 'service_area': serviceArea!.toJson(),
       'mile_id': mileEntity.id,
+      'minute_id': minuteEntity.id,
+      if (vehicleTypeEntity != null) 'vehicle_type_id': vehicleTypeEntity!.id,
     };
   }
 
@@ -170,24 +217,28 @@ late final mileValueInt;
     String? addressLine,
     LocationCoordinates? coordinates,
     ServiceArea? serviceArea,
-    MileEntity? mileEntity
+    MileEntity? mileEntity,
+    MinuteEntity? minuteEntity,
+    VehicleTypeEntity? vehicleTypeEntity,
   }) {
     return LocationDataEntity(
-        id: id ?? this.id,
-        type: type ?? this.type,
-        userId: userId ?? this.userId,
-        professionalId: professionalId ?? this.professionalId,
-        serviceId: serviceId ?? this.serviceId,
-        leadId: leadId ?? this.leadId,
-        projectId: projectId ?? this.projectId,
-        country: country ?? this.country,
-        state: state ?? this.state,
-        city: city ?? this.city,
-        zipcode: zipcode ?? this.zipcode,
-        addressLine: addressLine ?? this.addressLine,
-        coordinates: coordinates ?? this.coordinates,
-        serviceArea: serviceArea ?? this.serviceArea,
-        mileEntity: mileEntity ?? this.mileEntity
+      id: id ?? this.id,
+      type: type ?? this.type,
+      userId: userId ?? this.userId,
+      professionalId: professionalId ?? this.professionalId,
+      serviceId: serviceId ?? this.serviceId,
+      leadId: leadId ?? this.leadId,
+      projectId: projectId ?? this.projectId,
+      country: country ?? this.country,
+      state: state ?? this.state,
+      city: city ?? this.city,
+      zipcode: zipcode ?? this.zipcode,
+      addressLine: addressLine ?? this.addressLine,
+      coordinates: coordinates ?? this.coordinates,
+      serviceArea: serviceArea ?? this.serviceArea,
+      mileEntity: mileEntity ?? this.mileEntity,
+      minuteEntity: minuteEntity ?? this.minuteEntity,
+      vehicleTypeEntity: vehicleTypeEntity ?? this.vehicleTypeEntity,
     );
   }
 
@@ -196,11 +247,11 @@ late final mileValueInt;
     return 'LocationDataEntity(id:$id, type: $type, userId: $userId, professionalId: $professionalId, '
         'serviceId: $serviceId, leadId: $leadId, projectId: $projectId, country: $country, '
         'state: $state, city: $city, zipcode: $zipcode, addressLine: $addressLine, '
-        'coordinates: $coordinates, serviceArea: $serviceArea  , mileEntity: $mileEntity)';
+        'coordinates: $coordinates, serviceArea: $serviceArea, mileEntity: $mileEntity, '
+        'minuteEntity: $minuteEntity, vehicleTypeEntity: $vehicleTypeEntity)';
   }
 }
 
-/// Represents geographical coordinates in GeoJSON format.
 class LocationCoordinates {
   final String type;
   final List<double> coordinates;
@@ -239,7 +290,6 @@ class LocationCoordinates {
   }
 }
 
-/// Represents a service area radius in multiple units.
 class ServiceArea {
   final int radiusMiles;
   final double radiusMeters;

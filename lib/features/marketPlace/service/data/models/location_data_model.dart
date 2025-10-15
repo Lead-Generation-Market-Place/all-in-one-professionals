@@ -1,5 +1,7 @@
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/minute_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/vehicle_type_entity.dart';
 
 class LocationDataModel {
   final String id;
@@ -16,8 +18,16 @@ class LocationDataModel {
   final String? addressLine;
   final LocationCoordinates coordinates;
   final ServiceArea? serviceArea;
+
   final String mileId;
-  final int? mileValue; // Add this field to store the actual mile value
+  final int? mileValue;
+
+  final String minuteId;
+  final int? minuteValue;
+
+  final String vehicleTypeId;
+  final String? vehicleTypeValue;
+
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -37,12 +47,16 @@ class LocationDataModel {
     required this.coordinates,
     this.serviceArea,
     required this.mileId,
-    this.mileValue, // Initialize this
+    this.mileValue,
+    required this.minuteId,
+    this.minuteValue,
+    required this.vehicleTypeId,
+    this.vehicleTypeValue,
     required this.createdAt,
     required this.updatedAt,
   });
 
-  // Convert from JSON to Model
+  /// Convert from JSON to Model
   factory LocationDataModel.fromJson(Map<String, dynamic> json) {
     return LocationDataModel(
       id: json['_id'] ?? json['id'],
@@ -63,19 +77,29 @@ class LocationDataModel {
       ),
       serviceArea: json['service_area'] != null
           ? ServiceArea(
-        radiusMiles: json['service_area']['radius_miles'],
-        radiusMeters: json['service_area']['radius_meters'].toDouble(),
-        radiusKilometers: json['service_area']['radius_kilometers']
-            .toDouble(),
-      )
+              radiusMiles: json['service_area']['radius_miles'],
+              radiusMeters: (json['service_area']['radius_meters'] ?? 0)
+                  .toDouble(),
+              radiusKilometers: (json['service_area']['radius_kilometers'] ?? 0)
+                  .toDouble(),
+            )
           : null,
       mileId: json['mile_id'] ?? '',
-      mileValue: json['mile'] is int ? json['mile'] : (json['mile'] as num?)?.toInt(),
+      mileValue: json['mile'] is int
+          ? json['mile']
+          : (json['mile'] as num?)?.toInt(),
+      minuteId: json['minute_id'] ?? '',
+      minuteValue: json['minute'] is int
+          ? json['minute']
+          : (json['minute'] as num?)?.toInt(),
+      vehicleTypeId: json['vehicle_type_id'] ?? '',
+      vehicleTypeValue: json['vehicle_type'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
     );
   }
 
+  /// Convert Model to JSON
   Map<String, dynamic> toJson() {
     return {
       'type': type,
@@ -85,6 +109,8 @@ class LocationDataModel {
       if (leadId != null) 'lead_id': leadId,
       if (projectId != null) 'project_id': projectId,
       'mile_id': mileId,
+      'minute_id': minuteId,
+      'vehicle_type_id': vehicleTypeId,
       'country': country,
       if (state != null) 'state': state,
       if (city != null) 'city': city,
@@ -95,13 +121,13 @@ class LocationDataModel {
     };
   }
 
-  // Convert from Entity to Model
+  /// Convert from Entity to Model
   factory LocationDataModel.fromEntity(
-      LocationDataEntity entity, {
-        String? id,
-      }) {
+    LocationDataEntity entity, {
+    String? id,
+  }) {
     return LocationDataModel(
-      id: id ?? '',
+      id: id ?? entity.id ?? '',
       type: entity.type,
       userId: entity.userId,
       professionalId: entity.professionalId,
@@ -110,6 +136,10 @@ class LocationDataModel {
       projectId: entity.projectId,
       mileId: entity.mileEntity.id,
       mileValue: entity.mileEntity.mile,
+      minuteId: entity.minuteEntity.id,
+      minuteValue: entity.minuteEntity.minute,
+      vehicleTypeId: entity.vehicleTypeEntity?.id ?? '',
+      vehicleTypeValue: entity.vehicleTypeEntity?.vehicle_type,
       country: entity.country,
       state: entity.state,
       city: entity.city,
@@ -122,7 +152,12 @@ class LocationDataModel {
     );
   }
 
-  LocationDataEntity toEntity({required MileEntity mileEntity}) {
+  /// Convert Model to Entity using actual entities
+  LocationDataEntity toEntity({
+    required MileEntity mileEntity,
+    required MinuteEntity minuteEntity,
+    VehicleTypeEntity? vehicleTypeEntity,
+  }) {
     return LocationDataEntity(
       id: id,
       type: type,
@@ -139,16 +174,27 @@ class LocationDataModel {
       coordinates: coordinates,
       serviceArea: serviceArea,
       mileEntity: mileEntity,
+      minuteEntity: minuteEntity,
+      vehicleTypeEntity: vehicleTypeEntity,
     );
   }
 
-  // Alternative method that uses the stored mileValue if available
-  LocationDataEntity toEntityWithStoredMile() {
-    final mileEntity = MileEntity(
-      id: mileId,
-      mile: mileValue ?? 0,
-    );
+  /// Convert to Entity using stored mile/minute values
+  LocationDataEntity toEntityWithStoredValues() {
+    final mileEntity = MileEntity(id: mileId, mile: mileValue ?? 0);
 
-    return toEntity(mileEntity: mileEntity);
+    final minuteEntity = MinuteEntity(id: minuteId, minute: minuteValue ?? 0);
+    final vehicleType = vehicleTypeId.isNotEmpty
+        ? VehicleTypeEntity(
+            id: vehicleTypeId,
+            vehicle_type: vehicleTypeValue ?? '',
+          )
+        : null;
+
+    return toEntity(
+      mileEntity: mileEntity,
+      minuteEntity: minuteEntity,
+      vehicleTypeEntity: vehicleType,
+    );
   }
 }

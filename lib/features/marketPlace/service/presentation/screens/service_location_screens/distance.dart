@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:http/http.dart' as http;
-import 'package:logger/web.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/features/authentication/presentation/controllers/auth_user_controller.dart';
-import 'package:yelpax_pro/features/marketPlace/service/data/models/location_data_model.dart';
-import 'dart:convert';
-
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/minute_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/vehicle_type_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/controllers/service_controller.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/services/google_map_service.dart';
 import 'package:yelpax_pro/shared/widgets/custom_flutter_toast.dart';
 
 class Distance extends StatefulWidget {
@@ -23,38 +19,47 @@ class Distance extends StatefulWidget {
 }
 
 class _DistanceScreenState extends State<Distance> {
-  MileEntity? _selectedMile;
-  late final AuthUserController authUserController;
-  late final ServiceController serviceController;
+  final TextEditingController _searchController = TextEditingController();
+
+  late AuthUserController authUserController;
+  late ServiceController serviceController;
   late GoogleMapController _mapController;
 
-  final TextEditingController _searchController = TextEditingController();
-  late String _mapsApiKey;
+  final GoogleMapsService _locationHelper = GoogleMapsService();
+
   CameraPosition _initialPosition = const CameraPosition(
     target: LatLng(37.7749, -122.4194),
     zoom: 12,
   );
 
-  List<Placemark> _searchResults = [];
   List<dynamic> _autocompleteResults = [];
   LatLng? _selectedLatLng;
   String _selectedAddress = '';
   bool _isNextLoading = false;
+  Map<String, dynamic>? _selectedPlaceDetails;
+
+  MileEntity? _selectedMile;
+  MinuteEntity? _selectedMinute;
+  VehicleTypeEntity? _selectedVehicleType;
 
   @override
   void initState() {
-    _mapsApiKey = dotenv.env['MAPS_API_KEY'] ?? '';
-    authUserController = Provider.of(context, listen: false);
-    serviceController = Provider.of(context, listen: false);
-    init();
     super.initState();
+    authUserController = Provider.of<AuthUserController>(
+      context,
+      listen: false,
+    );
+    serviceController = Provider.of<ServiceController>(context, listen: false);
+    init();
   }
 
   Future<void> init() async {
     try {
       await serviceController.fetchAllMiles();
+      await serviceController.fetchAllMinute();
+      await serviceController.fetchAllVehicleTypes();
     } catch (e) {
-      CustomFlutterToast.showErrorToast('Error initializing distance class.');
+      CustomFlutterToast.showErrorToast('Failed to load dropdown data.');
     }
   }
 
@@ -62,362 +67,111 @@ class _DistanceScreenState extends State<Distance> {
     _mapController = controller;
   }
 
-  // Google Maps Geocoding API - Get detailed address from coordinates
-  Future<Map<String, dynamic>?> _getGoogleMapsGeocodingData(
-    LatLng coordinates,
-  ) async {
-    try {
-      final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinates.latitude},${coordinates.longitude}&key=$_mapsApiKey',
-      );
-
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-
-        if (data['status'] == 'OK' && data['results'].isNotEmpty) {
-          Logger().d('---------------------data----${data}');
-          return data;
-        } else {
-          print('Google Maps Geocoding API error: ${data['status']}');
-          return null;
-        }
-      } else {
-        print('HTTP error: ${response.statusCode}');
-        return null;
-      }
-    } catch (e) {
-      print('Error fetching Google Maps geocoding data: $e');
-      return null;
-    }
-  }
-
-  // Google Maps Places Autocomplete API
-  Future<Map<String, dynamic>?> _getPlaceAutocomplete(String query) async {
-    try {
-      final encodedQuery = Uri.encodeComponent(query);
-      final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$encodedQuery&key=$_mapsApiKey&types=geocode',
-      );
-
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-
-        if (data['status'] == 'OK' && data['predictions'].isNotEmpty) {
-          return data;
-        } else {
-          print('Places Autocomplete API error: ${data['status']}');
-          return null;
-        }
-      } else {
-        print('HTTP error: ${response.statusCode}');
-        return null;
-      }
-    } catch (e) {
-      print('Error fetching place autocomplete data: $e');
-      return null;
-    }
-  }
-
-  // Google Maps Place Details API
-  Future<Map<String, dynamic>?> _getPlaceDetails(String placeId) async {
-    try {
-      final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$_mapsApiKey&fields=name,formatted_address,geometry,address_components,types,place_id,plus_code,url,utc_offset,vicinity,adr_address,formatted_phone_number,international_phone_number,opening_hours,price_level,rating,reviews,user_ratings_total,website,photos',
-      );
-
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-
-        if (data['status'] == 'OK') {
-          return data['result'];
-        } else {
-          print('Place Details API error: ${data['status']}');
-          return null;
-        }
-      } else {
-        print('HTTP error: ${response.statusCode}');
-        return null;
-      }
-    } catch (e) {
-      print('Error fetching place details: $e');
-      return null;
-    }
-  }
-
-  // Extract comprehensive address components
-  Map<String, dynamic> _extractAddressComponents(
-    List<dynamic> addressComponents,
-  ) {
-    final Map<String, dynamic> components = {};
-
-    for (var component in addressComponents) {
-      final types = List<String>.from(component['types']);
-      final longName = component['long_name'];
-      final shortName = component['short_name'];
-
-      if (types.contains('street_number')) {
-        components['street_number'] = {'long': longName, 'short': shortName};
-      } else if (types.contains('route')) {
-        components['route'] = {'long': longName, 'short': shortName};
-      } else if (types.contains('locality')) {
-        components['locality'] = {'long': longName, 'short': shortName};
-      } else if (types.contains('administrative_area_level_1')) {
-        components['state'] = {'long': longName, 'short': shortName};
-      } else if (types.contains('administrative_area_level_2')) {
-        components['county'] = {'long': longName, 'short': shortName};
-      } else if (types.contains('country')) {
-        components['country'] = {'long': longName, 'short': shortName};
-      } else if (types.contains('postal_code')) {
-        components['postal_code'] = {'long': longName, 'short': shortName};
-      } else if (types.contains('postal_code_suffix')) {
-        components['postal_code_suffix'] = {
-          'long': longName,
-          'short': shortName,
-        };
-      } else if (types.contains('neighborhood')) {
-        components['neighborhood'] = {'long': longName, 'short': shortName};
-      } else if (types.contains('sublocality')) {
-        components['sublocality'] = {'long': longName, 'short': shortName};
-      } else if (types.contains('sublocality_level_1')) {
-        components['sublocality_level_1'] = {
-          'long': longName,
-          'short': shortName,
-        };
-      } else if (types.contains('premise')) {
-        components['premise'] = {'long': longName, 'short': shortName};
-      } else if (types.contains('subpremise')) {
-        components['subpremise'] = {'long': longName, 'short': shortName};
-      } else if (types.contains('plus_code')) {
-        components['plus_code'] = {'long': longName, 'short': shortName};
-      }
-    }
-
-    return components;
-  }
-
-  // New method to handle search and show suggestions
   Future<void> _onSearchChanged(String query) async {
     if (query.isEmpty) {
-      setState(() {
-        _autocompleteResults = [];
-        _searchResults = [];
-      });
+      setState(() => _autocompleteResults = []);
       return;
     }
+    final data = await _locationHelper.getPlaceAutocomplete(query);
 
-    try {
-      // Use Google Places Autocomplete for suggestions
-      final autocompleteData = await _getPlaceAutocomplete(query);
-
-      if (autocompleteData != null &&
-          autocompleteData['predictions'].isNotEmpty) {
-        setState(() {
-          _autocompleteResults = autocompleteData['predictions'];
-          _searchResults = [];
-        });
-      } else {
-        setState(() {
-          _autocompleteResults = [];
-        });
-      }
-    } catch (e) {
-      print('Error in search: $e');
-      setState(() {
-        _autocompleteResults = [];
-        _searchResults = [];
-      });
+    if (!mounted) return;
+    if (data != null && data['predictions'] is List) {
+      setState(() => _autocompleteResults = data['predictions']);
+    } else {
+      setState(() => _autocompleteResults = []);
     }
   }
 
-  // Method to select an autocomplete result
   Future<void> _selectAutocompleteResult(dynamic prediction) async {
-    final placeId = prediction['place_id'];
-    final description = prediction['description'];
+    final placeDetails = await _locationHelper.getPlaceDetails(
+      prediction['place_id'],
+    );
+    if (placeDetails == null) return;
 
-    _searchController.text = description;
+    final location = placeDetails['geometry']['location'];
+    final latLng = LatLng(location['lat'], location['lng']);
+
     setState(() {
+      _selectedLatLng = latLng;
+      _selectedAddress = placeDetails['formatted_address'];
+      _selectedPlaceDetails = placeDetails;
+      _searchController.text = _selectedAddress;
       _autocompleteResults = [];
-      _searchResults = [];
     });
 
-    try {
-      // Get detailed place information
-      final placeDetails = await _getPlaceDetails(placeId);
-
-      if (placeDetails != null) {
-        final geometry = placeDetails['geometry'];
-        final location = geometry['location'];
-        final latLng = LatLng(location['lat'], location['lng']);
-
-        setState(() {
-          _selectedLatLng = latLng;
-          _selectedAddress = placeDetails['formatted_address'] ?? description;
-        });
-
-        _mapController.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(target: latLng, zoom: 14),
-          ),
-        );
-      }
-    } catch (e) {
-      print('Error selecting autocomplete result: $e');
-      // Fallback to regular search
-      await _searchLocation(description);
-    }
-  }
-
-  // Original search method (for fallback)
-  Future<void> _searchLocation(String query) async {
-    try {
-      List<Location> locations = await locationFromAddress(query);
-
-      if (locations.isNotEmpty) {
-        final Location loc = locations.first;
-        final LatLng target = LatLng(loc.latitude, loc.longitude);
-
-        // Get address from coordinates using Google Maps API
-        final geocodingData = await _getGoogleMapsGeocodingData(target);
-
-        String formattedAddress = '';
-        if (geocodingData != null && geocodingData['results'].isNotEmpty) {
-          formattedAddress = geocodingData['results'][0]['formatted_address'];
-        } else {
-          // Fallback to local geocoding
-          List<Placemark> placemarks = await placemarkFromCoordinates(
-            loc.latitude,
-            loc.longitude,
-          );
-          formattedAddress = _formatAddress(placemarks.first);
-        }
-
-        setState(() {
-          _selectedLatLng = target;
-          _selectedAddress = formattedAddress;
-          _searchResults = [];
-          _autocompleteResults = [];
-        });
-
-        _mapController.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(target: target, zoom: 14),
-          ),
-        );
-      }
-    } catch (e) {
-      print('Error searching location: $e');
-      setState(() {
-        _searchResults = [];
-        _autocompleteResults = [];
-      });
-    }
-  }
-
-  String _formatAddress(Placemark placemark) {
-    final parts = [
-      placemark.street,
-      placemark.locality,
-      placemark.administrativeArea,
-      placemark.postalCode,
-      placemark.country,
-    ].where((part) => part != null && part.isNotEmpty).toList();
-
-    return parts.join(', ');
-  }
-
-  void _selectSearchResult(Placemark placemark) async {
-    final query =
-        "${placemark.name}, ${placemark.locality}, ${placemark.country}";
-    _searchController.text = query;
-    setState(() => _searchResults = []);
-    await _searchLocation(query);
+    _mapController.animateCamera(
+      CameraUpdate.newCameraPosition(CameraPosition(target: latLng, zoom: 14)),
+    );
   }
 
   Future<void> _addLocation() async {
-    if (_selectedLatLng == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please select a location first")),
-      );
+    if (_selectedLatLng == null ||
+        _selectedMile == null ||
+        _selectedMinute == null ||
+        _selectedVehicleType == null) {
+      CustomFlutterToast.showErrorToast('Please complete all selections.');
       return;
     }
 
-    if (_selectedMile == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please select a distance radius")),
-      );
-      return;
-    }
-
-    setState(() {
-      _isNextLoading = true;
-    });
+    setState(() => _isNextLoading = true);
 
     try {
-      // Get comprehensive data from Google Maps APIs
-      final geocodingData = await _getGoogleMapsGeocodingData(_selectedLatLng!);
+      Map<String, dynamic>? components;
+      String? formattedAddress;
 
-      if (geocodingData == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Failed to get location details from Google Maps"),
-          ),
+      if (_selectedPlaceDetails != null &&
+          _selectedPlaceDetails!['address_components'] is List) {
+        components = _locationHelper.extractAddressComponents(
+          _selectedPlaceDetails!['address_components'],
         );
-        return;
+        formattedAddress = _selectedPlaceDetails!['formatted_address'];
+      } else {
+        final geocodingData = await _locationHelper.getGoogleMapsGeocodingData(
+          _selectedLatLng!,
+        );
+
+        if (geocodingData == null ||
+            geocodingData['results'] == null ||
+            (geocodingData['results'] as List).isEmpty) {
+          CustomFlutterToast.showErrorToast('Failed to fetch address details.');
+          return;
+        }
+
+        final firstResult = geocodingData['results'][0];
+        components = _locationHelper.extractAddressComponents(
+          firstResult['address_components'],
+        );
+        formattedAddress = firstResult['formatted_address'];
       }
 
-      final firstResult = geocodingData['results'][0];
-      final addressComponents = _extractAddressComponents(
-        firstResult['address_components'],
-      );
-
-      // Create the location entity with clean backend data
-      final locationEntity = LocationDataEntity(
-
+      final LocationDataEntity locationEntity = LocationDataEntity(
         professionalId: authUserController.professionalId.value,
         serviceId: serviceController.selectedService!.id,
         type: 'service',
-        country: addressComponents['country']?['long'] ?? 'USA',
-        state: addressComponents['state']?['long'],
-        city: addressComponents['locality']?['long'],
-        zipcode: addressComponents['postal_code']?['long'],
-        addressLine: firstResult['formatted_address'],
+        country: ((components['country'] as Map?)?['long'] as String?) ?? 'USA',
+        state: (components['state'] as Map?)?['long'] as String?,
+        city: (components['locality'] as Map?)?['long'] as String?,
+        zipcode: (components['postal_code'] as Map?)?['long'] as String?,
+        addressLine: formattedAddress,
         coordinates: LocationCoordinates.fromLatLng(_selectedLatLng!),
         serviceArea: ServiceArea(
           radiusMiles: _selectedMile!.mile,
           radiusMeters: _selectedMile!.mile * 1609.34,
           radiusKilometers: _selectedMile!.mile * 1.60934,
         ),
-        mileEntity: _selectedMile!, // Pass the full MileEntity
+        mileEntity: _selectedMile!,
+        minuteEntity: _selectedMinute!,
+        vehicleTypeEntity: _selectedVehicleType,
       );
 
+      await serviceController.addLocationData(locationEntity);
 
-      final locationModel = LocationDataModel.fromEntity(locationEntity);
-      serviceController.addLocationData(locationEntity);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Location added successfully")),
-      );
-      Navigator.pushReplacementNamed(
-        context,
-        AppRouter.add_location,
-
-      );
-
+      CustomFlutterToast.showSuccessToast('Location added successfully');
+      Navigator.pushReplacementNamed(context, AppRouter.add_location);
     } catch (e) {
-      print('Error adding location: $e');
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error adding location: $e")));
+      CustomFlutterToast.showErrorToast('Error adding location: $e');
     } finally {
-      setState(() {
-        _isNextLoading = false;
-      });
+      setState(() => _isNextLoading = false);
     }
   }
 
@@ -436,178 +190,117 @@ class _DistanceScreenState extends State<Distance> {
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Note
-              Text(
-                'Note:- Please select your coverage area carefully. '
-                'This will determine where your services are available and can impact your visibility to potential customers.',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontStyle: FontStyle.italic,
-                  color: Colors.grey[600],
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Search Input
               TextField(
                 controller: _searchController,
                 onChanged: _onSearchChanged,
                 decoration: InputDecoration(
-                  hintText: 'Search by name or address',
-                  prefixIcon: const Icon(Icons.search, color: Colors.black),
+                  hintText: 'Search address...',
+                  prefixIcon: const Icon(Icons.search),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
               ),
-
-              const SizedBox(height: 10),
-
-              // Autocomplete Results (Google Places API)
               if (_autocompleteResults.isNotEmpty)
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.3),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _autocompleteResults.length,
-                    itemBuilder: (context, index) {
-                      final prediction = _autocompleteResults[index];
-                      final description = prediction['description'];
-
-                      return ListTile(
-                        leading: const Icon(Icons.location_on, size: 20),
-                        title: Text(
-                          description,
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                        onTap: () => _selectAutocompleteResult(prediction),
-                      );
-                    },
-                  ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _autocompleteResults.length,
+                  itemBuilder: (context, index) {
+                    final prediction = _autocompleteResults[index];
+                    return ListTile(
+                      title: Text(prediction['description']),
+                      onTap: () => _selectAutocompleteResult(prediction),
+                    );
+                  },
                 ),
-
-              // Search Results (Geocoding fallback)
-              if (_searchResults.isNotEmpty)
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _searchResults.length,
-                    itemBuilder: (context, index) {
-                      final placemark = _searchResults[index];
-                      final locationText =
-                          "${placemark.name ?? ''}, ${placemark.locality ?? ''}, ${placemark.country ?? ''}";
-                      return ListTile(
-                        title: Text(locationText),
-                        onTap: () => _selectSearchResult(placemark),
-                      );
-                    },
-                  ),
-                ),
-
               const SizedBox(height: 20),
-
-              // Map
               SizedBox(
                 height: 200,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: GoogleMap(
-                    initialCameraPosition: _initialPosition,
-                    onMapCreated: _onMapCreated,
-                    myLocationEnabled: true,
-                    zoomControlsEnabled: false,
-                    markers: _selectedLatLng != null
-                        ? {
-                            Marker(
-                              markerId: const MarkerId("selected"),
-                              position: _selectedLatLng!,
-                              infoWindow: InfoWindow(
-                                title: 'Selected Location',
-                                snippet: _selectedAddress,
-                              ),
-                            ),
-                          }
-                        : {},
-                  ),
+                child: GoogleMap(
+                  initialCameraPosition: _initialPosition,
+                  onMapCreated: _onMapCreated,
+                  myLocationEnabled: true,
+                  markers: _selectedLatLng != null
+                      ? {
+                          Marker(
+                            markerId: const MarkerId('selected'),
+                            position: _selectedLatLng!,
+                            infoWindow: InfoWindow(title: _selectedAddress),
+                          ),
+                        }
+                      : {},
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Distance Dropdown using backend data
               Consumer<ServiceController>(
-                builder: (context, controller, child) {
-                  return DropdownButtonFormField<MileEntity>(
-                    initialValue: _selectedMile,
-                    decoration: InputDecoration(
-                      labelText: 'Service Radius',
-                      labelStyle: const TextStyle(color: Colors.black),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                builder: (context, controller, _) {
+                  return Column(
+                    children: [
+                      DropdownButtonFormField<MileEntity>(
+                        decoration: const InputDecoration(
+                          labelText: 'Service Radius (Miles)',
+                          labelStyle: TextStyle(color: Colors.black),
+                        ),
+                        initialValue: _selectedMile,
+                        items: controller.miles
+                            .map(
+                              (mile) => DropdownMenuItem(
+                                value: mile,
+                                child: Text('${mile.mile} Miles'),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) =>
+                            setState(() => _selectedMile = value),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<MinuteEntity>(
+                        decoration: const InputDecoration(
+                          labelText: 'Travel Time (Minutes)',
+                          labelStyle: TextStyle(color: Colors.black),
+                        ),
+                        initialValue: _selectedMinute,
+                        items: controller.minute
+                            .map(
+                              (minute) => DropdownMenuItem(
+                                value: minute,
+                                child: Text('${minute.minute} Minutes'),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) =>
+                            setState(() => _selectedMinute = value),
                       ),
-                    ),
-                    items: controller.miles.map((MileEntity mile) {
-                      return DropdownMenuItem<MileEntity>(
-                        value: mile,
-                        child: Text('${mile.mile} Miles'),
-                      );
-                    }).toList(),
-                    onChanged: (MileEntity? value) {
-                      setState(() {
-                        _selectedMile = value;
-                      });
-                    },
-                    hint: const Text('Select Distance'),
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<VehicleTypeEntity>(
+                        decoration: const InputDecoration(
+                          labelText: 'Vehicle Type',
+                          labelStyle: TextStyle(color: Colors.black),
+                        ),
+                        initialValue: _selectedVehicleType,
+                        items: controller.vehicleType
+                            .map(
+                              (vehicle) => DropdownMenuItem(
+                                value: vehicle,
+                                child: Text(vehicle.vehicle_type),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) =>
+                            setState(() => _selectedVehicleType = value),
+                      ),
+                    ],
                   );
                 },
               ),
-
-              const SizedBox(height: 20),
               const SizedBox(height: 30),
-
-              // Add Location Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _isNextLoading ? null : _addLocation,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
                   child: _isNextLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
-                            ),
-                          ),
-                        )
+                      ? const CircularProgressIndicator()
                       : const Text('Add Location'),
                 ),
               ),

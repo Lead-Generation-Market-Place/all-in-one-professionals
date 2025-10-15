@@ -3,8 +3,12 @@ import 'package:logger/web.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/location_data_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/minute_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/vehicle_type_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/add_location.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_Minute_use_case.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_miles.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_vehicle_type_use_case.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_services_location_of_authenticated_user.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/update_location.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/add_location.dart';
@@ -34,6 +38,8 @@ class ServiceController extends ChangeNotifier {
   final UpdateLocationUseCase updateLocationUseCase;
   final GetAllMilesUseCase getAllMilesUseCase;
   final DeleteServiceLocationUseCase deleteServiceLocationUseCase;
+  final GetAllMinuteUseCase getAllMinuteUseCase;
+  final GetAllVehicleTypeUseCase getAllVehicleTypesUseCase;
   ServiceController({
     required this.getAllSubCategories,
     required this.getAllServices,
@@ -44,7 +50,9 @@ class ServiceController extends ChangeNotifier {
     required this.getServicesLocationOfAuthenticatedUser,
     required this.updateLocationUseCase,
     required this.getAllMilesUseCase,
-    required this.deleteServiceLocationUseCase
+    required this.deleteServiceLocationUseCase,
+    required this.getAllMinuteUseCase,
+    required this.getAllVehicleTypesUseCase,
   });
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -161,6 +169,44 @@ class ServiceController extends ChangeNotifier {
     }
   }
 
+  List<MinuteEntity> _minute = [];
+  List<MinuteEntity> get minute => _minute;
+
+  Future<void> fetchAllMinute() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await getAllMinuteUseCase();
+      Logger().d('fetch minutes === $response');
+      _minute = response;
+    } catch (e) {
+      print('Error fetching miles: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  List<VehicleTypeEntity> _vehicleType = [];
+  List<VehicleTypeEntity> get vehicleType => _vehicleType;
+
+  Future<void> fetchAllVehicleTypes() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await getAllVehicleTypesUseCase();
+      Logger().d('fetch Vehicle Types === $response');
+      _vehicleType = response;
+    } catch (e) {
+      print('Error fetching vehicle types: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<String> addLocationData(LocationDataEntity locationDataEntity) async {
     try {
       final response = await addLocation(locationDataEntity);
@@ -187,7 +233,7 @@ class ServiceController extends ChangeNotifier {
         professionalId,
         selectedService!.id.toString(),
       );
-
+      Logger().d('response === $response');
       if (response.isEmpty) {
         Logger().d('No service locations found.');
       } else {

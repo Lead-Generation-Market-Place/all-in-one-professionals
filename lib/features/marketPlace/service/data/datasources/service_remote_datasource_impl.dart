@@ -2,16 +2,21 @@ import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/datasources/service_remote_datasource.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/mile_model.dart';
+import 'package:yelpax_pro/features/marketPlace/service/data/models/minute_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/question_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/service_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/service_registration_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/subcategory_model.dart';
+import 'package:yelpax_pro/features/marketPlace/service/data/models/vehicle_type_model.dart';
+
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/minute_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/question_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/service_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/service_registration_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/subcategory_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/vehicle_type_entity.dart';
 import 'package:yelpax_pro/shared/services/api_service.dart';
 import 'package:yelpax_pro/shared/widgets/custom_flutter_toast.dart';
 
@@ -168,6 +173,7 @@ class ServiceRemoteDataSourceImpl implements ServiceRemoteDataSource {
         '/location/create',
         data: locationDataEntity.toJson(),
       );
+      Logger().i('-------------$locationDataEntity');
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
         final locationId =
@@ -264,13 +270,57 @@ class ServiceRemoteDataSourceImpl implements ServiceRemoteDataSource {
 
   @override
   Future<void> deleteServiceLocation(String? id) async {
-    try{
+    try {
       final response = await apiService.delete('/location/delete/$id');
-      if(response.statusCode == 200 || response.statusCode == 201){
-        CustomFlutterToast.showSuccessToast('Service location deleted successfully.');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        CustomFlutterToast.showSuccessToast(
+          'Service location deleted successfully.',
+        );
       }
-    }catch(e){
+    } catch (e) {
       CustomFlutterToast.showErrorToast('Error deleting service location.');
+    }
+  }
+
+  @override
+  Future<List<MinuteEntity>> getAllMinutes() async {
+    try {
+      final response = await apiService.get('/location/minute');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final miuteList = (response.data as List)
+            .map((json) => MinuteModel.fromJson(json))
+            .toList();
+        Logger().d('---=-=-=-=-=-=-=-=$miuteList');
+        return miuteList;
+      } else {
+        throw Exception(
+          'Failed to update location. Status: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      CustomFlutterToast.showErrorToast('Error getting minute data.');
+      return [];
+    }
+  }
+
+  @override
+  Future<List<VehicleTypeEntity>> getAllVehicleTypes() async {
+    try {
+      final response = await apiService.get('/location/vehicle_type');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final vehicleTypeList = (response.data as List)
+            .map((json) => VehicleTypeModel.fromJson(json))
+            .toList();
+        Logger().d('---=-=-=-=-=-=-=-=$vehicleTypeList');
+        return vehicleTypeList;
+      } else {
+        throw Exception(
+          'Failed to update location. Status: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      CustomFlutterToast.showErrorToast('Error getting vehicle type data.');
+      return [];
     }
   }
 }

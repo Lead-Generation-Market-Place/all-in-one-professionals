@@ -1,5 +1,7 @@
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/minute_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/vehicle_type_entity.dart';
 
 import '../entities/question_entity.dart';
 import '../entities/service_entity.dart';
@@ -33,4 +35,8 @@ abstract class ServiceRepository {
   Future<List<MileEntity>> getAllMiles();
 
   Future<void> deleteServiceLocation(String? id);
+
+  Future<List<MinuteEntity>> getAllMinutes();
+
+  Future<List<VehicleTypeEntity>> getAllVehicleTypes();
 }
