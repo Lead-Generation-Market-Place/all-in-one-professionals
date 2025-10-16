@@ -3,10 +3,12 @@ import 'package:logger/web.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/features/authentication/presentation/controllers/auth_user_controller.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/location_data_model.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/answer_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/minute_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/vehicle_type_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/add_answers_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/add_location.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_Minute_use_case.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_miles.dart';
@@ -19,7 +21,7 @@ import '../../domain/entities/budget_entity.dart';
 
 import '../../domain/entities/question_entity.dart';
 import '../../domain/entities/service_entity.dart';
-import '../../domain/entities/service_registration_entity.dart';
+
 import '../../domain/entities/subcategory_entity.dart';
 import '../../domain/usecases/delete_service_location_use_case.dart';
 import '../../domain/usecases/get_all_services.dart';
@@ -44,6 +46,7 @@ class ServiceController extends ChangeNotifier {
   final GetAllVehicleTypeUseCase getAllVehicleTypesUseCase;
   final AuthUserController authController;
   final AddServiceUsecase addServiceUsecase;
+  final AddAnswersUsecase addAnswersUsecase;
   ServiceController({
     required this.getAllSubCategories,
     required this.getAllServices,
@@ -59,6 +62,7 @@ class ServiceController extends ChangeNotifier {
     required this.getAllVehicleTypesUseCase,
     required this.authController,
     required this.addServiceUsecase,
+    required this.addAnswersUsecase,
   });
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -374,11 +378,56 @@ class ServiceController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Method for backward compatibility
-  Future<bool> submitAnswers() async {
-    // This method is kept for backward compatibility
-    // The actual submission is done in submitCompleteRegistration
-    return true;
+  Future<void> submitAnswers(BuildContext context) async {
+    if (isSubmitting) return;
+
+    isSubmitting = true;
+    submitError = null;
+    notifyListeners();
+
+    try {
+      // Validate required questions
+      for (final question in _questions) {
+        if (question.required) {
+          final answer = _answers[question.id];
+          if (answer == null ||
+              (answer is String && answer.trim().isEmpty) ||
+              (answer is List && answer.isEmpty)) {
+            throw Exception('Please answer all required questions');
+          }
+        }
+      }
+
+      // Prepare answer entities
+      final List<AnswerEntity> answerEntities = _answers.entries.map((entry) {
+        final questionId = entry.key;
+        final answerValue = entry.value;
+
+        return AnswerEntity(
+          userId: null,
+          questionId: questionId,
+          professionalId: authController.professionalId.value,
+          answers: answerValue,
+          createdAt: DateTime.now(),
+        );
+      }).toList();
+
+      // Submit answers
+      final response = await addAnswersUsecase(answerEntities);
+
+      if (response['success'] == true) {
+        CustomFlutterToast.showSuccessToast('Answers submitted successfully!');
+        Navigator.pushReplacementNamed(context, AppRouter.homeServicesServices);
+      } else {
+        CustomFlutterToast.showErrorToast('Error submitting answers.');
+      }
+    } catch (e) {
+      submitError = e.toString();
+      CustomFlutterToast.showErrorToast('Failed to submit answers: $e');
+    } finally {
+      isSubmitting = false;
+      notifyListeners();
+    }
   }
 
   // Method for backward compatibility
@@ -387,17 +436,6 @@ class ServiceController extends ChangeNotifier {
   // Registration submission
 
   // Validation
-  bool _validateRegistrationData(ServiceRegistrationEntity registration) {
-    if (registration.selectedService == null) {
-      return false;
-    }
-
-    if (registration.budget == null) {
-      return false;
-    }
-
-    return true;
-  }
 
   void _clearRegistrationData() {
     _selectedService = null;

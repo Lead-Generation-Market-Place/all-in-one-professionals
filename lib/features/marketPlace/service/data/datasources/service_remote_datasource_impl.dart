@@ -7,13 +7,14 @@ import 'package:yelpax_pro/features/marketPlace/service/data/models/question_mod
 import 'package:yelpax_pro/features/marketPlace/service/data/models/service_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/subcategory_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/vehicle_type_model.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/answer_entity.dart';
 
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/minute_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/question_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/service_entity.dart';
-import 'package:yelpax_pro/features/marketPlace/service/domain/entities/service_registration_entity.dart';
+
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/subcategory_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/vehicle_type_entity.dart';
 import 'package:yelpax_pro/shared/services/api_service.dart';
@@ -324,4 +325,28 @@ class ServiceRemoteDataSourceImpl implements ServiceRemoteDataSource {
       throw Exception('Failed to add service: $e');
     }
   }
+
+  @override
+  Future<Map<String, dynamic>> sendAnswers(
+    List<AnswerEntity> answerEntities,
+  ) async {
+    try {
+      final answersData = answerEntities.map((a) => a.toJson()).toList();
+
+      final response = await apiService.post(
+        '/answers/answers',
+        data: {'answers': answersData},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Logger().d('-=-===-==-=-=-=$response');
+        return response.data as Map<String, dynamic>;
+      } else {
+        throw Exception('Failed to send answers: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to send answers: $e');
+    }
+  }
+
 }

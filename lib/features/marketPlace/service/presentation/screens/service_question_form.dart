@@ -328,33 +328,11 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
                       child: CustomButton(
                         text: controller.isSubmitting
                             ? 'Submitting...'
-                            : 'Next',
+                            : 'Submit Answers',
                         onPressed: controller.isSubmitting
                             ? null
                             : () async {
-                                // After submitting answers
-                                final success = await controller
-                                    .submitAnswers();
-                                if (success && mounted) {
-                                  // Update controller with question answers
-                                  controller.updateQuestionAnswers(
-                                    controller.answers,
-                                  );
-                                  Navigator.pushNamed(
-                                    context,
-                                    AppRouter.homeServicesServices,
-                                  );
-                                }
-                                // else if (mounted) {
-                                //   ScaffoldMessenger.of(context).showSnackBar(
-                                //     const SnackBar(
-                                //       content: Text(
-                                //         'Please answer all required questions',
-                                //       ),
-                                //       backgroundColor: Colors.red,
-                                //     ),
-                                //   );
-                                // }
+                                await controller.submitAnswers(context);
                               },
                       ),
                     ),

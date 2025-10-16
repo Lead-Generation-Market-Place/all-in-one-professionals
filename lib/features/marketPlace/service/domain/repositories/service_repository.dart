@@ -1,3 +1,4 @@
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/answer_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/minute_entity.dart';
@@ -5,7 +6,7 @@ import 'package:yelpax_pro/features/marketPlace/service/domain/entities/vehicle_
 
 import '../entities/question_entity.dart';
 import '../entities/service_entity.dart';
-import '../entities/service_registration_entity.dart';
+
 import '../entities/subcategory_entity.dart';
 
 abstract class ServiceRepository {
@@ -42,4 +43,7 @@ abstract class ServiceRepository {
     String serviceId,
     String professionalId,
   );
+Future<Map<String, dynamic>> sendAnswers(List<AnswerEntity> answerEntities);
+
+
 }
