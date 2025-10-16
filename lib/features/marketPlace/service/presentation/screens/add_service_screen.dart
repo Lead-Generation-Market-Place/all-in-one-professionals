@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:logger/web.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
+import 'package:yelpax_pro/features/authentication/presentation/controllers/auth_user_controller.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/controllers/service_controller.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/service_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/subcategory_entity.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
+import 'package:yelpax_pro/shared/widgets/custom_flutter_toast.dart';
 
 class AddServiceScreen extends StatefulWidget {
   const AddServiceScreen({Key? key}) : super(key: key);
@@ -35,6 +37,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<ServiceController>();
+    final authController = context.watch<AuthUserController>();
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -126,8 +129,13 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
             CustomButton(
               text: 'Next',
               onPressed: controller.selectedService != null
-                  ? () {
-                      Navigator.pushNamed(context, AppRouter.add_location);
+                  ? () async {
+                      await controller.addService(
+                        context,
+                        authController.professionalId.value!,
+                      );
+                     
+       
                     }
                   : null,
             ),

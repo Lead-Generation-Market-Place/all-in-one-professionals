@@ -24,8 +24,7 @@ import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentati
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/business_name_logo.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/card_details.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/location.dart';
-import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/budget_screen.dart';
-import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/location.dart';
+
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/m_services_categories.dart';
 import 'package:yelpax_pro/features/marketPlace/m_professional_signup/presentation/screens/rating.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_question_form.dart';
@@ -43,9 +42,10 @@ import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/pr
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/your_introduction.dart';
 import 'package:yelpax_pro/features/marketPlace/search/presentation/screens/search_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/add_service_screen.dart';
-import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/business_availability.dart';
-import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_screen.dart';
+
 import 'package:yelpax_pro/features/marketPlace/settings/presentation/widgets/theme_selection.dart';
+import 'package:yelpax_pro/features/marketPlace/unused/budget_screen.dart';
+import 'package:yelpax_pro/features/marketPlace/unused/service_screen.dart';
 
 import 'package:yelpax_pro/shared/onboarding_screen/onboarding_screen.dart';
 
@@ -118,7 +118,7 @@ class AppRouter {
   static const String marketing_dashboard = '/homeServices/marketing_dashboard';
   static const String subscription_plan = '/homeServices/subscription_plan';
   static const String budget = '/homeServices/budget';
-static const String edit_distance = '/homeServices/edit_distance';
+  static const String edit_distance = '/homeServices/edit_distance';
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
@@ -203,7 +203,7 @@ static const String edit_distance = '/homeServices/edit_distance';
         return MaterialPageRoute(builder: (_) => AddLocation());
       case distance:
         return MaterialPageRoute(builder: (_) => Distance());
-case edit_distance:
+      case edit_distance:
         // Get the location from the arguments
         final location = settings.arguments as LocationDataEntity;
         return MaterialPageRoute(

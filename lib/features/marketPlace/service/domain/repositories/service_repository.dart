@@ -20,9 +20,7 @@ abstract class ServiceRepository {
   Future<List<QuestionEntity>> getQuestionsForService(String serviceId);
 
   // Service Registration
-  Future<bool> submitServiceRegistration(
-    ServiceRegistrationEntity registration,
-  );
+
   Future<String> addLocation(LocationDataEntity locationDataEntity);
 
   Future<List<LocationDataEntity>> getServiceLocationsOfAuthenticatedUser(
@@ -39,4 +37,9 @@ abstract class ServiceRepository {
   Future<List<MinuteEntity>> getAllMinutes();
 
   Future<List<VehicleTypeEntity>> getAllVehicleTypes();
+
+  Future<Map<String, dynamic>> addService(
+    String serviceId,
+    String professionalId,
+  );
 }

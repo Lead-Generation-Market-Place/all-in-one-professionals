@@ -1,4 +1,6 @@
+import 'package:yelpax_pro/features/authentication/presentation/controllers/auth_user_controller.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/add_location.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/add_service_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/delete_service_location_use_case.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_Minute_use_case.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_miles.dart';
@@ -15,7 +17,7 @@ import '../../domain/usecases/get_all_services.dart';
 import '../../domain/usecases/get_all_subcategories.dart';
 import '../../domain/usecases/get_questions_for_service.dart';
 import '../../domain/usecases/get_services_by_subcategory.dart';
-import '../../domain/usecases/submit_service_registration.dart';
+
 import '../../presentation/controllers/service_controller.dart';
 
 // Simple dependency injection without external packages
@@ -26,14 +28,14 @@ class ServiceDIContainer {
 
   bool _initialized = false;
   bool get isInitialized => _initialized;
-
+  final ApiService _apiService = ApiService();
   late final ServiceRemoteDataSourceImpl _remoteDataSource;
   late final ServiceRepository _repository;
   late final GetAllSubCategories _getAllSubCategories;
   late final GetAllServices _getAllServices;
   late final GetServicesBySubCategory _getServicesBySubCategory;
   late final GetQuestionsForService _getQuestionsForService;
-  late final SubmitServiceRegistration _submitServiceRegistration;
+
   late final AddLocationUseCase _addLocation;
   late final GetServicesLocationOfAuthenticatedUser
   _getServicesLocationOfAuthenticatedUser;
@@ -42,6 +44,8 @@ class ServiceDIContainer {
   late final DeleteServiceLocationUseCase _deleteServiceLocationUseCase;
   late final GetAllMinuteUseCase _getAllMinuteUseCase;
   late final GetAllVehicleTypeUseCase _getAllVehicleTypesUseCase;
+  late final AuthUserController _authController;
+  late final AddServiceUsecase _addServiceUsecase;
   void initialize() {
     if (_initialized) return;
 
@@ -52,7 +56,7 @@ class ServiceDIContainer {
     _getAllServices = GetAllServices(_repository);
     _getServicesBySubCategory = GetServicesBySubCategory(_repository);
     _getQuestionsForService = GetQuestionsForService(_repository);
-    _submitServiceRegistration = SubmitServiceRegistration(_repository);
+
     _addLocation = AddLocationUseCase(_repository);
     _getServicesLocationOfAuthenticatedUser =
         GetServicesLocationOfAuthenticatedUser(_repository);
@@ -61,6 +65,8 @@ class ServiceDIContainer {
     _deleteServiceLocationUseCase = DeleteServiceLocationUseCase(_repository);
     _getAllMinuteUseCase = GetAllMinuteUseCase(_repository);
     _getAllVehicleTypesUseCase = GetAllVehicleTypeUseCase(_repository);
+    _authController = AuthUserController(_apiService);
+    _addServiceUsecase = AddServiceUsecase(_repository);
     _initialized = true;
   }
 
@@ -70,7 +76,7 @@ class ServiceDIContainer {
       getAllServices: _getAllServices,
       getServicesBySubCategory: _getServicesBySubCategory,
       getQuestionsForService: _getQuestionsForService,
-      submitServiceRegistration: _submitServiceRegistration,
+
       addLocation: _addLocation,
       getServicesLocationOfAuthenticatedUser:
           _getServicesLocationOfAuthenticatedUser,
@@ -79,6 +85,8 @@ class ServiceDIContainer {
       deleteServiceLocationUseCase: _deleteServiceLocationUseCase,
       getAllMinuteUseCase: _getAllMinuteUseCase,
       getAllVehicleTypesUseCase: _getAllVehicleTypesUseCase,
+      authController: _authController,
+      addServiceUsecase: _addServiceUsecase,
     );
   }
 }

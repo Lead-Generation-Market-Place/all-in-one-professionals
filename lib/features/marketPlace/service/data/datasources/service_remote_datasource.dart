@@ -13,9 +13,6 @@ abstract class ServiceRemoteDataSource {
   Future<List<ServiceEntity>> getAllServices();
   Future<List<ServiceEntity>> getServicesBySubCategory(String subCategoryId);
   Future<List<QuestionEntity>> getQuestionsForService(String serviceId);
-  Future<bool> submitServiceRegistration(
-    ServiceRegistrationEntity registration,
-  );
 
   Future<String> addLocationData(LocationDataEntity locationDataEntity);
 
@@ -33,4 +30,9 @@ abstract class ServiceRemoteDataSource {
   Future<List<MinuteEntity>> getAllMinutes();
 
   Future<List<VehicleTypeEntity>> getAllVehicleTypes();
+
+  Future<Map<String, dynamic>> addService(
+    String serviceId,
+    String professionalId,
+  );
 }

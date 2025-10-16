@@ -177,7 +177,10 @@ class _AddLocationState extends State<AddLocation> {
             centerTitle: true,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_rounded, size: 20),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pushReplacementNamed(
+                context,
+                AppRouter.homeServicesServices,
+              )
             ),
             actions: [
               Container(
@@ -246,11 +249,11 @@ class _AddLocationState extends State<AddLocation> {
                     height: 48,
                     width: double.infinity,
                     child: CustomButton(
-                      text: 'Save',
+                      text: 'Next',
                       onPressed: () {
                         Navigator.pushNamed(
                           context,
-                          AppRouter.homeServicesServices,
+                          AppRouter.professionalServiceQuestionForm,
                         );
                       },
                     ),

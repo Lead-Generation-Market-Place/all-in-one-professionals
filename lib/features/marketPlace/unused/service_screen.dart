@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/core/constants/app_colors.dart';
-
-import '../../../jobs/presentation/widgets/finish_setup.dart';
-
+import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
 
 class ServiceScreen extends StatefulWidget {
   const ServiceScreen({super.key});
@@ -42,7 +40,6 @@ class _ServiceDashboardState extends State<ServiceScreen> {
   //     // metrics: ServiceMetrics(spent: "\$120", leads: 3, views: 24),
   //   ),
   // ];
-
 
   // double calculateCompletion(Service service) {
   //   if (service.completed) return 100;
@@ -200,7 +197,6 @@ class _ServiceDashboardState extends State<ServiceScreen> {
                           //     onExpand: () => toggleExpand(service.id),
                           //   ),
                           // ),
-
                           const SizedBox(height: 16),
                           ElevatedButton.icon(
                             onPressed: () {

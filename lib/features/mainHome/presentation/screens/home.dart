@@ -6,7 +6,8 @@ import 'package:yelpax_pro/features/mainHome/presentation/widgets/resturant_scre
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/screens/leads_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/presentation/screens/profile_screen.dart';
 import 'package:yelpax_pro/features/marketPlace/search/presentation/screens/search_screen.dart';
-import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_screen.dart';
+
+import 'package:yelpax_pro/features/marketPlace/unused/service_screen.dart';
 import 'package:yelpax_pro/shared/services/bottom_navbar_notifier.dart';
 import 'package:yelpax_pro/shared/widgets/bottom_navbar.dart';
 

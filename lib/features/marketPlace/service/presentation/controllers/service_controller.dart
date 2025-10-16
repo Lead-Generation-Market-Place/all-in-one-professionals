@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:logger/web.dart';
+import 'package:yelpax_pro/config/routes/router.dart';
+import 'package:yelpax_pro/features/authentication/presentation/controllers/auth_user_controller.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/location_data_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
@@ -24,14 +26,14 @@ import '../../domain/usecases/get_all_services.dart';
 import '../../domain/usecases/get_all_subcategories.dart';
 import '../../domain/usecases/get_questions_for_service.dart';
 import '../../domain/usecases/get_services_by_subcategory.dart';
-import '../../domain/usecases/submit_service_registration.dart';
+import '../../domain/usecases/add_service_usecase.dart';
 
 class ServiceController extends ChangeNotifier {
   final GetAllSubCategories getAllSubCategories;
   final GetAllServices getAllServices;
   final GetServicesBySubCategory getServicesBySubCategory;
   final GetQuestionsForService getQuestionsForService;
-  final SubmitServiceRegistration submitServiceRegistration;
+
   final AddLocationUseCase addLocation;
   final GetServicesLocationOfAuthenticatedUser
   getServicesLocationOfAuthenticatedUser;
@@ -40,12 +42,14 @@ class ServiceController extends ChangeNotifier {
   final DeleteServiceLocationUseCase deleteServiceLocationUseCase;
   final GetAllMinuteUseCase getAllMinuteUseCase;
   final GetAllVehicleTypeUseCase getAllVehicleTypesUseCase;
+  final AuthUserController authController;
+  final AddServiceUsecase addServiceUsecase;
   ServiceController({
     required this.getAllSubCategories,
     required this.getAllServices,
     required this.getServicesBySubCategory,
     required this.getQuestionsForService,
-    required this.submitServiceRegistration,
+
     required this.addLocation,
     required this.getServicesLocationOfAuthenticatedUser,
     required this.updateLocationUseCase,
@@ -53,27 +57,16 @@ class ServiceController extends ChangeNotifier {
     required this.deleteServiceLocationUseCase,
     required this.getAllMinuteUseCase,
     required this.getAllVehicleTypesUseCase,
+    required this.authController,
+    required this.addServiceUsecase,
   });
   bool _isLoading = false;
   bool get isLoading => _isLoading;
   // Registration data
-  late final ServiceRegistrationEntity _registrationData;
-  ServiceRegistrationEntity get registrationData => _registrationData;
 
-  void initializeRegistrationData(String professionalId) {
-    _registrationData = ServiceRegistrationEntity(
-      professionalId: professionalId,
-    );
-  }
+  void initializeRegistrationData(String professionalId) {}
 
-  void updateProfessionalId(String professionalId) {
-    if (_registrationData.professionalId != professionalId) {
-      _registrationData = _registrationData.copyWith(
-        professionalId: professionalId,
-      );
-      notifyListeners();
-    }
-  }
+  void updateProfessionalId(String professionalId) {}
 
   // Subcategories
   List<SubCategoryEntity> _subCategories = [];
@@ -146,6 +139,37 @@ class ServiceController extends ChangeNotifier {
     Logger().d('🐛 Selected Service: ${service.id}');
     _selectedService = service;
     notifyListeners();
+  }
+
+  Future<void> addService(BuildContext context, String? professionalId) async {
+    try {
+      final response = await addServiceUsecase(
+        selectedService!.id,
+        professionalId!,
+      );
+
+      // Check if the response contains 'success'
+      final bool success = response['success'] == true;
+
+      // Show based on response structure
+      if (success) {
+        final String message =
+            response['message'] ?? 'Service added successfully.';
+        CustomFlutterToast.showSuccessToast(message);
+        Navigator.pushNamed(context, AppRouter.add_location);
+      } else if (response.containsKey('assignedService')) {
+        // Handle the case when there's no success/message field but data is valid
+        CustomFlutterToast.showSuccessToast('Service assigned successfully.');
+        Navigator.pushReplacementNamed(context, AppRouter.add_location);
+      } else {
+        final String message = response['message'] ?? 'Unknown error occurred.';
+        CustomFlutterToast.showErrorToast(message);
+      }
+    } catch (e) {
+      print('Error adding service: $e');
+      CustomFlutterToast.showErrorToast('Failed to add service.');
+      return Future.error('Failed to add service: $e');
+    }
   }
 
   ///////////-Location-////////////
@@ -318,7 +342,7 @@ class ServiceController extends ChangeNotifier {
 
     try {
       _questions = await getQuestionsForService(_selectedService!.id);
-      // Initialize answers map
+      Logger().d('fetch Questions === $_questions');
       _answers.clear();
       for (final question in _questions) {
         _answers[question.id] = _getDefaultAnswer(question);
@@ -346,9 +370,7 @@ class ServiceController extends ChangeNotifier {
 
   void updateAnswer(String questionId, dynamic answer) {
     _answers[questionId] = answer;
-    _registrationData = _registrationData.copyWith(
-      questionAnswers: Map.from(_answers),
-    );
+
     notifyListeners();
   }
 
@@ -360,44 +382,9 @@ class ServiceController extends ChangeNotifier {
   }
 
   // Method for backward compatibility
-  void updateQuestionAnswers(Map<String, dynamic> answers) {
-    _registrationData = _registrationData.copyWith(questionAnswers: answers);
-    notifyListeners();
-  }
+  void updateQuestionAnswers(Map<String, dynamic> answers) {}
 
   // Registration submission
-  Future<bool> submitCompleteRegistration() async {
-    // Apply sensible defaults for optional steps if missing
-
-    BudgetEntity budget =
-        _registrationData.budget ?? BudgetEntity(limitBudget: false);
-
-    final updatedRegistration = _registrationData.copyWith(budget: budget);
-
-    if (!_validateRegistrationData(updatedRegistration)) {
-      return false;
-    }
-
-    isSubmitting = true;
-    submitError = null;
-    notifyListeners();
-
-    try {
-      final success = await submitServiceRegistration(updatedRegistration);
-      if (success) {
-        _clearRegistrationData();
-      }
-      isSubmitting = false;
-      notifyListeners();
-      return success;
-    } catch (e) {
-      submitError = e.toString();
-
-      isSubmitting = false;
-      notifyListeners();
-      return false;
-    }
-  }
 
   // Validation
   bool _validateRegistrationData(ServiceRegistrationEntity registration) {
@@ -421,24 +408,8 @@ class ServiceController extends ChangeNotifier {
   }
 
   void updateBudgetData(BudgetEntity budget) {
-    _registrationData = _registrationData.copyWith(budget: budget);
     notifyListeners();
   }
 
   // Helper method to get current registration progress
-  double get registrationProgress {
-    int completedSteps = 0;
-    const int totalSteps =
-        5; // service, availability, questions, location, budget
-
-    if (_registrationData.selectedService != null) completedSteps++;
-
-    if (_registrationData.questionAnswers != null &&
-        _registrationData.questionAnswers!.isNotEmpty)
-      completedSteps++;
-
-    if (_registrationData.budget != null) completedSteps++;
-
-    return completedSteps / totalSteps;
-  }
 }

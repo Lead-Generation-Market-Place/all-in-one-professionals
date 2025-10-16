@@ -103,45 +103,6 @@ class _BudgetScreenState extends State<BudgetScreen> {
     setState(() {
       isNextLoading = true;
     });
-
-    try {
-      final success = await controller.submitCompleteRegistration();
-
-      if (success && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Service registered successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-
-        // Navigate to success screen or dashboard
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/success', // Replace with your success route
-          (route) => false,
-        );
-      } else if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to register service. Please try again.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          isNextLoading = false;
-        });
-      }
-    }
   }
 
   Widget _buildPaymentCard() {

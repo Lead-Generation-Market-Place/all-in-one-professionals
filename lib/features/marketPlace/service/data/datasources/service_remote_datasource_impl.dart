@@ -5,7 +5,6 @@ import 'package:yelpax_pro/features/marketPlace/service/data/models/mile_model.d
 import 'package:yelpax_pro/features/marketPlace/service/data/models/minute_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/question_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/service_model.dart';
-import 'package:yelpax_pro/features/marketPlace/service/data/models/service_registration_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/subcategory_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/vehicle_type_model.dart';
 
@@ -108,36 +107,16 @@ class ServiceRemoteDataSourceImpl implements ServiceRemoteDataSource {
       final response = await apiService.get('/questions/service/$serviceId');
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data'];
-        // return data;
-        // .map((json) => QuestionModel.fromJson(json).toEntity())
-        // .toList();
-        return response.data;
+        return data
+            .map<QuestionEntity>(
+              (json) => QuestionModel.fromJson(json as Map<String, dynamic>),
+            )
+            .toList();
       } else {
         throw Exception(
           'Failed to fetch questions. Status: ${response.statusCode}',
         );
       }
-    } on DioException catch (e) {
-      throw Exception(_handleDioError(e));
-    } catch (e) {
-      throw Exception('Unexpected error: $e');
-    }
-  }
-
-  @override
-  Future<bool> submitServiceRegistration(
-    ServiceRegistrationEntity registration,
-  ) async {
-    try {
-      // final registrationModel = ServiceRegistrationModel.fromEntity(
-      //   registration,
-      // );
-      final response = await apiService.post(
-        '/services/asp',
-        // data: registrationModel.toJson(),
-      );
-
-      return response.statusCode == 200 || response.statusCode == 201;
     } on DioException catch (e) {
       throw Exception(_handleDioError(e));
     } catch (e) {
@@ -321,6 +300,28 @@ class ServiceRemoteDataSourceImpl implements ServiceRemoteDataSource {
     } catch (e) {
       CustomFlutterToast.showErrorToast('Error getting vehicle type data.');
       return [];
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> addService(
+    String serviceId,
+    String professionalId,
+  ) async {
+    try {
+      final response = await apiService.post(
+        '/services/asp',
+        data: {'service_id': serviceId, 'professional_id': professionalId},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response.data;
+      } else {
+        // Return error response in map format
+        return response.data;
+      }
+    } catch (e) {
+      throw Exception('Failed to add service: $e');
     }
   }
 }

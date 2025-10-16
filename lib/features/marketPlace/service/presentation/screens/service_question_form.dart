@@ -22,9 +22,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final controller = context.read<ServiceController>();
       if (controller.selectedService != null) {
-        Logger().d(
-          'Selected service: ${controller.selectedService?.name}',
-        );
+        Logger().d('Selected service: ${controller.selectedService?.name}');
         controller.fetchQuestionsForSelectedService();
       }
     });
@@ -344,7 +342,7 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
                                   );
                                   Navigator.pushNamed(
                                     context,
-                                    AppRouter.location,
+                                    AppRouter.homeServicesServices,
                                   );
                                 }
                                 // else if (mounted) {
@@ -490,8 +488,9 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
             children: question.options.asMap().entries.map((entry) {
               final optionIndex = entry.key;
               final option = entry.value;
-              final isSelected =
-                  (currentAnswer as List?)?.contains(option) ?? false;
+              final isSelected = currentAnswer is List
+                  ? currentAnswer.contains(option)
+                  : false;
 
               return AnimatedContainer(
                 duration: Duration(milliseconds: 200 + (optionIndex * 50)),
@@ -503,7 +502,9 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(12),
                     onTap: () {
-                      final newValue = List.from(currentAnswer ?? []);
+                      final List<String> newValue = currentAnswer is List
+                          ? List<String>.from(currentAnswer)
+                          : <String>[];
                       if (isSelected) {
                         newValue.remove(option);
                       } else {
@@ -667,15 +668,18 @@ class _ServiceQuestionFormState extends State<ServiceQuestionForm> {
               color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
             ),
           ),
-          child: DropdownButtonFormField<String>(
-            initialValue: currentAnswer as String?,
+          child: DropdownButtonFormField<String?>(
+            value: currentAnswer as String?,
             items: [
-              const DropdownMenuItem(
+              const DropdownMenuItem<String?>(
                 value: null,
                 child: Text('Select an option...'),
               ),
               ...question.options.map((option) {
-                return DropdownMenuItem(value: option, child: Text(option));
+                return DropdownMenuItem<String?>(
+                  value: option,
+                  child: Text(option),
+                );
               }).toList(),
             ],
             onChanged: (value) {

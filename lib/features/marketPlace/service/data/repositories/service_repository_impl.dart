@@ -38,13 +38,6 @@ class ServiceRepositoryImpl implements ServiceRepository {
   }
 
   @override
-  Future<bool> submitServiceRegistration(
-    ServiceRegistrationEntity registration,
-  ) async {
-    return await remoteDataSource.submitServiceRegistration(registration);
-  }
-
-  @override
   Future<String> addLocation(LocationDataEntity locationDataEntity) async {
     return await remoteDataSource.addLocationData(locationDataEntity);
   }
@@ -83,5 +76,13 @@ class ServiceRepositoryImpl implements ServiceRepository {
   @override
   Future<List<VehicleTypeEntity>> getAllVehicleTypes() async {
     return await remoteDataSource.getAllVehicleTypes();
+  }
+
+  @override
+  Future<Map<String, dynamic>> addService(
+    String serviceId,
+    String professionalId,
+  ) async {
+    return await remoteDataSource.addService(serviceId, professionalId);
   }
 }
