@@ -7,6 +7,7 @@ import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_miles.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_vehicle_type_use_case.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_services_location_of_authenticated_user.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/professional_services_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/update_location.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/add_location.dart';
 
@@ -48,6 +49,7 @@ class ServiceDIContainer {
   late final AuthUserController _authController;
   late final AddServiceUsecase _addServiceUsecase;
   late final AddAnswersUsecase _addAnswersUsecase;
+  late final ProfessionalServicesUsecase _professionalServicesUsecase;
   void initialize() {
     if (_initialized) return;
 
@@ -70,6 +72,7 @@ class ServiceDIContainer {
     _authController = AuthUserController(_apiService);
     _addServiceUsecase = AddServiceUsecase(_repository);
     _addAnswersUsecase = AddAnswersUsecase(_repository);
+    _professionalServicesUsecase = ProfessionalServicesUsecase(_repository);
     _initialized = true;
   }
 
@@ -90,7 +93,8 @@ class ServiceDIContainer {
       getAllVehicleTypesUseCase: _getAllVehicleTypesUseCase,
       authController: _authController,
       addServiceUsecase: _addServiceUsecase,
-      addAnswersUsecase: _addAnswersUsecase
+      addAnswersUsecase: _addAnswersUsecase,
+      professionalServicesUsecase: _professionalServicesUsecase
     );
   }
 }

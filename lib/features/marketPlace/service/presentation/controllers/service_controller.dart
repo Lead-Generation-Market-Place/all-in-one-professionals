@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logger/web.dart';
+import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/features/authentication/presentation/controllers/auth_user_controller.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/location_data_model.dart';
@@ -7,6 +8,7 @@ import 'package:yelpax_pro/features/marketPlace/service/domain/entities/answer_e
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/minute_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/professional_services_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/vehicle_type_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/add_answers_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/add_location.dart';
@@ -14,6 +16,7 @@ import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_miles.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_vehicle_type_use_case.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_services_location_of_authenticated_user.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/professional_services_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/update_location.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/add_location.dart';
 import 'package:yelpax_pro/shared/widgets/custom_flutter_toast.dart';
@@ -47,6 +50,7 @@ class ServiceController extends ChangeNotifier {
   final AuthUserController authController;
   final AddServiceUsecase addServiceUsecase;
   final AddAnswersUsecase addAnswersUsecase;
+  final ProfessionalServicesUsecase professionalServicesUsecase;
   ServiceController({
     required this.getAllSubCategories,
     required this.getAllServices,
@@ -63,6 +67,7 @@ class ServiceController extends ChangeNotifier {
     required this.authController,
     required this.addServiceUsecase,
     required this.addAnswersUsecase,
+    required this.professionalServicesUsecase,
   });
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -379,6 +384,11 @@ class ServiceController extends ChangeNotifier {
   }
 
   Future<void> submitAnswers(BuildContext context) async {
+    final authUserController = Provider.of<AuthUserController>(
+      context,
+      listen: false,
+    );
+
     if (isSubmitting) return;
 
     isSubmitting = true;
@@ -386,10 +396,10 @@ class ServiceController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Validate required questions
+      // ✅ Validate required questions
       for (final question in _questions) {
+        final answer = _answers[question.id];
         if (question.required) {
-          final answer = _answers[question.id];
           if (answer == null ||
               (answer is String && answer.trim().isEmpty) ||
               (answer is List && answer.isEmpty)) {
@@ -398,7 +408,15 @@ class ServiceController extends ChangeNotifier {
         }
       }
 
-      // Prepare answer entities
+      final String serviceId = selectedService!.id;
+
+      // ✅ Extract location IDs from serviceLocations
+      final List<String> locationIds = serviceLocations
+          .where((location) => location.id != null)
+          .map((location) => location.id!)
+          .toList();
+
+      // ✅ Prepare answer entities with service location IDs
       final List<AnswerEntity> answerEntities = _answers.entries.map((entry) {
         final questionId = entry.key;
         final answerValue = entry.value;
@@ -406,18 +424,24 @@ class ServiceController extends ChangeNotifier {
         return AnswerEntity(
           userId: null,
           questionId: questionId,
-          professionalId: authController.professionalId.value,
+          professionalId: authUserController.professionalId.value,
+          serviceId: serviceId,
+          serviceLocationIds: locationIds,
           answers: answerValue,
           createdAt: DateTime.now(),
         );
       }).toList();
 
-      // Submit answers
+      // ✅ Submit answers
       final response = await addAnswersUsecase(answerEntities);
 
       if (response['success'] == true) {
         CustomFlutterToast.showSuccessToast('Answers submitted successfully!');
-        Navigator.pushReplacementNamed(context, AppRouter.homeServicesServices);
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRouter.homeServicesServices,
+          (route) => false,
+        );
       } else {
         CustomFlutterToast.showErrorToast('Error submitting answers.');
       }
@@ -430,24 +454,22 @@ class ServiceController extends ChangeNotifier {
     }
   }
 
-  // Method for backward compatibility
-  void updateQuestionAnswers(Map<String, dynamic> answers) {}
-
-  // Registration submission
-
-  // Validation
-
-  void _clearRegistrationData() {
-    _selectedService = null;
-    _selectedSubCategory = null;
-    _answers.clear();
-    _questions.clear();
-    notifyListeners();
+  List<ProfessionalServicesEntity> _professionalServices = [];
+  List<ProfessionalServicesEntity> get professionalServices =>
+      _professionalServices;
+  Future<void> professionalServicesList(BuildContext context) async {
+    final professionalId = Provider.of<AuthUserController>(
+      context,
+      listen: false,
+    );
+    try {
+      final response = await professionalServicesUsecase(
+        professionalId.professionalId.value ?? '',
+      );
+      _professionalServices = response;
+      Logger().i('-1-1-1--1${_professionalServices}');
+    } catch (e) {
+      Logger().d(e);
+    }
   }
-
-  void updateBudgetData(BudgetEntity budget) {
-    notifyListeners();
-  }
-
-  // Helper method to get current registration progress
 }

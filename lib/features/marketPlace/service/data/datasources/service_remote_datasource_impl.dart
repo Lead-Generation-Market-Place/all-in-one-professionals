@@ -3,6 +3,7 @@ import 'package:logger/logger.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/datasources/service_remote_datasource.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/mile_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/minute_model.dart';
+import 'package:yelpax_pro/features/marketPlace/service/data/models/professional_services_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/question_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/service_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/subcategory_model.dart';
@@ -12,6 +13,7 @@ import 'package:yelpax_pro/features/marketPlace/service/domain/entities/answer_e
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/minute_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/professional_services_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/question_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/service_entity.dart';
 
@@ -346,6 +348,31 @@ class ServiceRemoteDataSourceImpl implements ServiceRemoteDataSource {
       }
     } catch (e) {
       throw Exception('Failed to send answers: $e');
+    }
+  }
+
+  @override
+  Future<List<ProfessionalServicesEntity>>
+  fetchAllServicesRelatedToProfessional(String professionalId) async {
+    try {
+      final response = await apiService.get('/services/pro/$professionalId');
+      Logger().d('Response status: ${response.statusCode}');
+      Logger().d('Response data: ${response.data}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Extract the list from the 'data' key
+        final List<dynamic> servicesJson = response.data['data'];
+
+        final List<ProfessionalServicesEntity> services = servicesJson
+            .map((json) => ProfessionalServicesModel.fromJson(json))
+            .toList();
+
+        return services;
+      } else {
+        throw Exception('Failed to send answers: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load services of professional.');
     }
   }
 

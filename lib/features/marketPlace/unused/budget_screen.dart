@@ -47,7 +47,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
     // Update controller FIRST
     final controller = context.read<ServiceController>();
-    controller.updateBudgetData(budgetData);
+
 
     // THEN submit
     _submitRegistration(controller);
@@ -86,7 +86,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
     // Update controller FIRST
     final controller = context.read<ServiceController>();
-    controller.updateBudgetData(budgetData);
+
 
     // THEN submit
     _submitRegistration(controller);

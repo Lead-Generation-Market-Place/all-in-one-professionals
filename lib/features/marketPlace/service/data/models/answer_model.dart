@@ -8,6 +8,7 @@ class AnswerModel extends AnswerEntity {
     super.leadId,
     super.professionalId,
     super.userId,
+    super.serviceId,
     required super.answers,
     super.createdAt,
     super.updatedAt,
@@ -32,6 +33,7 @@ class AnswerModel extends AnswerEntity {
       leadId: json['lead_id'],
       professionalId: json['professional_id'],
       userId: json['user_id'],
+      serviceId: json['service_id'],
       answers: json['answers'],
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
@@ -50,6 +52,7 @@ class AnswerModel extends AnswerEntity {
       leadId: entity.leadId,
       professionalId: entity.professionalId,
       userId: entity.userId,
+      serviceId: entity.serviceId,
       answers: entity.answers,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,

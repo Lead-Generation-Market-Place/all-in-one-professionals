@@ -2,6 +2,7 @@ import 'package:yelpax_pro/features/marketPlace/service/domain/entities/answer_e
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/minute_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/professional_services_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/vehicle_type_entity.dart';
 import '../../domain/entities/question_entity.dart';
 import '../../domain/entities/service_entity.dart';
@@ -85,12 +86,18 @@ class ServiceRepositoryImpl implements ServiceRepository {
     return await remoteDataSource.addService(serviceId, professionalId);
   }
 
-@override
+  @override
   Future<Map<String, dynamic>> sendAnswers(
     List<AnswerEntity> answerEntities,
   ) async {
     return await remoteDataSource.sendAnswers(answerEntities);
   }
 
-
+  @override
+  Future<List<ProfessionalServicesEntity>>
+  fetchAllServicesRelatedToProfessional(String professionalId) async {
+    return await remoteDataSource.fetchAllServicesRelatedToProfessional(
+      professionalId,
+    );
+  }
 }

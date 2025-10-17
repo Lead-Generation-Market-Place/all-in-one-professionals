@@ -1,7 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/web.dart';
+import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/controllers/service_controller.dart';
 
 class ServiceScreen extends StatefulWidget {
   const ServiceScreen({super.key});
@@ -53,6 +57,21 @@ class _ServiceDashboardState extends State<ServiceScreen> {
   //       .length;
   //   return (completedSteps / totalSteps) * 100;
   // }
+  late ServiceController serviceController;
+  @override
+  void initState() {
+    serviceController = Provider.of<ServiceController>(context, listen: false);
+    init(context);
+    super.initState();
+  }
+
+  Future<void> init(BuildContext context) async {
+    try {
+      await serviceController.professionalServicesList(context);
+    } catch (e) {
+      Logger().d(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,14 +151,16 @@ class _ServiceDashboardState extends State<ServiceScreen> {
                     ),
                   ],
                 ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      AppRouter.businessAvailability,
-                    );
-                  },
-                  child: const Text("Business Availability"),
+                Row(
+                  children: [
+                    TextButton.icon(
+                      icon: Icon(CupertinoIcons.add_circled_solid),
+                      label: Text('Add Service'),
+                      onPressed: () {
+                        Navigator.pushNamed(context, AppRouter.add_service);
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -170,44 +191,22 @@ class _ServiceDashboardState extends State<ServiceScreen> {
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           const SizedBox(height: 8),
-                          Text(
-                            "Set your job preferences, activate or deactivate services, and choose where you want to work.",
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          const SizedBox(height: 8),
-                          TextButton.icon(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.info_outline,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            label: const Text(
-                              "View our guide to job preferences",
-                            ),
-                          ),
-                          const SizedBox(height: 16),
 
-                          // Service list
-                          // ...services.map(
-                          //   (service) => ServiceCard(
-                          //     service: service,
-                          //     isExpanded: expandedServiceId == service.id,
-                          //     completion: calculateCompletion(service),
-                          //     onToggle: () => toggleService(service.id),
-                          //     onExpand: () => toggleExpand(service.id),
-                          //   ),
-                          // ),
-                          const SizedBox(height: 16),
-                          ElevatedButton.icon(
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                AppRouter.add_service,
-                              );
-                            },
-                            icon: const Icon(Icons.add),
-                            label: const Text("Add a Service"),
-                          ),
+                          serviceController.professionalServices.isEmpty
+                              ? CircularProgressIndicator.adaptive()
+                              : ListView.builder(
+                                  itemCount:
+                                      serviceController.serviceLocations.length,
+                                  itemBuilder: (context, index) {
+                                    final service = serviceController
+                                        .serviceLocations[index];
+
+                                    return ListTile(
+                                      title: Text('${service.serviceId}'),
+                                    );
+                                  },
+                                ),
+                         
                         ],
                       ),
                     ),
