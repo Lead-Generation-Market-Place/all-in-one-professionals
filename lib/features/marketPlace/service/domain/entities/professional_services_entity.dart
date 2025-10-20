@@ -10,7 +10,6 @@ class ProfessionalServicesEntity {
   final SubCategoryEntity subCategoryEntity;
   final List<LocationDataEntity> locationDataEntities;
   final List<QuestionEntity> questionEntities;
-  final List<AnswerEntity> answerEntities;
 
   const ProfessionalServicesEntity({
     required this.professionalServiceId,
@@ -18,6 +17,5 @@ class ProfessionalServicesEntity {
     required this.subCategoryEntity,
     required this.locationDataEntities,
     required this.questionEntities,
-    required this.answerEntities,
   });
 }

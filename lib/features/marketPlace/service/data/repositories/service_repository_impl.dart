@@ -100,4 +100,12 @@ class ServiceRepositoryImpl implements ServiceRepository {
       professionalId,
     );
   }
+
+  @override
+  Future<Map<String, dynamic>> updateService(
+    String proServiceId,
+    String serviceId,
+  ) async {
+    return await remoteDataSource.updateService(proServiceId, serviceId);
+  }
 }

@@ -35,20 +35,13 @@ class _ServiceDashboardState extends State<ServiceScreen> {
     }
   }
 
+// In your ServiceScreen, update the _handleEditService method
   void _handleEditService(ProfessionalServicesEntity service) {
-    // Convert entity to map for navigation
-    final serviceData = {
-      'serviceId': service.serviceEntity.id,
-      'serviceName': service.serviceEntity.name,
-      'categoryName': service.subCategoryEntity.name,
-      // Add other properties you need
-    };
-
-    print('Edit service with data: $serviceData');
+    print('Edit service with data: ${service.serviceEntity.name}');
     Navigator.pushNamed(
       context,
       AppRouter.edit_service,
-      arguments: serviceData,
+      arguments: service,
     );
   }
 

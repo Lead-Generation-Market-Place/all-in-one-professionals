@@ -48,4 +48,9 @@ abstract class ServiceRepository {
 
   Future<List<ProfessionalServicesEntity>>
   fetchAllServicesRelatedToProfessional(String professionalId);
+
+  Future<Map<String, dynamic>> updateService(
+    String proServiceId,
+    String serviceId,
+  );
 }

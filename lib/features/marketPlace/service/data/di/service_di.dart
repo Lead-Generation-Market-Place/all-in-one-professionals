@@ -9,6 +9,7 @@ import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_services_location_of_authenticated_user.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/professional_services_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/update_location.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/update_service_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/add_location.dart';
 
 import '../../../../../shared/services/api_service.dart';
@@ -50,6 +51,8 @@ class ServiceDIContainer {
   late final AddServiceUsecase _addServiceUsecase;
   late final AddAnswersUsecase _addAnswersUsecase;
   late final ProfessionalServicesUsecase _professionalServicesUsecase;
+
+  late final UpdateServiceUsecase _updateServiceUsecase;
   void initialize() {
     if (_initialized) return;
 
@@ -73,6 +76,7 @@ class ServiceDIContainer {
     _addServiceUsecase = AddServiceUsecase(_repository);
     _addAnswersUsecase = AddAnswersUsecase(_repository);
     _professionalServicesUsecase = ProfessionalServicesUsecase(_repository);
+    _updateServiceUsecase = UpdateServiceUsecase(_repository);
     _initialized = true;
   }
 
@@ -94,7 +98,8 @@ class ServiceDIContainer {
       authController: _authController,
       addServiceUsecase: _addServiceUsecase,
       addAnswersUsecase: _addAnswersUsecase,
-      professionalServicesUsecase: _professionalServicesUsecase
+      professionalServicesUsecase: _professionalServicesUsecase,
+      updateServiceUsecase: _updateServiceUsecase
     );
   }
 }

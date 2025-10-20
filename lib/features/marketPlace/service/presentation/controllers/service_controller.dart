@@ -19,6 +19,7 @@ import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_services_location_of_authenticated_user.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/professional_services_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/update_location.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/update_service_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/add_location.dart';
 import 'package:yelpax_pro/shared/widgets/custom_flutter_toast.dart';
 import '../../domain/entities/budget_entity.dart';
@@ -52,6 +53,7 @@ class ServiceController extends ChangeNotifier {
   final AddServiceUsecase addServiceUsecase;
   final AddAnswersUsecase addAnswersUsecase;
   final ProfessionalServicesUsecase professionalServicesUsecase;
+  final UpdateServiceUsecase updateServiceUsecase;
   ServiceController({
     required this.getAllSubCategories,
     required this.getAllServices,
@@ -69,6 +71,7 @@ class ServiceController extends ChangeNotifier {
     required this.addServiceUsecase,
     required this.addAnswersUsecase,
     required this.professionalServicesUsecase,
+    required this.updateServiceUsecase,
   });
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -91,7 +94,7 @@ class ServiceController extends ChangeNotifier {
   Future<void> fetchAllSubCategories() async {
     isSubCategoriesLoading = true;
     subCategoriesError = null;
-
+    _selectedSubCategory == null;
     try {
       _subCategories = await getAllSubCategories();
     } catch (e) {
@@ -189,7 +192,7 @@ class ServiceController extends ChangeNotifier {
 
   Future<void> fetchAllMiles() async {
     _isLoading = true;
-    notifyListeners();
+    // notifyListeners();
 
     try {
       final response = await getAllMilesUseCase();
@@ -513,4 +516,32 @@ class ServiceController extends ChangeNotifier {
     }
   }
 
+  Future<void> updateService(BuildContext context, String proServicesId) async {
+    try {
+      final response = await updateServiceUsecase(
+        proServicesId,
+        selectedService!.id,
+      );
+      Logger().d('asdfasdfasdfasdfa $response');
+
+      final bool success = response['success'] == true;
+      if (success) {
+        final String message =
+            response['message'] ?? 'Service update successfully.';
+        CustomFlutterToast.showSuccessToast(message);
+        professionalServicesList(context);
+        Navigator.pushNamed(context, AppRouter.add_location);
+      } else if (response.containsKey('assignedService')) {
+        CustomFlutterToast.showSuccessToast('Service update successfully.');
+        Navigator.pushReplacementNamed(context, AppRouter.add_location);
+      } else {
+        final String message = response['message'] ?? 'Unknown error occurred.';
+        CustomFlutterToast.showErrorToast(message);
+      }
+    } catch (e) {
+      print('Error adding service: $e');
+      CustomFlutterToast.showErrorToast('Failed to add service.');
+      return Future.error('Failed to add service: $e');
+    }
+  }
 }

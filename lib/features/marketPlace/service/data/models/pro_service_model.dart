@@ -38,16 +38,17 @@ class ProServiceModel extends ProServiceEntity {
   }
 
   /// Converts model instance to JSON map
-  Map<String, dynamic> toJson() {
+static Map<String, dynamic> toJsonFrom(ProServiceModel model) {
     return {
-      'maximum_price': maximumPrice,
-      'minimum_price': minimumPrice,
-      'pricing_type': pricingType,
-      'service_status': serviceStatus,
-      'description': description,
-      'completed_tasks': completedTasks,
+      'maximum_price': model.maximumPrice,
+      'minimum_price': model.minimumPrice,
+      'pricing_type': model.pricingType,
+      'service_status': model.serviceStatus,
+      'description': model.description,
+      'completed_tasks': model.completedTasks,
     };
   }
+
 
   /// Returns a string representation
   @override

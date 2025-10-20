@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:logger/web.dart';
 import 'package:provider/provider.dart';
-import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/features/authentication/presentation/controllers/auth_user_controller.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/controllers/service_controller.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/service_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/subcategory_entity.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
-import 'package:yelpax_pro/shared/widgets/custom_flutter_toast.dart';
 
 class AddServiceScreen extends StatefulWidget {
   const AddServiceScreen({Key? key}) : super(key: key);
@@ -53,7 +51,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
 
             // Fixed: Remove initialValue and use value instead
             DropdownButtonFormField<SubCategoryEntity>(
-              // REMOVED: initialValue: controller.selectedSubCategory,
+            
               initialValue: controller
                   .selectedSubCategory, // Use value instead of initialValue
               isExpanded: true,

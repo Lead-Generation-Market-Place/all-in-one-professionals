@@ -364,15 +364,28 @@ class ServiceRemoteDataSourceImpl implements ServiceRemoteDataSource {
       if (response.statusCode == 400) {
         throw Exception('Bad request from frontend');
       } else if (response.statusCode == 200 || response.statusCode == 201) {
-        // final data = response.data['data'];
-        // if (data == null || data is! List) {
-        //   throw Exception('Invalid data format');
-        // }
-
-
         Logger().i("Fetched services: ${response.data}");
 
-        return response.data;
+        // Extract the data array from the response
+        final responseData = response.data as Map<String, dynamic>;
+
+        if (responseData['success'] == true) {
+          final dataList = responseData['data'] as List<dynamic>;
+
+          // Convert each item in the list to ProfessionalServicesModel
+          final services = dataList.map((item) {
+            return ProfessionalServicesModel.fromJson(
+              item as Map<String, dynamic>,
+            );
+          }).toList();
+
+          Logger().i("Converted ${services.length} services");
+          return services;
+        } else {
+          throw Exception(
+            'API returned unsuccessful response: ${responseData['message']}',
+          );
+        }
       } else {
         throw Exception('Unexpected response status: ${response.statusCode}');
       }
@@ -381,4 +394,36 @@ class ServiceRemoteDataSourceImpl implements ServiceRemoteDataSource {
       throw Exception('Failed to load services of professional.');
     }
   }
+
+  @override
+  Future<Map<String, dynamic>> updateService(
+    String serviceId,
+    String proServiceId,
+  ) async {
+    try {
+      Logger().d(
+        'Updating service: serviceId=$serviceId, proServiceId=$proServiceId',
+      );
+
+      final response = await apiService.put(
+        '/services/professional-service/update',
+        data: {"_id": proServiceId, "serviceId": serviceId},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response.data;
+      } else {
+        // Return error response in map format
+        return {
+          "success": false,
+          "statusCode": response.statusCode,
+          "data": response.data,
+        };
+      }
+    } catch (e) {
+      Logger().e('Failed to update service: $e');
+      throw Exception('Failed to update service: $e');
+    }
+  }
+
 }
