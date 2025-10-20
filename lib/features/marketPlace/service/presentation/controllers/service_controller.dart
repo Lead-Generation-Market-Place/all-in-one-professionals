@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/features/authentication/presentation/controllers/auth_user_controller.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/location_data_model.dart';
+import 'package:yelpax_pro/features/marketPlace/service/data/models/professional_services_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/answer_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/mile_entity.dart';
@@ -457,19 +458,59 @@ class ServiceController extends ChangeNotifier {
   List<ProfessionalServicesEntity> _professionalServices = [];
   List<ProfessionalServicesEntity> get professionalServices =>
       _professionalServices;
+
   Future<void> professionalServicesList(BuildContext context) async {
-    final professionalId = Provider.of<AuthUserController>(
+    final authUserController = Provider.of<AuthUserController>(
       context,
       listen: false,
     );
+
+    final professionalId = authUserController.professionalId.value;
+
+    if (professionalId == null || professionalId.isEmpty) {
+      Logger().w('Professional ID is null or empty. Cannot fetch services.');
+      return;
+    }
+
     try {
-      final response = await professionalServicesUsecase(
-        professionalId.professionalId.value ?? '',
-      );
+      final response = await professionalServicesUsecase(professionalId);
       _professionalServices = response;
-      Logger().i('-1-1-1--1${_professionalServices}');
+      Logger().i('Loaded professional services: $_professionalServices');
+      notifyListeners();
     } catch (e) {
-      Logger().d(e);
+      Logger().e('Error loading professional services: $e');
     }
   }
+
+  Future<void> previousSubcategoryAndService(
+    ServiceEntity service,
+    SubCategoryEntity subcategoryEntity,
+  ) async {
+    try {
+      // Set the selected subcategory
+      _selectedSubCategory = subcategoryEntity;
+      notifyListeners();
+
+      // Ensure services are loaded
+      if (_services.isEmpty) {
+        await fetchAllServices();
+      }
+
+      // Find the matching service by ID
+      final matchingService = _services.firstWhere(
+        (s) => s.id == service.id,
+        orElse: () => service,
+      );
+
+      _selectedService = matchingService;
+      notifyListeners();
+    } catch (e) {
+      Logger().e('Error setting previous subcategory and service: $e');
+      // Fallback: set the provided values directly
+      _selectedSubCategory = subcategoryEntity;
+      _selectedService = service;
+      notifyListeners();
+    }
+  }
+
 }

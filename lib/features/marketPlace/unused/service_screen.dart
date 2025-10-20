@@ -6,6 +6,8 @@ import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/core/constants/app_colors.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/presentation/widgets/finish_setup.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/controllers/service_controller.dart';
+// Import your entity class
+import 'package:yelpax_pro/features/marketPlace/service/domain/entities/professional_services_entity.dart';
 
 class ServiceScreen extends StatefulWidget {
   const ServiceScreen({super.key});
@@ -16,48 +18,8 @@ class ServiceScreen extends StatefulWidget {
 
 class _ServiceDashboardState extends State<ServiceScreen> {
   bool isSetupFinished = false;
-  int? expandedServiceId;
-
-  // late List<Service> services = [
-  //   Service(
-  //     id: 1,
-  //     service_name: "Basement Finishing or Remodeling",
-  //     active: true,
-  //     completed: false,
-  //     description:
-  //         "Transform your basement into a functional living space with our remodeling services.",
-  //     // metrics: ServiceMetrics(spent: "\$0", leads: 0, views: 0),
-  //     // setupProgress: SetupProgress(
-  //     //   questions: true,
-  //     //   pricing: false,
-  //     //   availability: false,
-  //     //   serviceArea: true,
-  //     // ),
-  //   ),
-  //   Service(
-  //     id: 2,
-  //     service_name: "Kitchen Remodeling",
-  //     active: true,
-  //     completed: true,
-  //     description:
-  //         "Modern kitchen remodeling services to upgrade your cooking space.",
-  //     // metrics: ServiceMetrics(spent: "\$120", leads: 3, views: 24),
-  //   ),
-  // ];
-
-  // double calculateCompletion(Service service) {
-  //   if (service.completed) return 100;
-  //   if (service.setupProgress == null) return 0;
-
-  //   final totalSteps = service.setupProgress!.toJson().length;
-  //   final completedSteps = service.setupProgress!
-  //       .toJson()
-  //       .values
-  //       .where((v) => v)
-  //       .length;
-  //   return (completedSteps / totalSteps) * 100;
-  // }
   late ServiceController serviceController;
+
   @override
   void initState() {
     serviceController = Provider.of<ServiceController>(context, listen: false);
@@ -73,26 +35,94 @@ class _ServiceDashboardState extends State<ServiceScreen> {
     }
   }
 
+  void _handleEditService(ProfessionalServicesEntity service) {
+    // Convert entity to map for navigation
+    final serviceData = {
+      'serviceId': service.serviceEntity.id,
+      'serviceName': service.serviceEntity.name,
+      'categoryName': service.subCategoryEntity.name,
+      // Add other properties you need
+    };
+
+    print('Edit service with data: $serviceData');
+    Navigator.pushNamed(
+      context,
+      AppRouter.edit_service,
+      arguments: serviceData,
+    );
+  }
+
+  void _handleDeleteService(String serviceId) {
+    print('Delete service with ID: $serviceId');
+    _showDeleteConfirmationDialog(serviceId);
+  }
+
+  void _showDeleteConfirmationDialog(String serviceId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Delete Service',
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            'Are you sure you want to delete this service? This action cannot be undone.',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // serviceController.deleteService(serviceId);
+              },
+              child: Text(
+                'Delete',
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Services'),
+        title: Text(
+          'Services',
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications),
+            icon: const Icon(Icons.notifications_outlined),
             onPressed: () {
               Navigator.pushNamed(context, AppRouter.homeServicesNotifications);
             },
           ),
           IconButton(
-            icon: const Icon(Icons.campaign),
+            icon: const Icon(Icons.campaign_outlined),
             onPressed: () {
               Navigator.pushNamed(context, AppRouter.marketing_dashboard);
             },
           ),
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.settings_outlined),
             onPressed: () {
               Navigator.pushNamed(context, AppRouter.settingsScreen);
             },
@@ -109,20 +139,18 @@ class _ServiceDashboardState extends State<ServiceScreen> {
               },
             ),
 
-          // Stats Cards
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
-                StatCard(title: "Active Services", value: "4"),
-                StatCard(title: "Avg. Rating", value: "3.7"),
-                StatCard(title: "Total Reviews", value: "134"),
-                StatCard(title: "Incomplete Setups", value: "2"),
+                _StatCard(title: "Active Services", value: "4"),
+                _StatCard(title: "Avg. Rating", value: "3.7"),
+                _StatCard(title: "Total Reviews", value: "134"),
+                _StatCard(title: "Incomplete Setups", value: "2"),
               ],
             ),
           ),
 
-          // Header with business info
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
@@ -133,94 +161,107 @@ class _ServiceDashboardState extends State<ServiceScreen> {
                   children: [
                     Text(
                       "BCC Brand",
-                      style: Theme.of(context).textTheme.headlineSmall,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
                         Icon(
-                          Icons.location_on,
+                          Icons.location_on_outlined,
                           size: 16,
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           "Falls Church",
-                          style: Theme.of(context).textTheme.bodyMedium,
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                         ),
                       ],
                     ),
                   ],
                 ),
-                Row(
-                  children: [
-                    TextButton.icon(
-                      icon: Icon(CupertinoIcons.add_circled_solid),
-                      label: Text('Add Service'),
-                      onPressed: () {
-                        Navigator.pushNamed(context, AppRouter.add_service);
-                      },
-                    ),
-                  ],
+                FilledButton.icon(
+                  icon: const Icon(Icons.add, size: 18),
+                  label: const Text('Add Service'),
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRouter.add_service);
+                  },
                 ),
               ],
             ),
           ),
 
-          // Main content
           Expanded(
-            child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Services section
-                  Container(
-                    margin: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Your Services",
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          const SizedBox(height: 8),
-
-                          serviceController.professionalServices.isEmpty
-                              ? CircularProgressIndicator.adaptive()
-                              : ListView.builder(
-                                  itemCount:
-                                      serviceController.serviceLocations.length,
-                                  itemBuilder: (context, index) {
-                                    final service = serviceController
-                                        .serviceLocations[index];
-
-                                    return ListTile(
-                                      title: Text('${service.serviceId}'),
-                                    );
-                                  },
-                                ),
-                         
-                        ],
-                      ),
+                  Text(
+                    "Your Services",
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
+                  const SizedBox(height: 16),
 
-                  // Sidebar cards
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      children: [
-                        ActivityCard(),
-                        const SizedBox(height: 16),
-                        SpendingCard(),
-                      ],
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.outline.withOpacity(0.2),
+                        ),
+                      ),
+                      child: Consumer<ServiceController>(
+                        builder: (context, controller, child) {
+                          if (controller.professionalServices.isEmpty) {
+                            return const Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.work_outline,
+                                    size: 48,
+                                    color: Colors.grey,
+                                  ),
+                                  SizedBox(height: 16),
+                                  Text(
+                                    'No services added yet',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+
+                          return ListView.separated(
+                            padding: const EdgeInsets.all(16),
+                            itemCount: controller.professionalServices.length,
+                            separatorBuilder: (context, index) =>
+                                const Divider(height: 1),
+                            itemBuilder: (context, index) {
+                              final service =
+                                  controller.professionalServices[index];
+                              return _ServiceListItem(
+                                service: service,
+                                onEdit: _handleEditService,
+                                onDelete: _handleDeleteService,
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],
@@ -233,252 +274,153 @@ class _ServiceDashboardState extends State<ServiceScreen> {
   }
 }
 
-class ServiceCard extends StatelessWidget {
-  // final Service service;
-  final bool isExpanded;
-  final double completion;
-  final VoidCallback onToggle;
-  final VoidCallback onExpand;
+class _ServiceListItem extends StatelessWidget {
+  final ProfessionalServicesEntity service;
+  final Function(ProfessionalServicesEntity) onEdit;
+  final Function(String) onDelete;
 
-  const ServiceCard({
-    // required this.service,
-    required this.isExpanded,
-    required this.completion,
-    required this.onToggle,
-    required this.onExpand,
-    Key? key,
-  }) : super(key: key);
+  const _ServiceListItem({
+    required this.service,
+    required this.onEdit,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // final bool hasSetupProgress = service.setupProgress != null;
-    // final bool isCompleted = service.completed;
-
-    final scheme = Theme.of(context).colorScheme;
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Theme.of(context).colorScheme.outline),
+        borderRadius: BorderRadius.circular(8),
       ),
-      child: InkWell(
-        onTap: onExpand,
-        borderRadius: BorderRadius.circular(16),
-        child: Column(
-          children: [
-            // Service header
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      // Expanded(
-                      // child: Text(
-                      //   service.service_name,
-                      //   style: Theme.of(context).textTheme.titleMedium,
-                      // ),
-                      // ),
-                      // Switch(
-                      //   value: service.active,
-                      //   onChanged: (_) => onToggle(),
-                      // ),
-                      IconButton(
-                        icon: Icon(
-                          isExpanded ? Icons.expand_less : Icons.expand_more,
-                        ),
-                        onPressed: onExpand,
-                      ),
-                    ],
-                  ),
-                  // if (service.description.isNotEmpty)
-                  //   Padding(
-                  //     padding: const EdgeInsets.only(top: 4),
-                  //     child: Text(
-                  //       service.description,
-                  //       style: Theme.of(context).textTheme.bodySmall,
-                  //     ),
-                  // ),
-                  // if (hasSetupProgress && !isCompleted)
-                  //   Column(
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     children: [
-                  //       const SizedBox(height: 16),
-                  //       Row(
-                  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //         children: [
-                  //           Text(
-                  //             "Setup progress: ${completion.toStringAsFixed(0)}%",
-                  //             style: Theme.of(context).textTheme.bodySmall,
-                  //           ),
-                  //           Text(
-                  //             "${service.setupProgress!.toJson().values.where((v) => v).length}/"
-                  //             "${service.setupProgress!.toJson().length} steps",
-                  //             style: Theme.of(context).textTheme.bodySmall,
-                  //           ),
-                  //         ],
-                  //       ),
-                  //       const SizedBox(height: 8),
-                  //       LinearProgressIndicator(
-                  //         value: completion / 100,
-                  //         backgroundColor: scheme.surfaceContainerHighest,
-                  //         color: scheme.primary,
-                  //       ),
-                  //     ],
-                  //   ),
-                ],
-              ),
-            ),
-
-            // Expanded content
-            if (isExpanded)
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Setup incomplete section
-                    // if (hasSetupProgress && !isCompleted)
-                    //   Container(
-                    //     padding: const EdgeInsets.all(16),
-                    //     decoration: BoxDecoration(
-                    //       color: scheme.error.withOpacity(0.08),
-                    //       border: Border(
-                    //         left: BorderSide(color: scheme.error, width: 4),
-                    //       ),
-                    //     ),
-                    //     child: Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         Row(
-                    //           children: [
-                    //             Icon(Icons.warning, color: scheme.error),
-                    //             const SizedBox(width: 8),
-                    //             Text(
-                    //               "Setup incomplete",
-                    //               style: Theme.of(context).textTheme.titleSmall
-                    //                   ?.copyWith(color: scheme.error),
-                    //             ),
-                    //           ],
-                    //         ),
-                    //         const SizedBox(height: 8),
-                    //         Text(
-                    //           "Complete your service setup to start receiving leads.",
-                    //           style: Theme.of(context).textTheme.bodyMedium,
-                    //         ),
-                    //         const SizedBox(height: 16),
-                    // ...service.setupProgress!.toJson().entries.map(
-                    //   (e) => ListTile(
-                    //     leading: Icon(
-                    //       e.value ? Icons.check : Icons.close,
-                    //       color: e.value
-                    //           ? scheme.tertiary
-                    //           : scheme.error,
-                    //     ),
-                    //     title: Text(e.key),
-                    //     trailing: TextButton(
-                    //       onPressed: () {},
-                    //       child: const Text("Set up"),
-                    //     ),
-                    //   ),
-                    // ),
-                    //       const SizedBox(height: 8),
-                    //       ElevatedButton(
-                    //         onPressed: () {},
-                    //         child: const Text("Complete Setup"),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-
-                    // Metrics section
-                    const SizedBox(height: 16),
-                    Text(
-                      "Activity this week",
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        // MetricCard(
-                        //   icon: Icons.attach_money,
-                        //   title: "Spent",
-                        //   value: service.metrics!.spent,
-                        //   color: scheme.primary,
-                        // ),
-                        // MetricCard(
-                        //   icon: Icons.abc_outlined,
-                        //   title: "Leads",
-                        //   value: service.metrics!.leads.toString(),
-                        //   color: scheme.tertiary,
-                        // ),
-                        // MetricCard(
-                        //   icon: Icons.remove_red_eye,
-                        //   title: "Views",
-                        //   value: service.metrics!.views.toString(),
-                        //   color: scheme.secondary,
-                        // ),
-                      ],
-                    ),
-
-                    // Divider
-                    const Divider(height: 32),
-
-                    // Pricing section
-                    SectionHeader(
-                      title: "Pricing",
-                      description:
-                          "Configure your pricing structure for this service.",
-                      onEdit: () {},
-                    ),
-
-                    Row(
-                      children: [
-                        PricingCard(
-                          icon: Icons.attach_money,
-                          title: "What you pay",
-                          description: "Choose how much you pay per lead",
-                          value: "\$15 - \$25 per lead",
-                          color: scheme.primary.withOpacity(0.06),
-                        ),
-                        PricingCard(
-                          icon: Icons.attach_money,
-                          title: "customers pay",
-                          description: "Your service pricing",
-                          value: "\$2,500 - \$5,000",
-                          color: scheme.tertiary.withOpacity(0.06),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-          ],
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            Icons.work_outlined,
+            color: Theme.of(context).colorScheme.primary,
+            size: 20,
+          ),
+        ),
+        title: Text(
+          service.serviceEntity.name,
+          style: Theme.of(
+            context,
+          ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Text(
+          service.subCategoryEntity.name,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+        trailing: _ServicePopupMenu(
+          service: service,
+          onEdit: onEdit,
+          onDelete: onDelete,
         ),
       ),
     );
   }
 }
 
-class StatCard extends StatelessWidget {
-  final String title;
-  final String value;
+class _ServicePopupMenu extends StatelessWidget {
+  final ProfessionalServicesEntity service;
+  final Function(ProfessionalServicesEntity) onEdit;
+  final Function(String) onDelete;
 
-  const StatCard({required this.title, required this.value});
+  const _ServicePopupMenu({
+    required this.service,
+    required this.onEdit,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    return PopupMenuButton<String>(
+      icon: const Icon(Icons.more_vert, size: 20),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      onSelected: (value) {
+        switch (value) {
+          case 'edit':
+            onEdit(service);
+            break;
+          case 'delete':
+            onDelete(service.serviceEntity.id);
+            break;
+        }
+      },
+      itemBuilder: (BuildContext context) => [
+        PopupMenuItem<String>(
+          value: 'edit',
+          child: Row(
+            children: [
+              Icon(
+                Icons.edit_outlined,
+                size: 18,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              const SizedBox(width: 8),
+              Text('Edit', style: Theme.of(context).textTheme.bodyMedium),
+            ],
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'delete',
+          child: Row(
+            children: [
+              Icon(
+                Icons.delete_outline,
+                size: 18,
+                color: Theme.of(context).colorScheme.error,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Delete',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _StatCard extends StatelessWidget {
+  final String title;
+  final String value;
+
+  const _StatCard({required this.title, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(12),
         margin: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
-          color: scheme.surface,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: scheme.outlineVariant),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.1),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -496,305 +438,6 @@ class StatCard extends StatelessWidget {
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class MetricCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String value;
-  final Color color;
-
-  const MetricCard({
-    required this.icon,
-    required this.title,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withOpacity(0.3)),
-          color: color.withOpacity(0.1),
-        ),
-        child: Column(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: color),
-            ),
-            const SizedBox(height: 8),
-            Text(title, style: Theme.of(context).textTheme.bodySmall),
-            Text(
-              value,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SectionHeader extends StatelessWidget {
-  final String title;
-  final String description;
-  final VoidCallback onEdit;
-
-  const SectionHeader({
-    required this.title,
-    required this.description,
-    required this.onEdit,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 2,
-      runSpacing: 2,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: Theme.of(context).textTheme.titleMedium),
-            Text(description, style: Theme.of(context).textTheme.bodySmall),
-          ],
-        ),
-        TextButton(
-          onPressed: onEdit,
-          child: const Row(
-            children: [
-              Icon(Icons.edit, size: 16),
-              SizedBox(width: 4),
-              Text("Edit"),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class PricingCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String description;
-  final String value;
-  final Color color;
-
-  const PricingCard({
-    required this.icon,
-    required this.title,
-    required this.description,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade200),
-          color: color,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(0.3),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(icon, size: 16),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleSmall,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: false,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(description, style: Theme.of(context).textTheme.bodySmall),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ActivityCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Theme.of(context).colorScheme.outline),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Icon(Icons.trending_up, color: scheme.tertiary),
-                const SizedBox(width: 8),
-                Text(
-                  "Activity this week",
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleSmall?.copyWith(color: scheme.primary),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Column(
-                  children: [
-                    Text(
-                      "\$0",
-                      style: Theme.of(
-                        context,
-                      ).textTheme.titleLarge?.copyWith(color: scheme.primary),
-                    ),
-                    Text("spent", style: Theme.of(context).textTheme.bodySmall),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      "0",
-                      style: Theme.of(
-                        context,
-                      ).textTheme.titleLarge?.copyWith(color: scheme.primary),
-                    ),
-                    Text("leads", style: Theme.of(context).textTheme.bodySmall),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      "0",
-                      style: Theme.of(
-                        context,
-                      ).textTheme.titleLarge?.copyWith(color: scheme.primary),
-                    ),
-                    Text("views", style: Theme.of(context).textTheme.bodySmall),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SpendingCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Theme.of(context).colorScheme.outline),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Icon(Icons.wallet, color: scheme.secondary),
-                const SizedBox(width: 8),
-                Text(
-                  "Spending this week",
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleSmall?.copyWith(color: scheme.primary),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "\$0",
-                      style: Theme.of(
-                        context,
-                      ).textTheme.titleLarge?.copyWith(color: scheme.primary),
-                    ),
-                    Text(
-                      "\$85 budget spent",
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      "\$0",
-                      style: Theme.of(
-                        context,
-                      ).textTheme.titleLarge?.copyWith(color: scheme.primary),
-                    ),
-                    Text(
-                      "additional spent",
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-              ],
             ),
           ],
         ),

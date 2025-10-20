@@ -1,4 +1,4 @@
-import 'package:yelpax_pro/features/marketPlace/service/domain/entities/subcategory_entity.dart';
+
 
 class ServiceEntity {
   final String id;
@@ -8,6 +8,7 @@ class ServiceEntity {
   final String description;
   final String imageUrl;
   final bool isActive;
+  final bool isFeatured;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -19,6 +20,7 @@ class ServiceEntity {
     required this.description,
     required this.imageUrl,
     required this.isActive,
+    required this.isFeatured,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -36,6 +38,7 @@ class ServiceEntity {
         other.description == description &&
         other.imageUrl == imageUrl &&
         other.isActive == isActive &&
+        other.isFeatured == isFeatured &&
         other.createdAt == createdAt &&
         other.updatedAt == updatedAt;
   }
@@ -50,6 +53,7 @@ class ServiceEntity {
       description,
       imageUrl,
       isActive,
+      isFeatured,
       createdAt,
       updatedAt,
     );
@@ -64,6 +68,7 @@ class ServiceEntity {
     String? description,
     String? imageUrl,
     bool? isActive,
+    bool? isFeatured,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -75,6 +80,7 @@ class ServiceEntity {
       description: description ?? this.description,
       imageUrl: imageUrl ?? this.imageUrl,
       isActive: isActive ?? this.isActive,
+      isFeatured: isFeatured ?? this.isFeatured,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -84,5 +90,35 @@ class ServiceEntity {
   @override
   String toString() {
     return 'ServiceEntity(id: $id, name: $name, subcategoryId: $subcategoryId)';
+  }
+
+  factory ServiceEntity.fromJson(Map<String, dynamic> json) {
+    return ServiceEntity(
+      id: json['_id'] ?? '',
+      name: json['name'] ?? '',
+      slug: json['slug'] ?? '',
+      subcategoryId: json['subcategory_id'] ?? '',
+      description: json['description'] ?? '',
+      imageUrl: json['image_url'] ?? '',
+      isActive: json['is_active'] ?? false,
+      isFeatured: json['is_featured'] ?? false,
+      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'name': name,
+      'slug': slug,
+      'subcategory_id': subcategoryId,
+      'description': description,
+      'image_url': imageUrl,
+      'is_active': isActive,
+      'is_featured': isFeatured,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+    };
   }
 }

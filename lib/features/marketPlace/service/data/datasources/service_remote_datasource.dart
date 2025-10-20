@@ -39,6 +39,7 @@ abstract class ServiceRemoteDataSource {
   );
 
   Future<Map<String, dynamic>> sendAnswers(List<AnswerEntity> answerEntities);
+  
   Future<List<ProfessionalServicesEntity>>
   fetchAllServicesRelatedToProfessional(String professionalId);
 }

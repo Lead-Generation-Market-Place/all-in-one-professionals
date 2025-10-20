@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:logger/logger.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/datasources/service_remote_datasource.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/mile_model.dart';
@@ -359,21 +361,24 @@ class ServiceRemoteDataSourceImpl implements ServiceRemoteDataSource {
       Logger().d('Response status: ${response.statusCode}');
       Logger().d('Response data: ${response.data}');
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        // Extract the list from the 'data' key
-        final List<dynamic> servicesJson = response.data['data'];
+      if (response.statusCode == 400) {
+        throw Exception('Bad request from frontend');
+      } else if (response.statusCode == 200 || response.statusCode == 201) {
+        // final data = response.data['data'];
+        // if (data == null || data is! List) {
+        //   throw Exception('Invalid data format');
+        // }
 
-        final List<ProfessionalServicesEntity> services = servicesJson
-            .map((json) => ProfessionalServicesModel.fromJson(json))
-            .toList();
 
-        return services;
+        Logger().i("Fetched services: ${response.data}");
+
+        return response.data;
       } else {
-        throw Exception('Failed to send answers: ${response.statusCode}');
+        throw Exception('Unexpected response status: ${response.statusCode}');
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      Logger().e('Error fetching services: $e\n$stackTrace');
       throw Exception('Failed to load services of professional.');
     }
   }
-
 }
