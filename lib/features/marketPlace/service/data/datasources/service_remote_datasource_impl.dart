@@ -426,4 +426,92 @@ class ServiceRemoteDataSourceImpl implements ServiceRemoteDataSource {
     }
   }
 
+  @override
+  Future<bool> deleteProService(String proServiceId) async {
+    try {
+      final response = await apiService.delete(
+        '/services/pro-service/delete/$proServiceId',
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        await fetchAllServicesRelatedToProfessional(proServiceId);
+        Logger().d('Service deleted successfully: $response');
+        return response.data;
+      } else {
+        Logger().e(
+          'Failed to delete service. Status: ${response.statusCode}, Response: $response',
+        );
+        return false;
+      }
+    } catch (e) {
+      Logger().e('Error deleting service: $e');
+      return false;
+    }
+  }
+
+  @override
+  Future<void> addServicePricing({
+    required String professionalId,
+    required String serviceId,
+    required double maxPrice,
+    required double minPrice,
+    required String description,
+    required String pricingType,
+    required int completedTasks,
+  }) async {
+    try {
+      final response = await apiService.post(
+        '/services/pricing',
+        data: {
+          'professional_id': professionalId,
+          'service_id': serviceId,
+          'maximum_price': maxPrice,
+          'minimum_price': minPrice,
+          'description': description,
+          'pricing_type': pricingType,
+          'completed_tasks': completedTasks,
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Logger().d('Service pricing added successfully: $response');
+      } else {
+        throw Exception(
+          'Failed to add service pricing. Status: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      Logger().e('Error adding service pricing: $e');
+      throw Exception('Failed to add service pricing: $e');
+    }
+  }
+
+  @override
+  Future<void> updatePricing({
+    required String professionalId,
+    required String serviceId,
+    required double maxPrice,
+    required double minPrice,
+    required String description,
+    required String pricingType,
+    required int completedTasks,
+  }) {
+    try {
+      return apiService.put(
+        '/services/pricing/update',
+        data: {
+          'professional_id': professionalId,
+          'service_id': serviceId,
+          'maximum_price': maxPrice,
+          'minimum_price': minPrice,
+          'description': description,
+          'pricing_type': pricingType,
+          'completed_tasks': completedTasks,
+        },
+      );
+    } catch (e) {
+      Logger().e('Error updating service pricing: $e');
+      throw Exception('Failed to update service pricing: $e');
+    }
+  } 
 }

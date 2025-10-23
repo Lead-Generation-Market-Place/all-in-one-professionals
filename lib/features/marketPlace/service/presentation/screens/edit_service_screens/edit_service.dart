@@ -201,7 +201,9 @@ class _EditServiceState extends State<EditService> {
                         context,
                         widget
                             .service
-                            .professionalServiceId, // This is the proServiceId (_id from DB)
+                            .professionalServiceId,
+                        authController.professionalId.value!,
+                        widget.service
        
                       );
                     }

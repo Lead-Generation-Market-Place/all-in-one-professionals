@@ -47,4 +47,26 @@ abstract class ServiceRemoteDataSource {
     String proServiceId,
     String serviceId,
   );
+
+  Future<void> deleteProService(String proServiceId);
+
+  Future<void> addServicePricing({
+    required String professionalId,
+    required String serviceId,
+    required double maxPrice,
+    required double minPrice,
+    required String description,
+    required String pricingType,
+    required int completedTasks,
+  });
+
+  Future<void> updatePricing({
+    required String professionalId,
+    required String serviceId,
+    required double maxPrice,
+    required double minPrice,
+    required String description,
+    required String pricingType,
+    required int completedTasks,
+  });
 }

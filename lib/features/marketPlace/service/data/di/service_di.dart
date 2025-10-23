@@ -1,7 +1,9 @@
 import 'package:yelpax_pro/features/authentication/presentation/controllers/auth_user_controller.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/add_answers_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/add_location.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/add_service_pricing_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/add_service_usecase.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/delete_pro_service_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/delete_service_location_use_case.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_Minute_use_case.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_miles.dart';
@@ -9,6 +11,7 @@ import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_services_location_of_authenticated_user.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/professional_services_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/update_location.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/update_pricing_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/update_service_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/add_location.dart';
 
@@ -53,6 +56,9 @@ class ServiceDIContainer {
   late final ProfessionalServicesUsecase _professionalServicesUsecase;
 
   late final UpdateServiceUsecase _updateServiceUsecase;
+  late final DeleteProServiceUsecase _deleteProServiceUsecase;
+  late final AddServicePricingUsecase _addServicePricingUsecase;
+  late final UpdatePricingUsecase _updatePricingUsecase;
   void initialize() {
     if (_initialized) return;
 
@@ -77,6 +83,9 @@ class ServiceDIContainer {
     _addAnswersUsecase = AddAnswersUsecase(_repository);
     _professionalServicesUsecase = ProfessionalServicesUsecase(_repository);
     _updateServiceUsecase = UpdateServiceUsecase(_repository);
+    _deleteProServiceUsecase = DeleteProServiceUsecase(_repository);
+    _addServicePricingUsecase = AddServicePricingUsecase(_repository);
+    _updatePricingUsecase = UpdatePricingUsecase(_repository);
     _initialized = true;
   }
 
@@ -99,7 +108,10 @@ class ServiceDIContainer {
       addServiceUsecase: _addServiceUsecase,
       addAnswersUsecase: _addAnswersUsecase,
       professionalServicesUsecase: _professionalServicesUsecase,
-      updateServiceUsecase: _updateServiceUsecase
+      updateServiceUsecase: _updateServiceUsecase,
+      deleteProServiceUsecase: _deleteProServiceUsecase,
+      addServicePricingUsecase: _addServicePricingUsecase,
+      updateServicePricingUsecase: _updatePricingUsecase
     );
   }
 }

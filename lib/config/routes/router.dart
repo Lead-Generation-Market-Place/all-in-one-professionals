@@ -15,8 +15,10 @@ import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/professional_services_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/edit_service_screens/edit_service.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/add_location.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/add_service_pricing.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/distance.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/edit_distance.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/edit_service_pricing.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/nationwide.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/travel_time.dart';
 import 'package:yelpax_pro/features/marketPlace/jobs/subs/reminders/presentation/reminders_screen.dart';
@@ -123,6 +125,10 @@ class AppRouter {
   static const String budget = '/homeServices/budget';
   static const String edit_distance = '/homeServices/edit_distance';
   static const String edit_service = '/homeServices/edit_service';
+
+  static const String add_service_pricing = '/homeServices/add_service_pricing';
+  static const String edit_service_pricing =
+      '/homeServices/edit_service_pricing';
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
@@ -204,7 +210,9 @@ class AppRouter {
       case add_service:
         return MaterialPageRoute(builder: (_) => AddServiceScreen());
       case add_location:
-        return MaterialPageRoute(builder: (_) => AddLocation());
+final service = settings.arguments as ProfessionalServicesModel?;
+        return MaterialPageRoute(builder: (_) => AddLocation(service: service));
+
       case distance:
         return MaterialPageRoute(builder: (_) => Distance());
       case edit_distance:
@@ -226,6 +234,10 @@ class AppRouter {
       case edit_service:
         final service = settings.arguments as ProfessionalServicesModel;
         return MaterialPageRoute(builder: (_) => EditService(service: service));
+      case add_service_pricing:
+        return MaterialPageRoute(builder: (_) => AddServicePricing());
+      case edit_service_pricing:
+        return MaterialPageRoute(builder: (_) => EditServicePricing());
       case unknownRouteScreen:
         return MaterialPageRoute(
           builder: (_) =>

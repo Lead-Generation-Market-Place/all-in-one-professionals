@@ -13,16 +13,19 @@ import 'package:yelpax_pro/features/marketPlace/service/domain/entities/professi
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/vehicle_type_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/add_answers_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/add_location.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/add_service_pricing_usecase.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/delete_pro_service_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_Minute_use_case.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_miles.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_all_vehicle_type_use_case.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/get_services_location_of_authenticated_user.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/professional_services_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/update_location.dart';
+import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/update_pricing_usecase.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/update_service_usecase.dart';
-import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/add_location.dart';
+
 import 'package:yelpax_pro/shared/widgets/custom_flutter_toast.dart';
-import '../../domain/entities/budget_entity.dart';
+
 
 import '../../domain/entities/question_entity.dart';
 import '../../domain/entities/service_entity.dart';
@@ -54,6 +57,9 @@ class ServiceController extends ChangeNotifier {
   final AddAnswersUsecase addAnswersUsecase;
   final ProfessionalServicesUsecase professionalServicesUsecase;
   final UpdateServiceUsecase updateServiceUsecase;
+  final AddServicePricingUsecase addServicePricingUsecase;
+  final DeleteProServiceUsecase deleteProServiceUsecase;
+  final UpdatePricingUsecase updateServicePricingUsecase;
   ServiceController({
     required this.getAllSubCategories,
     required this.getAllServices,
@@ -72,6 +78,9 @@ class ServiceController extends ChangeNotifier {
     required this.addAnswersUsecase,
     required this.professionalServicesUsecase,
     required this.updateServiceUsecase,
+    required this.deleteProServiceUsecase,
+    required this.addServicePricingUsecase,
+    required this.updateServicePricingUsecase
   });
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -155,35 +164,47 @@ class ServiceController extends ChangeNotifier {
   }
 
   Future<void> addService(BuildContext context, String? professionalId) async {
+    if (selectedService == null || professionalId == null) {
+      CustomFlutterToast.showErrorToast(
+        'Service or Professional ID is missing.',
+      );
+      return;
+    }
+
     try {
       final response = await addServiceUsecase(
         selectedService!.id,
-        professionalId!,
+        professionalId,
       );
 
-      // Check if the response contains 'success'
-      final bool success = response['success'] == true;
+      Logger().d('Add Service Response: $response');
 
-      // Show based on response structure
-      if (success) {
+      // Case 1: response has 'success' key
+      if (response.isNotEmpty) {
         final String message =
             response['message'] ?? 'Service added successfully.';
         CustomFlutterToast.showSuccessToast(message);
         Navigator.pushNamed(context, AppRouter.add_location);
-      } else if (response.containsKey('assignedService')) {
-        // Handle the case when there's no success/message field but data is valid
+        return;
+      }
+
+      // Case 2: response contains 'assignedService' key
+      if (response.containsKey('assignedService')) {
         CustomFlutterToast.showSuccessToast('Service assigned successfully.');
         Navigator.pushReplacementNamed(context, AppRouter.add_location);
-      } else {
-        final String message = response['message'] ?? 'Unknown error occurred.';
-        CustomFlutterToast.showErrorToast(message);
+        return;
       }
-    } catch (e) {
-      print('Error adding service: $e');
+
+      // Case 3: fallback for unknown error
+      final String message = response['message'] ?? 'Unknown error occurred.';
+      CustomFlutterToast.showErrorToast(message);
+    } catch (e, stackTrace) {
+      Logger().e('Error adding service');
       CustomFlutterToast.showErrorToast('Failed to add service.');
       return Future.error('Failed to add service: $e');
     }
   }
+
 
   ///////////-Location-////////////
 
@@ -462,15 +483,8 @@ class ServiceController extends ChangeNotifier {
   List<ProfessionalServicesEntity> get professionalServices =>
       _professionalServices;
 
-  Future<void> professionalServicesList(BuildContext context) async {
-    final authUserController = Provider.of<AuthUserController>(
-      context,
-      listen: false,
-    );
-
-    final professionalId = authUserController.professionalId.value;
-
-    if (professionalId == null || professionalId.isEmpty) {
+  Future<void> professionalServicesList(String professionalId) async {
+    if (professionalId.isEmpty) {
       Logger().w('Professional ID is null or empty. Cannot fetch services.');
       return;
     }
@@ -516,7 +530,12 @@ class ServiceController extends ChangeNotifier {
     }
   }
 
-  Future<void> updateService(BuildContext context, String proServicesId) async {
+  Future<void> updateService(
+    BuildContext context,
+    String proServicesId,
+    String professionalId,
+    ProfessionalServicesModel service,
+  ) async {
     try {
       final response = await updateServiceUsecase(
         proServicesId,
@@ -529,11 +548,19 @@ class ServiceController extends ChangeNotifier {
         final String message =
             response['message'] ?? 'Service update successfully.';
         CustomFlutterToast.showSuccessToast(message);
-        professionalServicesList(context);
-        Navigator.pushNamed(context, AppRouter.add_location);
+        professionalServicesList(professionalId);
+        Navigator.pushNamed(
+          context,
+          AppRouter.add_location,
+          arguments: service,
+        );
       } else if (response.containsKey('assignedService')) {
         CustomFlutterToast.showSuccessToast('Service update successfully.');
-        Navigator.pushReplacementNamed(context, AppRouter.add_location);
+        Navigator.pushNamed(
+          context,
+          AppRouter.add_location,
+          arguments: service,
+        );
       } else {
         final String message = response['message'] ?? 'Unknown error occurred.';
         CustomFlutterToast.showErrorToast(message);
@@ -542,6 +569,94 @@ class ServiceController extends ChangeNotifier {
       print('Error adding service: $e');
       CustomFlutterToast.showErrorToast('Failed to add service.');
       return Future.error('Failed to add service: $e');
+    }
+  }
+
+  Future<void> deleteService(
+    String proServicesId,
+    String professionalId,
+  ) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      await deleteProServiceUsecase(proServicesId);
+      Logger().d('Delete service executed for id: $proServicesId');
+
+      await professionalServicesList(professionalId);
+      CustomFlutterToast.showSuccessToast('Service deleted successfully');
+    } catch (e) {
+      Logger().e('Error deleting service: $e');
+      CustomFlutterToast.showErrorToast('Error deleting service.');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  final TextEditingController maxPriceController = TextEditingController();
+  final TextEditingController minPriceController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController completedTasksController =
+      TextEditingController();
+
+  String? selectedPricingType;
+
+  final List<String> pricingTypes = [
+    "fixed",
+    "hourly",
+    "per_project",
+    "custom",
+  ];
+
+  Future<bool> savePricing(String? professionalId, String serviceId) async {
+    try {
+      await addServicePricingUsecase(
+        professionalId: professionalId!,
+        serviceId: serviceId,
+        maxPrice: double.tryParse(maxPriceController.text) ?? 0.0,
+        minPrice: double.tryParse(minPriceController.text) ?? 0.0,
+        description: descriptionController.text.trim(),
+        pricingType: selectedPricingType ?? 'fixed',
+        completedTasks: int.tryParse(completedTasksController.text) ?? 0,
+      );
+      CustomFlutterToast.showSuccessToast('Pricing saved successfully');
+      clearPricingFields();
+      return true;
+    } catch (e) {
+      Logger().e('Error saving pricing: $e');
+      CustomFlutterToast.showErrorToast('Failed to save pricing');
+      return false;
+    }
+  }
+
+  void clearPricingFields() {
+    maxPriceController.clear();
+    minPriceController.clear();
+    descriptionController.clear();
+    completedTasksController.clear();
+    selectedPricingType = null;
+    notifyListeners();
+  }
+
+  Future<void> updateServicePricing(
+    String? professionalId,
+    String serviceId,
+  ) async {
+    try {
+      await updateServicePricingUsecase(
+        professionalId: professionalId!,
+        serviceId: serviceId,
+        maxPrice: double.tryParse(maxPriceController.text) ?? 0.0,
+        minPrice: double.tryParse(minPriceController.text) ?? 0.0,
+        description: descriptionController.text.trim(),
+        pricingType: selectedPricingType ?? 'fixed',
+        completedTasks: int.tryParse(completedTasksController.text) ?? 0,
+      );
+      CustomFlutterToast.showSuccessToast('Pricing updated successfully');
+      clearPricingFields();
+    } catch (e) {
+      Logger().e('Error updating pricing: $e');
+      CustomFlutterToast.showErrorToast('Failed to update pricing');
     }
   }
 }

@@ -148,7 +148,8 @@ class AuthUserController extends ChangeNotifier {
     notifyListeners();
   }
 
-  final professionalId = ValueNotifier<String?>(null);
+final professionalId = ValueNotifier<String>('');
+
 
   Future<void> getProfessionalIdByUserId() async {
     try {
@@ -165,20 +166,20 @@ class AuthUserController extends ChangeNotifier {
           professionalId.value = data['_id'];
           Logger().i('Professional ID fetched: ${data['_id']}');
         } else {
-          professionalId.value = null;
+          professionalId.value = '';
           Logger().w('Professional data exists but no _id found in response.');
         }
       } else if (response.statusCode == 404) {
-        professionalId.value = null;
+        professionalId.value = '';
         Logger().w('No professional profile found for this user.');
       } else {
-        professionalId.value = null;
+        professionalId.value = '';
         Logger().e(
           'Failed to fetch professional: ${response.statusCode} - ${response.data}',
         );
       }
     } catch (e) {
-      professionalId.value = null;
+      professionalId.value = '';
       Logger().e('Failed to get professional ID: $e');
     }
   }

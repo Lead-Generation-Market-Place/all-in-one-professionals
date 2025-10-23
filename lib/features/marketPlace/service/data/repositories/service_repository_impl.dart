@@ -108,4 +108,51 @@ class ServiceRepositoryImpl implements ServiceRepository {
   ) async {
     return await remoteDataSource.updateService(proServiceId, serviceId);
   }
+
+  @override
+  Future<void> deleteProService(String proServiceId) async {
+    return await remoteDataSource.deleteProService(proServiceId);
+  }
+
+  @override
+  Future<void> addServicePricing({
+    required String professionalId,
+    required String serviceId,
+    required double maxPrice,
+    required double minPrice,
+    required String description,
+    required String pricingType,
+    required int completedTasks,
+  }) async {
+    return await remoteDataSource.addServicePricing(
+      professionalId: professionalId,
+      serviceId: serviceId,
+      maxPrice: maxPrice,
+      minPrice: minPrice,
+      description: description,
+      pricingType: pricingType,
+      completedTasks: completedTasks,
+    );
+  }
+
+  @override
+  Future<void> updatePricing({
+    required String professionalId,
+    required String serviceId,
+    required double maxPrice,
+    required double minPrice,
+    required String description,
+    required String pricingType,
+    required int completedTasks,
+  }) async {
+    return await remoteDataSource.updatePricing(
+      professionalId: professionalId,
+      serviceId: serviceId,
+      maxPrice: maxPrice,
+      minPrice: minPrice,
+      description: description,
+      pricingType: pricingType,
+      completedTasks: completedTasks,
+    );
+  }
 }

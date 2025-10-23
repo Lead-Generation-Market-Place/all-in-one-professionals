@@ -4,15 +4,15 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
 import 'package:yelpax_pro/features/authentication/presentation/controllers/auth_user_controller.dart';
-import 'package:yelpax_pro/features/marketPlace/jobs/subs/location/presentation/widgets/build_location_card.dart';
-import 'package:yelpax_pro/features/marketPlace/service/data/di/service_di.dart';
+import 'package:yelpax_pro/features/marketPlace/service/data/models/professional_services_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/controllers/service_controller.dart';
 import 'package:yelpax_pro/shared/widgets/custom_button.dart';
 import 'package:yelpax_pro/shared/widgets/custom_flutter_toast.dart';
 
 class AddLocation extends StatefulWidget {
-  const AddLocation({super.key});
+  const AddLocation({super.key, this.service});
+  final ProfessionalServicesModel? service;
 
   @override
   State<AddLocation> createState() => _AddLocationState();
@@ -47,7 +47,7 @@ class _AddLocationState extends State<AddLocation> {
       );
 
       await serviceController.getServiceLocationsOfAuthenticatedUser(
-        professionalId!,
+        professionalId,
       );
     } catch (e) {
       Logger().d('Error initializing location data.');
@@ -58,7 +58,7 @@ class _AddLocationState extends State<AddLocation> {
     try {
       final professionalId = authUserController.professionalId.value;
       await serviceController.getServiceLocationsOfAuthenticatedUser(
-        professionalId!,
+        professionalId,
       );
     } catch (e) {
       Logger().d('Error refreshing location data: $e');
@@ -177,9 +177,7 @@ class _AddLocationState extends State<AddLocation> {
             centerTitle: true,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_rounded, size: 20),
-              onPressed: () => Navigator.pushReplacementNamed(
-                context,
-                AppRouter.homeServicesServices,
+              onPressed: () => Navigator.pop(context         
               )
             ),
             actions: [
@@ -251,9 +249,18 @@ class _AddLocationState extends State<AddLocation> {
                     child: CustomButton(
                       text: 'Next',
                       onPressed: () {
+
+                        widget.service!.professionalServiceId.isNotEmpty
+                            ?
                         Navigator.pushNamed(
                           context,
-                          AppRouter.professionalServiceQuestionForm,
+                                AppRouter.edit_service_pricing,
+                                arguments: widget.service,
+                              )
+                            : Navigator.pushNamed(
+                                context,
+                                AppRouter.add_service_pricing,
+                        
                         );
                       },
                     ),
@@ -351,6 +358,7 @@ class _AddLocationState extends State<AddLocation> {
                       ),
                     ),
                   ),
+               
                   PopupMenuButton<String>(
                     icon: Icon(
                       Icons.more_vert,

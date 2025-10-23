@@ -42,32 +42,17 @@ class SubCategoryEntity {
     };
   }
 
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is SubCategoryEntity &&
-        other.id == id &&
-        other.name == name &&
-        other.slug == slug &&
-        other.isActive == isActive &&
-        other.categoryId == categoryId &&
-        other.description == description &&
-        other.subcategoryImageUrl == subcategoryImageUrl;
-  }
+@override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SubCategoryEntity &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
 
   @override
-  int get hashCode {
-    return Object.hash(
-      id,
-      name,
-      slug,
-      isActive,
-      categoryId,
-      description,
-      subcategoryImageUrl,
-    );
-  }
+  int get hashCode => id.hashCode;
+
+
 
   SubCategoryEntity copyWith({
     String? id,
