@@ -6,6 +6,7 @@ class QuestionEntity {
   final String questionName;
   final String formType;
   final List<String> options;
+  final dynamic answer;
   final bool required;
   final int order;
   final bool active;
@@ -16,6 +17,7 @@ class QuestionEntity {
     required this.questionName,
     required this.formType,
     required this.options,
+    this.answer,
     required this.required,
     required this.order,
     required this.active,
@@ -32,6 +34,7 @@ class QuestionEntity {
               ?.map((e) => e.toString())
               .toList() ??
           [],
+      answer: json['answer'],
       required: json['required'] ?? false,
       order: json['order'] ?? 0,
       active: json['active'] ?? true,
@@ -45,6 +48,7 @@ class QuestionEntity {
       'question_name': questionName,
       'form_type': formType,
       'options': options,
+      if (answer != null) 'answer': answer,
       'required': required,
       'order': order,
       'active': active,
@@ -85,6 +89,7 @@ class QuestionEntity {
     String? questionName,
     String? formType,
     List<String>? options,
+    dynamic answer,
     bool? required,
     int? order,
     bool? active,
@@ -95,6 +100,7 @@ class QuestionEntity {
       questionName: questionName ?? this.questionName,
       formType: formType ?? this.formType,
       options: options ?? this.options,
+      answer: answer ?? this.answer,
       required: required ?? this.required,
       order: order ?? this.order,
       active: active ?? this.active,

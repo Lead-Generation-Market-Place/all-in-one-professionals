@@ -13,6 +13,7 @@ import 'package:yelpax_pro/features/marketPlace/jobs/subs/leads_setting/presenta
 import 'package:yelpax_pro/features/marketPlace/service/data/models/professional_services_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/professional_services_entity.dart';
+import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/edit_service_question_form.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/edit_service_screens/edit_service.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/add_location.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/screens/service_location_screens/add_service_pricing.dart';
@@ -129,6 +130,8 @@ class AppRouter {
   static const String add_service_pricing = '/homeServices/add_service_pricing';
   static const String edit_service_pricing =
       '/homeServices/edit_service_pricing';
+  static const String edit_service_question_form =
+      '/homeServices/edit_service_question_form';
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
@@ -237,7 +240,16 @@ final service = settings.arguments as ProfessionalServicesModel?;
       case add_service_pricing:
         return MaterialPageRoute(builder: (_) => AddServicePricing());
       case edit_service_pricing:
-        return MaterialPageRoute(builder: (_) => EditServicePricing());
+        final service = settings.arguments as ProfessionalServicesModel;
+        return MaterialPageRoute(
+          builder: (_) => EditServicePricing(service: service),
+        );
+
+      case edit_service_question_form:
+        final service = settings.arguments as ProfessionalServicesModel;
+        return MaterialPageRoute(
+          builder: (_) => EditServiceQuestionForm(service: service),
+        );
       case unknownRouteScreen:
         return MaterialPageRoute(
           builder: (_) =>

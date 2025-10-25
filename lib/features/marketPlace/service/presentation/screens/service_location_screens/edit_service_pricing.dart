@@ -17,6 +17,33 @@ class EditServicePricing extends StatefulWidget {
 class _EditServicePricingState extends State<EditServicePricing> {
   final _formKey = GlobalKey<FormState>();
 
+
+@override
+  void initState() {
+    super.initState();
+    // Defer loading to after the first frame so that any notifyListeners
+    // called by the controller doesn't happen during the widget build.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) loadServiceData();
+    });
+  }
+
+  Future<void> loadServiceData() async {
+    final serviceController = Provider.of<ServiceController>(
+      context,
+      listen: false,
+    );
+
+    // If no service was provided (adding new pricing), do nothing.
+    if (widget.service == null) return;
+
+    Logger().d(
+      "Loading service data for editing ${widget.service!.proServiceEntity.maximumPrice}",
+    );
+
+    // Use controller helper to populate fields and notify listeners
+    serviceController.loadPricingFromProfessionalService(widget.service!);
+  }
   @override
   Widget build(BuildContext context) {
     final serviceController = Provider.of<ServiceController>(context);
@@ -25,7 +52,7 @@ class _EditServicePricingState extends State<EditServicePricing> {
       listen: false,
     );
 
-    Logger().d(widget.service!.serviceEntity);
+
 
     return Scaffold(
       appBar: AppBar(
@@ -73,9 +100,8 @@ class _EditServicePricingState extends State<EditServicePricing> {
                           DropdownMenuItem(value: type, child: Text(type)),
                     )
                     .toList(),
-                onChanged: (value) => setState(() {
-                  serviceController.selectedPricingType = value;
-                }),
+                onChanged: (value) =>
+                    serviceController.setSelectedPricingType(value),
                 decoration: const InputDecoration(
                   labelText: "Pricing Type",
                   border: OutlineInputBorder(),
@@ -108,9 +134,34 @@ class _EditServicePricingState extends State<EditServicePricing> {
                             content: Text("Service pricing added successfully"),
                           ),
                         );
-                        Navigator.pushReplacementNamed(
+                        // Log service questions and any embedded answers before navigating
+                        try {
+                          Logger().d(
+                            'Navigating to edit questions for service: ${widget.service?.professionalServiceId}',
+                          );
+                          for (final q
+                              in widget.service?.questionEntities ?? []) {
+                            try {
+                              final dynamic dq = q as dynamic;
+                              Logger().d(
+                                ' question ${q.id} answer property (dynamic): ${dq.answer}',
+                              );
+                            } catch (e) {
+                              Logger().d(
+                                ' question ${q.id} no dynamic answer property: $e',
+                              );
+                            }
+                          }
+                        } catch (e) {
+                          Logger().d(
+                            'Error logging service question answers before navigation: $e',
+                          );
+                        }
+
+                        Navigator.pushNamed(
                           context,
-                          AppRouter.professionalServiceQuestionForm,
+                          AppRouter.edit_service_question_form,
+                          arguments: widget.service,
                         );
                       }
                     } else {

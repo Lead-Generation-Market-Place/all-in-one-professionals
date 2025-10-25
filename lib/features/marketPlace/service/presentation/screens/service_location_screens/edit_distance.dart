@@ -627,7 +627,7 @@ class _EditDistanceScreenState extends State<EditDistance> {
                         return Column(
                           children: [
                             DropdownButtonFormField<MileEntity>(
-                              value: _selectedMile,
+                              initialValue: _selectedMile,
                               decoration: InputDecoration(
                                 labelText: 'Service Radius',
                                 labelStyle: const TextStyle(
@@ -656,7 +656,7 @@ class _EditDistanceScreenState extends State<EditDistance> {
                             ),
                             const SizedBox(height: 16),
                             DropdownButtonFormField<MinuteEntity>(
-                              value: _selectedMinute,
+                              initialValue: _selectedMinute,
                               decoration: InputDecoration(
                                 labelText: 'Travel Time',
                                 labelStyle: const TextStyle(
@@ -687,7 +687,7 @@ class _EditDistanceScreenState extends State<EditDistance> {
                             ),
                             const SizedBox(height: 16),
                             DropdownButtonFormField<VehicleTypeEntity>(
-                              value: _selectedVehicleType,
+                              initialValue: _selectedVehicleType,
                               decoration: InputDecoration(
                                 labelText: 'Vehicle Type',
                                 labelStyle: const TextStyle(

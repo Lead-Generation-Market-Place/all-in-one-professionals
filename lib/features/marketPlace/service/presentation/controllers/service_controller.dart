@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:logger/web.dart';
 import 'package:provider/provider.dart';
 import 'package:yelpax_pro/config/routes/router.dart';
+import 'package:yelpax_pro/features/mainHome/presentation/controllers/business_context_controller.dart';
+import 'package:yelpax_pro/shared/services/bottom_navbar_notifier.dart';
 import 'package:yelpax_pro/features/authentication/presentation/controllers/auth_user_controller.dart';
-import 'package:yelpax_pro/features/marketPlace/service/data/models/location_data_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/professional_services_model.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/answer_entity.dart';
 import 'package:yelpax_pro/features/marketPlace/service/domain/entities/location_data_entity.dart';
@@ -163,7 +164,7 @@ class ServiceController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addService(BuildContext context, String? professionalId) async {
+Future<void> addService(BuildContext context, String? professionalId) async {
     if (selectedService == null || professionalId == null) {
       CustomFlutterToast.showErrorToast(
         'Service or Professional ID is missing.',
@@ -179,10 +180,22 @@ class ServiceController extends ChangeNotifier {
 
       Logger().d('Add Service Response: $response');
 
+      if (response.isEmpty) {
+        CustomFlutterToast.showErrorToast('Empty response from server.');
+        return;
+      }
+
+      final String message =
+          response['message'] ?? 'Service added successfully.';
+
+      // 🔹 Stop immediately if service already exists
+      if (message == "You already saved this service") {
+        CustomFlutterToast.showErrorToast(message);
+        return; // <-- exit early
+      }
+
       // Case 1: response has 'success' key
-      if (response.isNotEmpty) {
-        final String message =
-            response['message'] ?? 'Service added successfully.';
+      if (response.containsKey('success') && response['success'] == true) {
         CustomFlutterToast.showSuccessToast(message);
         Navigator.pushNamed(context, AppRouter.add_location);
         return;
@@ -196,14 +209,16 @@ class ServiceController extends ChangeNotifier {
       }
 
       // Case 3: fallback for unknown error
-      final String message = response['message'] ?? 'Unknown error occurred.';
-      CustomFlutterToast.showErrorToast(message);
+      CustomFlutterToast.showErrorToast(
+        message.isNotEmpty ? message : 'Unknown error occurred.',
+      );
     } catch (e, stackTrace) {
-      Logger().e('Error adding service');
+      Logger().e('Error adding service', error: e, stackTrace: stackTrace);
       CustomFlutterToast.showErrorToast('Failed to add service.');
       return Future.error('Failed to add service: $e');
     }
   }
+    
 
 
   ///////////-Location-////////////
@@ -304,7 +319,7 @@ class ServiceController extends ChangeNotifier {
     }
   }
 
-  // Add this method to your ServiceController
+
   Future<void> updateLocationData(LocationDataEntity locationEntity) async {
     try {
       _isLoading = true;
@@ -421,27 +436,51 @@ class ServiceController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // ✅ Validate required questions
+      Logger().d('submitAnswers: starting submission');
+      Logger().d('submitAnswers: selectedService=${_selectedService}');
+      Logger().d(
+        'submitAnswers: professionalId=${authUserController.professionalId.value}',
+      );
+      Logger().d('submitAnswers: current answers=$_answers');
+
+      // Guard: ensure selected service exists
+      if (_selectedService == null) {
+        throw Exception('No selected service; cannot submit answers.');
+      }
+
+      // Guard: ensure professional id exists
+      final String professionalId = authUserController.professionalId.value;
+      if (professionalId.isEmpty) {
+        throw Exception('Professional ID is missing; cannot submit answers.');
+      }
+
+      // Validate required questions
       for (final question in _questions) {
         final answer = _answers[question.id];
         if (question.required) {
           if (answer == null ||
               (answer is String && answer.trim().isEmpty) ||
               (answer is List && answer.isEmpty)) {
-            throw Exception('Please answer all required questions');
+            throw Exception(
+              'Please answer all required questions: "${question.questionName}"',
+            );
           }
         }
       }
 
-      final String serviceId = selectedService!.id;
+      final String serviceId = _selectedService!.id;
+      if (serviceId.isEmpty) {
+        throw Exception('Service ID is missing; cannot submit answers.');
+      }
 
-      // ✅ Extract location IDs from serviceLocations
+      // Safely extract non-empty location ids (avoid force-unwrapping)
       final List<String> locationIds = serviceLocations
-          .where((location) => location.id != null)
-          .map((location) => location.id!)
+          .map((l) => l.id)
+          .whereType<String>()
+          .where((id) => id.isNotEmpty)
           .toList();
 
-      // ✅ Prepare answer entities with service location IDs
+      // Prepare answer entities with service location IDs
       final List<AnswerEntity> answerEntities = _answers.entries.map((entry) {
         final questionId = entry.key;
         final answerValue = entry.value;
@@ -449,29 +488,58 @@ class ServiceController extends ChangeNotifier {
         return AnswerEntity(
           userId: null,
           questionId: questionId,
-          professionalId: authUserController.professionalId.value,
+          professionalId: professionalId,
           serviceId: serviceId,
-          serviceLocationIds: locationIds,
+          serviceLocationIds: locationIds.isNotEmpty ? locationIds : null,
           answers: answerValue,
           createdAt: DateTime.now(),
         );
       }).toList();
 
-      // ✅ Submit answers
-      final response = await addAnswersUsecase(answerEntities);
+      Logger().d(
+        'submitAnswers: sending ${answerEntities.length} answer entities',
+      );
+      final Map<String, dynamic> response = await addAnswersUsecase(
+        answerEntities,
+      );
+      Logger().d('submitAnswers: response=$response');
 
       if (response['success'] == true) {
         CustomFlutterToast.showSuccessToast('Answers submitted successfully!');
+
+        // Ensure app shows the main Home scaffold with bottom navbar
+        try {
+          // Switch business context to Home Services and select Services tab
+          final navProvider = Provider.of<BottomNavProvider>(
+            context,
+            listen: false,
+          );
+          navProvider.changeIndex(2); // Services tab index
+
+          final contextProvider = Provider.of<BusinessContextProvider>(
+            context,
+            listen: false,
+          );
+          contextProvider.switchContextByType(BusinessType.homeServices);
+        } catch (e) {
+          // ignore - if providers are not available for some reason, still navigate
+          Logger().w('Could not update nav/context providers: $e');
+        }
+
         Navigator.pushNamedAndRemoveUntil(
           context,
-          AppRouter.homeServicesServices,
+          AppRouter.home,
           (route) => false,
         );
       } else {
-        CustomFlutterToast.showErrorToast('Error submitting answers.');
+        final msg =
+            response['message']?.toString() ?? 'Error submitting answers.';
+        CustomFlutterToast.showErrorToast(msg);
+        throw Exception('Failed to submit answers: $msg');
       }
-    } catch (e) {
+    } catch (e, stack) {
       submitError = e.toString();
+      Logger().e('submitAnswers error: $e\n$stack');
       CustomFlutterToast.showErrorToast('Failed to submit answers: $e');
     } finally {
       isSubmitting = false;
@@ -608,6 +676,28 @@ class ServiceController extends ChangeNotifier {
     "custom",
   ];
 
+  /// Populate pricing-related controllers and selected pricing type
+  /// from an existing ProfessionalServicesModel and notify listeners
+  void loadPricingFromProfessionalService(ProfessionalServicesModel service) {
+    try {
+      final pro = service.proServiceEntity;
+
+      maxPriceController.text = pro.maximumPrice?.toString() ?? '';
+      minPriceController.text = pro.minimumPrice?.toString() ?? '';
+      descriptionController.text = pro.description;
+      selectedPricingType = pro.pricingType;
+      completedTasksController.text = pro.completedTasks.toString();
+    } catch (e) {
+      Logger().e('Error loading pricing from ProfessionalServicesModel: $e');
+    }
+    notifyListeners();
+  }
+
+  void setSelectedPricingType(String? value) {
+    selectedPricingType = value;
+    notifyListeners();
+  }
+
   Future<bool> savePricing(String? professionalId, String serviceId) async {
     try {
       await addServicePricingUsecase(
@@ -659,4 +749,78 @@ class ServiceController extends ChangeNotifier {
       CustomFlutterToast.showErrorToast('Failed to update pricing');
     }
   }
+
+
+  Future<void> fetchQuestionsForSelectedServices() async {
+    if (_selectedService == null) return;
+
+    isQuestionsLoading = true;
+    questionsError = null;
+    notifyListeners();
+
+    try {
+      _questions = await getQuestionsForService(_selectedService!.id);
+      Logger().d('fetch Questions === $_questions');
+
+      // DON'T clear answers here - preserve existing answers
+      // Only initialize answers for new questions that don't have answers yet
+      for (final question in _questions) {
+        if (!_answers.containsKey(question.id)) {
+          _answers[question.id] = _getDefaultAnswer(question);
+        }
+      }
+
+      // Remove answers for questions that no longer exist
+      final questionIds = _questions.map((q) => q.id).toSet();
+      _answers.removeWhere((key, value) => !questionIds.contains(key));
+    } catch (e) {
+      questionsError = e.toString();
+      _questions = [];
+    }
+
+    isQuestionsLoading = false;
+    notifyListeners();
+  }
+
+  void loadExistingAnswers(List<AnswerEntity> existingAnswers) {
+    Logger().d(
+      'ServiceController.loadExistingAnswers: loading ${existingAnswers.length} answers',
+    );
+    for (final answer in existingAnswers) {
+      Logger().d(
+        ' - answer for question ${answer.questionId}: ${answer.answers}',
+      );
+      _answers[answer.questionId] = answer.answers;
+    }
+    Logger().d(
+      'ServiceController.answers after loadExistingAnswers: $_answers',
+    );
+    notifyListeners();
+  }
+
+  void setQuestions(List<QuestionEntity> questions) {
+    _questions = questions;
+    Logger().d(
+      'ServiceController.setQuestions: loaded ${questions.length} questions',
+    );
+    for (final q in questions) {
+      try {
+        Logger().d(' - question ${q.id}: ${q.toJson()}');
+      } catch (_) {
+        Logger().d(' - question ${q.id} (toJson not available)');
+      }
+    }
+    notifyListeners();
+  }
+
+  void setAnswers(Map<String, dynamic> answers) {
+    Logger().d(
+      'ServiceController.setAnswers: incoming map keys=${answers.keys}',
+    );
+    _answers.clear();
+    _answers.addAll(answers);
+    Logger().d('ServiceController.answers after setAnswers: $_answers');
+    notifyListeners();
+  }
+
 }

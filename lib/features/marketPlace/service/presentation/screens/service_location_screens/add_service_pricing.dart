@@ -72,8 +72,10 @@ class _AddServicePricingState extends State<AddServicePricing> {
                 onChanged: (value) => setState(() {
                   serviceController.selectedPricingType = value;
                 }),
+              
                 decoration: const InputDecoration(
                   labelText: "Pricing Type",
+                  
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) =>

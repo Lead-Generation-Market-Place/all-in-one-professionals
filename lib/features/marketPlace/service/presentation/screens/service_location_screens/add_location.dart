@@ -49,6 +49,8 @@ class _AddLocationState extends State<AddLocation> {
       await serviceController.getServiceLocationsOfAuthenticatedUser(
         professionalId,
       );
+
+      Logger().d('-------------${widget.service!.professionalServiceId}');
     } catch (e) {
       Logger().d('Error initializing location data.');
     }
@@ -177,8 +179,7 @@ class _AddLocationState extends State<AddLocation> {
             centerTitle: true,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_rounded, size: 20),
-              onPressed: () => Navigator.pop(context         
-              )
+              onPressed: () => Navigator.pop(context),
             ),
             actions: [
               Container(
@@ -249,19 +250,25 @@ class _AddLocationState extends State<AddLocation> {
                     child: CustomButton(
                       text: 'Next',
                       onPressed: () {
+                        // Avoid using the null-check operator on widget.service.
+                        // If a service was provided and it has a professionalServiceId,
+                        // navigate to edit; otherwise go to add pricing.
+                        final hasExistingService =
+                            widget.service?.professionalServiceId.isNotEmpty ??
+                            false;
 
-                        widget.service!.professionalServiceId.isNotEmpty
-                            ?
-                        Navigator.pushNamed(
-                          context,
-                                AppRouter.edit_service_pricing,
-                                arguments: widget.service,
-                              )
-                            : Navigator.pushNamed(
-                                context,
-                                AppRouter.add_service_pricing,
-                        
-                        );
+                        if (hasExistingService) {
+                          Navigator.pushNamed(
+                            context,
+                            AppRouter.edit_service_pricing,
+                            arguments: widget.service,
+                          );
+                        } else {
+                          Navigator.pushNamed(
+                            context,
+                            AppRouter.add_service_pricing,
+                          );
+                        }
                       },
                     ),
                   ),
@@ -358,7 +365,7 @@ class _AddLocationState extends State<AddLocation> {
                       ),
                     ),
                   ),
-               
+
                   PopupMenuButton<String>(
                     icon: Icon(
                       Icons.more_vert,

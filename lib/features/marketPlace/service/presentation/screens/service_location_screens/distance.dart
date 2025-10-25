@@ -50,7 +50,28 @@ class _DistanceScreenState extends State<Distance> {
       listen: false,
     );
     serviceController = Provider.of<ServiceController>(context, listen: false);
-    init();
+    // Defer loading dropdown data until after first frame and after
+    // authentication/professionalId is available to avoid a race where
+    // ApiService is not yet initialized with tokens.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final profId = authUserController.professionalId.value;
+      if (profId.isNotEmpty) {
+        init();
+      } else {
+        // Listen for professionalId to become available and load once
+        void _profListener() {
+          final id = authUserController.professionalId.value;
+          if (id.isNotEmpty) {
+            try {
+              authUserController.professionalId.removeListener(_profListener);
+            } catch (_) {}
+            init();
+          }
+        }
+
+        authUserController.professionalId.addListener(_profListener);
+      }
+    });
   }
 
   Future<void> init() async {
