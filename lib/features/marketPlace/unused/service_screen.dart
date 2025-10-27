@@ -33,7 +33,7 @@ class _ServiceDashboardState extends State<ServiceScreen> {
   Future<void> init(BuildContext context) async {
     try {
       final professionalId = authController.professionalId.value;
-      await serviceController.professionalServicesList(professionalId!);
+      await serviceController.professionalServicesList(professionalId);
     } catch (e) {
       Logger().d(e);
     }
@@ -51,7 +51,7 @@ class _ServiceDashboardState extends State<ServiceScreen> {
   Future<void> _refreshServices() async {
     try {
       final professionalId = authController.professionalId.value;
-      await serviceController.professionalServicesList(professionalId!);
+      await serviceController.professionalServicesList(professionalId);
     } catch (e) {
       Logger().d(e);
       // Optional: Show error message to user
@@ -97,7 +97,7 @@ class _ServiceDashboardState extends State<ServiceScreen> {
                     Navigator.of(context).pop();
                     await valueController.deleteService(
                       serviceId,
-                      professionalId!,
+                      professionalId,
                     );
                   },
                   child: Text(

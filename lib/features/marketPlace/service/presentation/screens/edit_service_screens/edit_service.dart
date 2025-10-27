@@ -101,118 +101,162 @@ class _EditServiceState extends State<EditService> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Edit service")),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            /// Subcategory Dropdown
-            Text('Subcategory', style: theme.textTheme.titleMedium),
-            const SizedBox(height: 8),
-
-            DropdownButtonFormField<String>(
-              initialValue: _selectedSubCategoryId,
-              isExpanded: true,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                filled: true,
-              ),
-              hint: const Text('Select Subcategory'),
-              items: controller.subCategories.map((subCategory) {
-                return DropdownMenuItem<String>(
-                  value: subCategory.id,
-                  child: Text(subCategory.name),
-                );
-              }).toList(),
-              onChanged: (subCategoryId) {
-                if (subCategoryId != null) {
-                  final subCategory = _findSubCategoryById(subCategoryId);
-                  if (subCategory != null) {
-                    setState(() {
-                      _selectedSubCategoryId = subCategoryId;
-                      _selectedServiceId =
-                          null; // Reset service when subcategory changes
-                    });
-                    controller.selectSubCategory(subCategory);
-                  }
-                }
-              },
-            ),
-
-            const SizedBox(height: 24),
-
-            /// Service Dropdown - Only show when subcategory is selected
-            if (_selectedSubCategoryId != null && _isInitialized) ...[
-              Text('Service', style: theme.textTheme.titleMedium),
-              const SizedBox(height: 8),
-              controller.isServicesLoading
-                  ? const SizedBox(
-                      height: 56,
-                      child: Center(child: CircularProgressIndicator()),
-                    )
-                  : DropdownButtonFormField<String>(
-                      initialValue: _selectedServiceId,
-                      isExpanded: true,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        filled: true,
-                      ),
-                      hint: const Text('Select Service'),
-                      items: controller.filteredServices.map((service) {
-                        return DropdownMenuItem<String>(
-                          value: service.id,
-                          child: Text(service.name),
-                        );
-                      }).toList(),
-                      onChanged: (serviceId) {
-                        if (serviceId != null) {
-                          final service = _findServiceById(serviceId);
-                          if (service != null) {
-                            setState(() {
-                              _selectedServiceId = serviceId;
-                            });
-                            controller.selectService(service);
-                          }
-                        }
-                      },
-                    ),
-              const Spacer(),
-            ],
-
-            /// Submit Button (Next)
-            CustomButton(
-              text: 'Next',
-              onPressed: _selectedServiceId != null
-                  ? () async {
-                      await controller.updateService(
-                        context,
-                        widget
-                            .service
-                            .professionalServiceId,
-                        authController.professionalId.value!,
-                        widget.service
-       
-                      );
-                    }
-                  : null,
-
-            ),
-          ],
+        appBar: AppBar(
+          title: const Text("Edit Service"),
+          centerTitle: true,
+          elevation: 2,
         ),
-      ),
-    );
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// Subcategory Section
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.category, color: theme.iconTheme.color),
+                          const SizedBox(width: 8),
+                          Text('Subcategory', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      DropdownButtonFormField<String>(
+                        initialValue: _selectedSubCategoryId,
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          prefixIcon: Icon(Icons.arrow_drop_down, color: theme.iconTheme.color),
+                        ),
+                        hint: const Text('Select Subcategory'),
+                        items: controller.subCategories.map((subCategory) {
+                          return DropdownMenuItem<String>(
+                            value: subCategory.id,
+                            child: Text(subCategory.name),
+                          );
+                        }).toList(),
+                        onChanged: (subCategoryId) {
+                          if (subCategoryId != null) {
+                            final subCategory = _findSubCategoryById(subCategoryId);
+                            if (subCategory != null) {
+                              setState(() {
+                                _selectedSubCategoryId = subCategoryId;
+                                _selectedServiceId =
+                                    null; // Reset service when subcategory changes
+                              });
+                              controller.selectSubCategory(subCategory);
+                            }
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+  
+              const SizedBox(height: 24),
+  
+              /// Service Section - Only show when subcategory is selected
+              if (_selectedSubCategoryId != null && _isInitialized) ...[
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.build, color: theme.iconTheme.color),
+                            const SizedBox(width: 8),
+                            Text('Service', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        controller.isServicesLoading
+                            ? const SizedBox(
+                                height: 56,
+                                child: Center(child: CircularProgressIndicator()),
+                              )
+                            : DropdownButtonFormField<String>(
+                                initialValue: _selectedServiceId,
+                                isExpanded: true,
+                                decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 14,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  filled: true,
+                                  prefixIcon: Icon(Icons.arrow_drop_down, color: theme.iconTheme.color),
+                                ),
+                                hint: const Text('Select Service'),
+                                items: controller.filteredServices.map((service) {
+                                  return DropdownMenuItem<String>(
+                                    value: service.id,
+                                    child: Text(service.name),
+                                  );
+                                }).toList(),
+                                onChanged: (serviceId) {
+                                  if (serviceId != null) {
+                                    final service = _findServiceById(serviceId);
+                                    if (service != null) {
+                                      setState(() {
+                                        _selectedServiceId = serviceId;
+                                      });
+                                      controller.selectService(service);
+                                    }
+                                  }
+                                },
+                              ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+              ],
+  
+              /// Submit Button (Next)
+              SizedBox(
+                width: double.infinity,
+                child: CustomButton(
+                  text: 'Next',
+                  onPressed: _selectedServiceId != null
+                      ? () async {
+                          await controller.updateService(
+                            context,
+                            widget.service.professionalServiceId,
+                            authController.professionalId.value!,
+                            widget.service,
+                          );
+                        }
+                      : null,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
   }
 }
