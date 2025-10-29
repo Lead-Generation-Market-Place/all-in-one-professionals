@@ -6,7 +6,7 @@ import 'package:yelpax_pro/features/authentication/presentation/controllers/auth
 import 'package:yelpax_pro/features/inbox/di_controller.dart';
 import 'package:yelpax_pro/features/mainHome/presentation/controllers/business_context_controller.dart';
 import 'package:yelpax_pro/features/marketPlace/profiles/d_i_m_profiles.dart';
-import 'package:yelpax_pro/features/marketPlace/service/data/di/service_di.dart';
+import 'package:yelpax_pro/features/marketPlace/service/data/di/service_getit.dart';
 import 'package:yelpax_pro/features/marketPlace/service/presentation/controllers/service_controller.dart';
 
 import 'package:yelpax_pro/shared/services/api_service.dart';
@@ -31,22 +31,21 @@ List<SingleChildWidget> appProviders = [
   /// ✅ ServiceController using clean architecture with AuthUserController dependency
   ChangeNotifierProxyProvider<AuthUserController, ServiceController>(
     create: (context) {
-      // Initialize the service DI if not already done
-      if (!serviceDI.isInitialized) {
-        serviceDI.initialize();
-      }
-      final controller = serviceDI.createServiceController();
+      // Initialize the service DI
+      setupServiceDI();
+
       final authController = context.read<AuthUserController>();
-      final professionalId = authController.professionalId.value ?? '';
+      final controller = createServiceControllerWithGetIt(authController);
+      final professionalId = authController.professionalId.value;
       if (professionalId.isNotEmpty) {
         controller.initializeRegistrationData(professionalId);
       }
       return controller;
     },
     update: (context, authController, controller) {
-      final professionalId = authController.professionalId.value ?? '';
-      if (professionalId.isNotEmpty) {
-        controller?.updateProfessionalId(professionalId);
+      final professionalId = authController.professionalId.value;
+      if (controller != null && professionalId.isNotEmpty) {
+        controller.updateProfessionalId(professionalId);
       }
       return controller!;
     },

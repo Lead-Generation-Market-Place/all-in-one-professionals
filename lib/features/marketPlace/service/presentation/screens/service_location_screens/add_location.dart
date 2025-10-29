@@ -46,11 +46,17 @@ class _AddLocationState extends State<AddLocation> {
         listen: false,
       );
 
+      // Check if we have a selected service, otherwise we can't load locations
+      if (serviceController.selectedService?.id == null) {
+        Logger().w('No selected service, cannot load locations');
+        return;
+      }
+
       await serviceController.getServiceLocationsOfAuthenticatedUser(
         professionalId,
       );
 
-      Logger().d('-------------${widget.service!.professionalServiceId}');
+      Logger().d('-------------${widget.service?.professionalServiceId}');
     } catch (e) {
       Logger().d('Error initializing location data.');
     }
@@ -59,6 +65,13 @@ class _AddLocationState extends State<AddLocation> {
   Future<void> _refreshData() async {
     try {
       final professionalId = authUserController.professionalId.value;
+
+      // Check if we have a selected service
+      if (serviceController.selectedService?.id == null) {
+        Logger().w('No selected service, cannot refresh locations');
+        return;
+      }
+
       await serviceController.getServiceLocationsOfAuthenticatedUser(
         professionalId,
       );

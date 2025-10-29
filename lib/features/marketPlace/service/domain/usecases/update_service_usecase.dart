@@ -6,12 +6,9 @@ class UpdateServiceUsecase {
   UpdateServiceUsecase(this.repository);
 
   Future<Map<String, dynamic>> call(
+    String proServiceId,
     String serviceId,
-    String professionalId,
   ) async {
-    return await repository.updateService(
-       professionalId,
-      serviceId
-      );
+    return await repository.updateService(proServiceId, serviceId);
   }
 }

@@ -36,4 +36,11 @@ class BasicInfoRemoteDataSourceImpl implements BasicInfoRemoteDataSource {
       throw Exception("Failed to update basic info");
     }
   }
+
+
+  Future<void> updateProfileInfo() async {
+    try {} catch (e) {
+      throw Exception("Failed to update profile info");
+    }
+  }
 }

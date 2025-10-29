@@ -44,7 +44,8 @@ class LocationDataEntity {
 
   factory LocationDataEntity.fromJson(Map<String, dynamic> json) {
     final mileId = json['mile_id'] ?? '';
-    final mileValue = json['mile'] ?? 0;
+    final dynamic rawMile = json['serviceRadiusMiles'] ?? json['mile'] ?? 0;
+    final int mileValue = rawMile is int ? rawMile : (rawMile as num).toInt();
     final minuteId = json['minute_id'] ?? '';
     final minuteValue = json['minute'] ?? 0;
 
@@ -69,10 +70,7 @@ class LocationDataEntity {
       serviceArea: json['service_area'] != null
           ? ServiceArea.fromJson(json['service_area'] as Map<String, dynamic>)
           : null,
-      mileEntity: MileEntity(
-        id: mileId,
-        mile: mileValue is int ? mileValue : (mileValue as num).toInt(),
-      ),
+      mileEntity: MileEntity(id: mileId, mile: mileValue),
       minuteEntity: MinuteEntity(
         id: minuteId,
         minute: minuteValue is int ? minuteValue : (minuteValue as num).toInt(),
@@ -103,7 +101,8 @@ class LocationDataEntity {
       if (addressLine != null) 'address_line': addressLine,
       'coordinates': coordinates.toJson(),
       if (serviceArea != null) 'service_area': serviceArea!.toJson(),
-      'mile_id': mileEntity.id,
+      // Send the raw miles instead of referencing a Mile document
+      'serviceRadiusMiles': mileEntity.mile,
       'minute_id': minuteEntity.id,
       if (vehicleTypeEntity != null) 'vehicle_type_id': vehicleTypeEntity!.id,
     };

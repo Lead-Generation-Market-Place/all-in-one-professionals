@@ -17,8 +17,7 @@ class EditServicePricing extends StatefulWidget {
 class _EditServicePricingState extends State<EditServicePricing> {
   final _formKey = GlobalKey<FormState>();
 
-
-@override
+  @override
   void initState() {
     super.initState();
     // Defer loading to after the first frame so that any notifyListeners
@@ -37,6 +36,18 @@ class _EditServicePricingState extends State<EditServicePricing> {
     // If no service was provided (adding new pricing), do nothing.
     if (widget.service == null) return;
 
+    // Check if controller already has data (user just updated and came back)
+    // Only load if controller fields are empty
+    final hasExistingData =
+        serviceController.maxPriceController.text.isNotEmpty ||
+        serviceController.minPriceController.text.isNotEmpty ||
+        serviceController.descriptionController.text.isNotEmpty;
+
+    if (hasExistingData) {
+      Logger().d('Controller already has pricing data, not overwriting');
+      return;
+    }
+
     Logger().d(
       "Loading service data for editing ${widget.service!.proServiceEntity.maximumPrice}",
     );
@@ -44,6 +55,7 @@ class _EditServicePricingState extends State<EditServicePricing> {
     // Use controller helper to populate fields and notify listeners
     serviceController.loadPricingFromProfessionalService(widget.service!);
   }
+
   @override
   Widget build(BuildContext context) {
     final serviceController = Provider.of<ServiceController>(context);
@@ -51,8 +63,6 @@ class _EditServicePricingState extends State<EditServicePricing> {
       context,
       listen: false,
     );
-
-
 
     return Scaffold(
       appBar: AppBar(
@@ -268,58 +278,42 @@ class _EditServicePricingState extends State<EditServicePricing> {
                 child: ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      final res = await serviceController.savePricing(
+                      // Use updateServicePricing for editing, not savePricing
+                      await serviceController.updateServicePricing(
                         authController.professionalId.value,
                         serviceController.selectedService!.id,
                       );
 
-                      if (res == true) {
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                "Service pricing updated successfully",
-                              ),
-                            ),
+                      if (mounted) {
+                        // Log service questions and any embedded answers before navigating
+                        try {
+                          Logger().d(
+                            'Navigating to edit questions for service: ${widget.service?.professionalServiceId}',
                           );
-                          // Log service questions and any embedded answers before navigating
-                          try {
-                            Logger().d(
-                              'Navigating to edit questions for service: ${widget.service?.professionalServiceId}',
-                            );
-                            for (final q
-                                in widget.service?.questionEntities ?? []) {
-                              try {
-                                final dynamic dq = q as dynamic;
-                                Logger().d(
-                                  ' question ${q.id} answer property (dynamic): ${dq.answer}',
-                                );
-                              } catch (e) {
-                                Logger().d(
-                                  ' question ${q.id} no dynamic answer property: $e',
-                                );
-                              }
+                          for (final q
+                              in widget.service?.questionEntities ?? []) {
+                            try {
+                              final dynamic dq = q as dynamic;
+                              Logger().d(
+                                ' question ${q.id} answer property (dynamic): ${dq.answer}',
+                              );
+                            } catch (e) {
+                              Logger().d(
+                                ' question ${q.id} no dynamic answer property: $e',
+                              );
                             }
-                          } catch (e) {
-                            Logger().d(
-                              'Error logging service question answers before navigation: $e',
-                            );
                           }
+                        } catch (e) {
+                          Logger().d(
+                            'Error logging service question answers before navigation: $e',
+                          );
+                        }
 
-                          Navigator.pushNamed(
-                            context,
-                            AppRouter.edit_service_question_form,
-                            arguments: widget.service,
-                          );
-                        }
-                      } else {
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Failed to update service pricing"),
-                            ),
-                          );
-                        }
+                        Navigator.pushNamed(
+                          context,
+                          AppRouter.edit_service_question_form,
+                          arguments: widget.service,
+                        );
                       }
                     }
                   },

@@ -1,4 +1,4 @@
-import 'data/di/service_di.dart';
+import 'data/di/service_getit.dart';
 
 void setupService() {
   setupServiceDI();

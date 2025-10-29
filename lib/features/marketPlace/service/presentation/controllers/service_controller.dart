@@ -27,7 +27,6 @@ import 'package:yelpax_pro/features/marketPlace/service/domain/usecases/update_s
 
 import 'package:yelpax_pro/shared/widgets/custom_flutter_toast.dart';
 
-
 import '../../domain/entities/question_entity.dart';
 import '../../domain/entities/service_entity.dart';
 
@@ -81,7 +80,7 @@ class ServiceController extends ChangeNotifier {
     required this.updateServiceUsecase,
     required this.deleteProServiceUsecase,
     required this.addServicePricingUsecase,
-    required this.updateServicePricingUsecase
+    required this.updateServicePricingUsecase,
   });
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -164,7 +163,7 @@ class ServiceController extends ChangeNotifier {
     notifyListeners();
   }
 
-Future<void> addService(BuildContext context, String? professionalId) async {
+  Future<void> addService(BuildContext context, String? professionalId) async {
     if (selectedService == null || professionalId == null) {
       CustomFlutterToast.showErrorToast(
         'Service or Professional ID is missing.',
@@ -218,8 +217,6 @@ Future<void> addService(BuildContext context, String? professionalId) async {
       return Future.error('Failed to add service: $e');
     }
   }
-    
-
 
   ///////////-Location-////////////
 
@@ -315,10 +312,9 @@ Future<void> addService(BuildContext context, String? professionalId) async {
         notifyListeners(); // notify UI about changes
       }
     } catch (e) {
-      CustomFlutterToast.showErrorToast('Failed to fetch service locations.');
+      Logger().e('Failed to fetch service locations.');
     }
   }
-
 
   Future<void> updateLocationData(LocationDataEntity locationEntity) async {
     try {
@@ -605,25 +601,28 @@ Future<void> addService(BuildContext context, String? professionalId) async {
     ProfessionalServicesModel service,
   ) async {
     try {
+      // Validate that we have a selected service
+      if (selectedService == null) {
+        CustomFlutterToast.showErrorToast('Please select a service.');
+        return;
+      }
+
       final response = await updateServiceUsecase(
         proServicesId,
         selectedService!.id,
       );
-      Logger().d('asdfasdfasdfasdfa $response');
+      Logger().d('Update service response: $response');
 
       final bool success = response['success'] == true;
       if (success) {
         final String message =
-            response['message'] ?? 'Service update successfully.';
+            response['message'] ?? 'Service updated successfully.';
         CustomFlutterToast.showSuccessToast(message);
-        professionalServicesList(professionalId);
-        Navigator.pushNamed(
-          context,
-          AppRouter.add_location,
-          arguments: service,
-        );
-      } else if (response.containsKey('assignedService')) {
-        CustomFlutterToast.showSuccessToast('Service update successfully.');
+
+        // Refresh the professional services list
+        await professionalServicesList(professionalId);
+
+        // Navigate to location screen to continue editing
         Navigator.pushNamed(
           context,
           AppRouter.add_location,
@@ -633,10 +632,10 @@ Future<void> addService(BuildContext context, String? professionalId) async {
         final String message = response['message'] ?? 'Unknown error occurred.';
         CustomFlutterToast.showErrorToast(message);
       }
-    } catch (e) {
-      print('Error adding service: $e');
-      CustomFlutterToast.showErrorToast('Failed to add service.');
-      return Future.error('Failed to add service: $e');
+    } catch (e, stackTrace) {
+      Logger().e('Error updating service', error: e, stackTrace: stackTrace);
+      CustomFlutterToast.showErrorToast('Failed to update service: $e');
+      return Future.error('Failed to update service: $e');
     }
   }
 
@@ -743,13 +742,14 @@ Future<void> addService(BuildContext context, String? professionalId) async {
         completedTasks: int.tryParse(completedTasksController.text) ?? 0,
       );
       CustomFlutterToast.showSuccessToast('Pricing updated successfully');
-      clearPricingFields();
+      // Reload professional services to get updated data
+      await professionalServicesList(professionalId);
+      // DON'T clear fields - keep the updated values for user to see
     } catch (e) {
       Logger().e('Error updating pricing: $e');
       CustomFlutterToast.showErrorToast('Failed to update pricing');
     }
   }
-
 
   Future<void> fetchQuestionsForSelectedServices() async {
     if (_selectedService == null) return;
@@ -822,5 +822,4 @@ Future<void> addService(BuildContext context, String? professionalId) async {
     Logger().d('ServiceController.answers after setAnswers: $_answers');
     notifyListeners();
   }
-
 }

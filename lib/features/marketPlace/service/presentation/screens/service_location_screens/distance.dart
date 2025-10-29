@@ -236,12 +236,59 @@ class _DistanceScreenState extends State<Distance> {
                   },
                 ),
               const SizedBox(height: 20),
+              // Mile selector as a single line (slider) from 1 to 1000 miles
+              Builder(
+                builder: (context) {
+                  final double currentMiles = (_selectedMile?.mile ?? 1)
+                      .toDouble();
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Service Radius',
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          Text('${currentMiles.round()} mi'),
+                        ],
+                      ),
+                      Slider(
+                        value: currentMiles.clamp(0, 100),
+                        min: 0,
+                        max: 100,
+                        divisions: 100,
+                        label: '${currentMiles.round()} mi',
+                        onChanged: (double v) {
+                          setState(() {
+                            _selectedMile = MileEntity(id: '', mile: v.round());
+                          });
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 8),
               SizedBox(
                 height: 200,
                 child: GoogleMap(
                   initialCameraPosition: _initialPosition,
                   onMapCreated: _onMapCreated,
                   myLocationEnabled: true,
+                  circles: (_selectedLatLng != null && _selectedMile != null)
+                      ? {
+                          Circle(
+                            circleId: const CircleId('coverage'),
+                            center: _selectedLatLng!,
+                            radius: _selectedMile!.mile * 1609.34,
+                            fillColor: Colors.blueAccent.withOpacity(0.12),
+                            strokeColor: Colors.blueAccent.withOpacity(0.6),
+                            strokeWidth: 2,
+                          ),
+                        }
+                      : {},
                   markers: _selectedLatLng != null
                       ? {
                           Marker(
@@ -258,24 +305,6 @@ class _DistanceScreenState extends State<Distance> {
                 builder: (context, controller, _) {
                   return Column(
                     children: [
-                      DropdownButtonFormField<MileEntity>(
-                        decoration: const InputDecoration(
-                          labelText: 'Service Radius (Miles)',
-                          labelStyle: TextStyle(color: Colors.black),
-                        ),
-                        initialValue: _selectedMile,
-                        items: controller.miles
-                            .map(
-                              (mile) => DropdownMenuItem(
-                                value: mile,
-                                child: Text('${mile.mile} Miles'),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (value) =>
-                            setState(() => _selectedMile = value),
-                      ),
-                      const SizedBox(height: 16),
                       DropdownButtonFormField<MinuteEntity>(
                         decoration: const InputDecoration(
                           labelText: 'Travel Time (Minutes)',

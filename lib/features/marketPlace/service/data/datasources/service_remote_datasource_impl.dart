@@ -1,6 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:logger/logger.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/datasources/service_remote_datasource.dart';
 import 'package:yelpax_pro/features/marketPlace/service/data/models/mile_model.dart';
@@ -194,7 +192,7 @@ class ServiceRemoteDataSourceImpl implements ServiceRemoteDataSource {
         );
       }
     } catch (e, stackTrace) {
-      CustomFlutterToast.showErrorToast("Error getting location.");
+
       // Optional: log error or rethrow for debugging
       print('Error: $e\n$stackTrace');
       return []; // Return an empty list to satisfy return type
@@ -397,12 +395,12 @@ class ServiceRemoteDataSourceImpl implements ServiceRemoteDataSource {
 
   @override
   Future<Map<String, dynamic>> updateService(
-    String serviceId,
     String proServiceId,
+    String serviceId,
   ) async {
     try {
       Logger().d(
-        'Updating service: serviceId=$serviceId, proServiceId=$proServiceId',
+        'Updating service: proServiceId=$proServiceId, serviceId=$serviceId',
       );
 
       final response = await apiService.put(
@@ -513,5 +511,5 @@ class ServiceRemoteDataSourceImpl implements ServiceRemoteDataSource {
       Logger().e('Error updating service pricing: $e');
       throw Exception('Failed to update service pricing: $e');
     }
-  } 
+  }
 }
